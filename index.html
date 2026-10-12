@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NHL 27 League</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap">
+<style>
+/* Arena scoreboard header over one ice-white column; tabs for Standings / Schedule / Results / Log / Players */
+:root{
+  --ice:#f3f6f9; --boards:#ffffff; --line:#d9e1e9; --ink:#0f1c2b; --muted:#5b6b7c;
+  --goal:#d7263d; --blue:#1f5fbf; --win:#1f8a4c; --otl:#b7791f; --loss:#9aa6b3;
+  --board-bg:#0f1c2b; --board-fg:#f3f6f9;
+  --display:"Teko","Barlow Semi Condensed",Impact,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --data:"Barlow Semi Condensed","Barlow",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --ice:#0b131c; --boards:#121d29; --line:#22313f; --ink:#e7eef5; --muted:#8b9bab;
+  --goal:#ff4d5e; --blue:#6aa3ff; --win:#45c07a; --otl:#e0a742; --loss:#5d6c7a;
+  --board-bg:#060b11; --board-fg:#e7eef5; color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ice);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+.wrap{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:18px}
+header.board{background:var(--board-bg);color:var(--board-fg);border-radius:10px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border-bottom:4px solid var(--goal)}
+.board h1{font-family:var(--display);font-weight:600;font-size:44px;line-height:.9;margin:0;letter-spacing:.02em;text-transform:uppercase;overflow-wrap:anywhere}
+.board .sub{font-family:var(--data);font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.board .right{display:grid;gap:10px;justify-items:end}
+.tally{display:flex;gap:18px;font-family:var(--display)}
+.tally div{display:grid;text-align:center}
+.tally b{font-size:34px;line-height:.9;font-weight:500}
+.tally span{font-family:var(--data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+.acct{display:flex;gap:8px;align-items:center;font-family:var(--data);font-size:14px;flex-wrap:wrap;justify-content:flex-end}
+.acct button{font:600 13px var(--data);letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--board-fg);border:1px solid color-mix(in srgb,var(--board-fg) 35%,transparent);border-radius:6px;padding:6px 10px;cursor:pointer}
+nav.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);overflow-x:auto;scrollbar-width:none}
+nav.tabs button{font:600 15px var(--data);letter-spacing:.08em;text-transform:uppercase;background:none;border:0;color:var(--muted);padding:10px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--goal)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.panel{background:var(--boards);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:500;font-size:26px;line-height:1;margin:0;text-transform:uppercase;letter-spacing:.03em;text-wrap:balance}
+.panel h3{font:600 13px var(--data);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
+.hint{color:var(--muted);font-size:13.5px;margin:0}
+.notice{border:1px solid var(--line);border-left:4px solid var(--blue);background:var(--boards);border-radius:0 10px 10px 0;padding:12px 16px}
+.notice p{margin:0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--data);font-variant-numeric:tabular-nums}
+th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line);font-size:15.5px;white-space:nowrap}
+th.l,td.l{text-align:left}
+td.pts{font-family:var(--display);font-size:24px;line-height:1;font-weight:500}
+tr.me td{background:color-mix(in srgb,var(--blue) 9%,transparent)}
+.rank{color:var(--muted);width:2ch}
+.who{display:grid;line-height:1.15}
+.who b{font-weight:600}
+.who small{color:var(--muted);font-size:12.5px}
+.form{display:inline-flex;gap:3px}
+.chip{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 3px;border-radius:4px;font:600 11px var(--data);color:#fff}
+.chip.W{background:var(--win)}.chip.L{background:var(--loss)}.chip.O{background:var(--otl)}
+.list{display:grid;gap:8px}
+.game{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--ice)}
+.game .side{display:grid;min-width:0}
+.game .side.r{text-align:right}
+.game .side b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game .side small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game .side.lost b{color:var(--muted);font-weight:500}
+.score{font-family:var(--display);font-size:32px;line-height:.9;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.score small{display:block;font-family:var(--data);font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.score.pending{font-size:22px;color:var(--muted)}
+.game .meta{display:grid;justify-items:end;gap:4px;font-size:12px;color:var(--muted);font-family:var(--data)}
+.round{display:grid;gap:8px}
+.round-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.round-head b{font-family:var(--display);font-size:22px;font-weight:500;text-transform:uppercase;letter-spacing:.03em}
+.round-head span{font:500 12.5px var(--data);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.bye{font-size:13px;color:var(--muted);font-family:var(--data)}
+.sm{background:none;border:1px solid var(--line);color:var(--ink);border-radius:6px;font:600 12px var(--data);letter-spacing:.04em;padding:4px 9px;cursor:pointer;white-space:nowrap}
+.sm.armed{border-color:var(--goal);color:var(--goal)}
+.sm.go{border-color:var(--goal);color:var(--goal)}
+form{display:grid;gap:14px}
+.field{display:grid;gap:5px;min-width:0}
+label,.lbl{font:600 12px var(--data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+select,input{font:500 16px var(--body);color:var(--ink);background:var(--ice);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+.matchup{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.matchup .team{font:600 17px var(--body);overflow-wrap:anywhere}
+input.goals{font-family:var(--display);font-size:34px;line-height:1;text-align:center;padding:6px}
+.vs{font-family:var(--display);font-size:22px;color:var(--muted);padding-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.row>.field{flex:1 1 160px}
+.row>.end{flex:0 0 auto;align-self:end}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:600 14px var(--data);letter-spacing:.06em;background:var(--ice);color:var(--muted);border:0;padding:9px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--boards)}
+.btn{font:600 15px var(--data);letter-spacing:.08em;text-transform:uppercase;background:var(--goal);color:#fff;border:0;border-radius:8px;padding:11px 18px;cursor:pointer;justify-self:start}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:default}
+.msg{font-size:14px;margin:0;min-height:1.2em}
+.msg.err{color:var(--goal)}.msg.ok{color:var(--win)}
+.empty{color:var(--muted);text-align:center;padding:22px 8px;display:grid;gap:6px}
+.empty b{font-family:var(--display);font-size:24px;font-weight:500;color:var(--ink);text-transform:uppercase}
+.filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.filter select{width:auto}
+.legend{font-size:12.5px;color:var(--muted);font-family:var(--data);margin:0}
+.player{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--ice)}
+.player .acts{display:flex;gap:6px;flex-wrap:wrap}
+.player .inline{display:flex;gap:6px;flex-wrap:wrap;width:100%}
+.player .inline input{flex:1 1 160px;width:auto;padding:6px 8px;font-size:15px}
+.host{font:600 10.5px var(--data);letter-spacing:.12em;text-transform:uppercase;background:var(--goal);color:#fff;border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:2px}
+.dialog{position:fixed;inset:0;background:color-mix(in srgb,var(--board-bg) 55%,transparent);display:grid;place-items:center;padding:16px;z-index:10}
+.dialog .panel{width:min(420px,100%)}
+ol.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:var(--ice);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+@media (max-width:560px){
+  .board h1{font-size:36px}
+  .board .right{justify-items:start}
+  .game{grid-template-columns:1fr auto 1fr}
+  .game .meta{grid-column:1/-1;grid-auto-flow:column;justify-content:space-between;align-items:center}
+  .hide-sm{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="board">
+    <div>
+      <div class="sub" id="season">Season 1</div>
+      <h1 id="lname">NHL 27 League</h1>
+    </div>
+    <div class="right">
+      <div class="tally" aria-label="League totals">
+        <div><b id="t-players">0</b><span>Players</span></div>
+        <div><b id="t-games">0</b><span>Played</span></div>
+        <div><b id="t-left">0</b><span>Left</span></div>
+      </div>
+      <div class="acct" id="acct"></div>
+    </div>
+  </header>
+
+  <div class="notice" id="status"><p>Loading the league…</p></div>
+
+  <!-- First-run setup -->
+  <section class="panel" id="setup" hidden>
+    <h2>Set up the league</h2>
+    <p class="hint">This runs once. You become the host: you create everyone's username and password.</p>
+    <h3>1. Make an access key on GitHub</h3>
+    <ol class="steps">
+      <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+      <li>Name it <code>nhl27-league</code> and pick the longest expiration offered.</li>
+      <li>Under <b>Repository access</b>, choose <b>Only select repositories</b> and pick <code id="repo-name">nhl27-league</code>.</li>
+      <li>Under <b>Permissions → Repository permissions</b>, set <b>Contents</b> to <b>Read and write</b>. Leave everything else alone.</li>
+      <li>Click <b>Generate token</b> and copy it.</li>
+    </ol>
+    <h3>2. Create the league</h3>
+    <form id="setup-form">
+      <div class="row">
+        <div class="field"><label for="s-name">League name</label><input id="s-name" maxlength="40" value="NHL 27 League" required></div>
+        <div class="field"><label for="s-season">Season</label><input id="s-season" maxlength="30" value="Season 1"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="s-user">Your username</label><input id="s-user" maxlength="20" autocomplete="username" required></div>
+        <div class="field"><label for="s-team">Your team</label><input id="s-team" list="teams" maxlength="32"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="s-pass">Your password</label><input id="s-pass" type="password" minlength="8" autocomplete="new-password" required></div>
+        <div class="field"><label for="s-token">GitHub access key</label><input id="s-token" type="password" autocomplete="off" placeholder="github_pat_…" required></div>
+      </div>
+      <button class="btn" type="submit" id="s-submit">Create league</button>
+      <p class="msg" id="setup-msg"></p>
+    </form>
+  </section>
+
+  <nav class="tabs" role="tablist" id="tabs" hidden>
+    <button role="tab" data-tab="standings" aria-selected="true">Standings</button>
+    <button role="tab" data-tab="schedule" aria-selected="false">Schedule</button>
+    <button role="tab" data-tab="results" aria-selected="false">Results</button>
+    <button role="tab" data-tab="log" aria-selected="false">Log a game</button>
+    <button role="tab" data-tab="players" aria-selected="false">Players</button>
+  </nav>
+
+  <section class="panel" id="p-standings" hidden>
+    <h2>Standings</h2>
+    <div class="scroll" id="standings"></div>
+    <p class="legend">2 pts for a win, 1 for an overtime or shootout loss. Ties broken by wins, goal difference, then goals for. Everyone plays everyone twice, once at home and once away.</p>
+  </section>
+
+  <section class="panel" id="p-schedule" hidden>
+    <div class="filter">
+      <h2>Schedule</h2>
+      <select id="sch-filter" aria-label="Show schedule for"></select>
+    </div>
+    <div class="list" id="schedule"></div>
+  </section>
+
+  <section class="panel" id="p-results" hidden>
+    <div class="filter">
+      <h2>Results</h2>
+      <select id="res-filter" aria-label="Show results for"></select>
+    </div>
+    <div class="list" id="results"></div>
+  </section>
+
+  <section class="panel" id="p-log" hidden>
+    <h2>Log a game</h2>
+    <div id="log-blocked" class="empty" hidden></div>
+    <form id="log-form">
+      <div class="field">
+        <label for="l-fixture">Matchup</label>
+        <select id="l-fixture" required></select>
+      </div>
+      <div class="matchup">
+        <div class="field"><span class="lbl">Home</span><span class="team" id="l-hname">–</span>
+          <input id="l-hs" class="goals" type="number" min="0" max="99" inputmode="numeric" required aria-label="Home goals" value="0"></div>
+        <div class="vs">VS</div>
+        <div class="field"><span class="lbl">Away</span><span class="team" id="l-aname">–</span>
+          <input id="l-as" class="goals" type="number" min="0" max="99" inputmode="numeric" required aria-label="Away goals" value="0"></div>
+      </div>
+      <div class="row">
+        <div class="field" style="flex:0 0 auto">
+          <span class="lbl">Ended in</span>
+          <div class="seg" id="l-result" role="group" aria-label="Ended in">
+            <button type="button" data-v="REG" aria-pressed="true">Regulation</button>
+            <button type="button" data-v="OT" aria-pressed="false">OT</button>
+            <button type="button" data-v="SO" aria-pressed="false">Shootout</button>
+          </div>
+        </div>
+        <div class="field"><label for="l-date">Played on</label><input id="l-date" type="date" required></div>
+      </div>
+      <div class="field"><label for="l-note">Note (optional)</label><input id="l-note" maxlength="120" placeholder="e.g. Comeback in the 3rd"></div>
+      <button class="btn" type="submit" id="l-submit">Save result</button>
+      <p class="msg" id="log-msg"></p>
+    </form>
+  </section>
+
+  <section class="panel" id="p-players" hidden>
+    <h2>Players</h2>
+    <div class="list" id="players"></div>
+
+    <div id="host-tools" hidden>
+      <h3>Add a player</h3>
+      <form id="add-form">
+        <div class="row">
+          <div class="field"><label for="a-user">Username</label><input id="a-user" maxlength="20" autocomplete="off" required></div>
+          <div class="field"><label for="a-pass">Password</label><input id="a-pass" minlength="6" autocomplete="off" required></div>
+          <div class="field"><label for="a-team">Team</label><input id="a-team" list="teams" maxlength="32"></div>
+          <div class="end"><button class="btn" type="submit">Add</button></div>
+        </div>
+        <p class="hint">Send each friend their username and password yourself. Adding a player adds their home and away games to the schedule.</p>
+        <p class="msg" id="add-msg"></p>
+      </form>
+      <h3>League settings</h3>
+      <form id="league-form">
+        <div class="row">
+          <div class="field"><label for="g-name">League name</label><input id="g-name" maxlength="40" required></div>
+          <div class="field"><label for="g-season">Season</label><input id="g-season" maxlength="30"></div>
+          <div class="end"><button class="btn ghost" type="submit">Save</button></div>
+        </div>
+        <p class="msg" id="league-msg"></p>
+      </form>
+      <h3>GitHub access key</h3>
+      <form id="token-form">
+        <div class="row">
+          <div class="field"><label for="k-token">New access key</label><input id="k-token" type="password" autocomplete="off" placeholder="github_pat_…" required></div>
+          <div class="end"><button class="btn ghost" type="submit">Replace key</button></div>
+        </div>
+        <p class="hint">Only needed when the old key expires. Everyone's password keeps working.</p>
+        <p class="msg" id="token-msg"></p>
+      </form>
+    </div>
+
+    <div id="me-tools" hidden>
+      <h3>Change my password</h3>
+      <form id="pw-form">
+        <div class="row">
+          <div class="field"><label for="pw-new">New password</label><input id="pw-new" type="password" minlength="6" autocomplete="new-password" required></div>
+          <div class="end"><button class="btn ghost" type="submit">Change</button></div>
+        </div>
+        <p class="msg" id="pw-msg"></p>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div class="dialog" id="login" hidden>
+  <section class="panel" role="dialog" aria-modal="true" aria-labelledby="login-h">
+    <h2 id="login-h">Sign in</h2>
+    <p class="hint">Use the username and password the league host gave you.</p>
+    <form id="login-form">
+      <div class="field"><label for="li-user">Username</label><input id="li-user" autocomplete="username" required></div>
+      <div class="field"><label for="li-pass">Password</label><input id="li-pass" type="password" autocomplete="current-password" required></div>
+      <div class="row"><button class="btn" type="submit" id="li-submit">Sign in</button><button class="btn ghost" type="button" id="li-cancel">Cancel</button></div>
+      <p class="msg" id="login-msg"></p>
+    </form>
+  </section>
+</div>
+
+<datalist id="teams"></datalist>
+
+<script>
+"use strict";
+/* ===== Config ===== */
+const OWNER="rfeasey1213", REPO="nhl27-league", BRANCH="main", FILE="data/league.json";
+const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
+const TEAMS=["Anaheim Ducks","Boston Bruins","Buffalo Sabres","Calgary Flames","Carolina Hurricanes","Chicago Blackhawks","Colorado Avalanche","Columbus Blue Jackets","Dallas Stars","Detroit Red Wings","Edmonton Oilers","Florida Panthers","Los Angeles Kings","Minnesota Wild","Montréal Canadiens","Nashville Predators","New Jersey Devils","New York Islanders","New York Rangers","Ottawa Senators","Philadelphia Flyers","Pittsburgh Penguins","San Jose Sharks","Seattle Kraken","St. Louis Blues","Tampa Bay Lightning","Toronto Maple Leafs","Utah Mammoth","Vancouver Canucks","Vegas Golden Knights","Washington Capitals","Winnipeg Jets"];
+
+/* ===== Helpers ===== */
+const $=id=>document.getElementById(id);
+function h(tag,attrs,...kids){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(v==null||v===false)continue;if(k==="class")e.className=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);else e.setAttribute(k,v===true?"":v)}for(const c of kids.flat()){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e}
+const enc=new TextEncoder(),dec=new TextDecoder();
+function bytesToB64(b){let s="";for(let i=0;i<b.length;i+=0x8000)s+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return btoa(s)}
+function b64ToBytes(s){const bin=atob(s.replace(/\s/g,""));const b=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return b}
+const strToB64=s=>bytesToB64(enc.encode(s)), b64ToStr=s=>dec.decode(b64ToBytes(s));
+const normUser=u=>String(u||"").trim().toLowerCase();
+const validUser=u=>/^[a-z0-9_.-]{2,20}$/.test(u);
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function fmtDate(s){if(!s)return"";const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}
+function setMsg(id,text,kind){const m=$(id);m.textContent=text;m.className="msg"+(kind?" "+kind:"")}
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ===== Crypto =====
+   A random league key (K) unlocks the GitHub access key.
+   Each player's password unlocks their own copy of K.
+   So: right password -> K -> access key -> can save games. */
+async function pwKey(password,salt){
+  const base=await crypto.subtle.importKey("raw",enc.encode(password),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:210000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+async function rawKey(bytes){return crypto.subtle.importKey("raw",bytes,{name:"AES-GCM"},false,["encrypt","decrypt"])}
+async function seal(key,bytes,aad){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv,additionalData:enc.encode(aad)},key,bytes));return{iv:bytesToB64(iv),ct:bytesToB64(ct)}}
+async function unseal(key,box,aad){return new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64ToBytes(box.iv),additionalData:enc.encode(aad)},key,b64ToBytes(box.ct)))}
+async function lockForUser(user,password,K){const salt=crypto.getRandomValues(new Uint8Array(16));const box=await seal(await pwKey(password,salt),K,"user:"+user);return{salt:bytesToB64(salt),...box}}
+async function unlockUser(user,password,blob){return unseal(await pwKey(password,b64ToBytes(blob.salt)),blob,"user:"+user)}
+async function lockToken(K,token){return seal(await rawKey(K),enc.encode(token),"token")}
+async function unlockToken(K,box){return dec.decode(await unseal(await rawKey(K),box,"token"))}
+
+/* ===== GitHub storage ===== */
+const S={league:null,sha:null,etag:null,session:store.get("nhl27-session"),tab:store.get("nhl27-tab")||"standings",result:"REG",schFilter:"all",resFilter:"all",loaded:false,missing:false};
+function authHeaders(token){const hd={"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};if(token)hd.Authorization="Bearer "+token;return hd}
+async function fetchLeague({token,useEtag}={}){
+  const hd=authHeaders(token);if(useEtag&&S.etag)hd["If-None-Match"]=S.etag;
+  const r=await fetch(`${API}/contents/${FILE}?ref=${BRANCH}&t=${Date.now()}`,{headers:hd,cache:"no-store"});
+  if(r.status===304)return{unchanged:true};
+  if(r.status===404)return{missing:true};
+  if(!r.ok){const e=new Error("load");e.status=r.status;throw e}
+  const j=await r.json();
+  let text;
+  if(j.content)text=b64ToStr(j.content);
+  else{const raw=await fetch(j.download_url+"?t="+Date.now(),{cache:"no-store"});text=await raw.text()}
+  return{league:JSON.parse(text),sha:j.sha,etag:r.headers.get("ETag")};
+}
+async function putLeague(token,league,sha,message){
+  const body={message,content:strToB64(JSON.stringify(league,null,1)),branch:BRANCH};if(sha)body.sha=sha;
+  const r=await fetch(`${API}/contents/${FILE}`,{method:"PUT",headers:{...authHeaders(token),"Content-Type":"application/json"},body:JSON.stringify(body)});
+  if(r.ok){const j=await r.json();return j.content.sha}
+  const e=new Error("save");e.status=r.status;throw e;
+}
+/* Read the latest file, apply a change, save; retry if someone else saved first. */
+async function mutate(message,fn,tokenOverride){
+  const token=tokenOverride||S.session?.token;if(!token)throw new Error("Sign in first.");
+  for(let attempt=0;attempt<4;attempt++){
+    const cur=await fetchLeague({token});
+    if(cur.missing)throw new Error("The league file is missing.");
+    const next=structuredClone(cur.league);
+    await fn(next);
+    try{const sha=await putLeague(token,next,cur.sha,message);S.league=next;S.sha=sha;S.etag=null;render();return}
+    catch(e){if(e.status===409||e.status===422){await new Promise(r=>setTimeout(r,400+Math.random()*600));continue}throw e}
+  }
+  throw new Error("Someone else was saving at the same time. Try again.");
+}
+function saveErr(e){
+  if(e&&e.status===401)return"The league's GitHub access key has expired or been revoked. The host needs to replace it on the Players tab.";
+  if(e&&e.status===403)return"GitHub refused the save. The access key may be missing write permission, or you hit a rate limit. Wait a minute and try again.";
+  if(e&&e.status===404)return"GitHub couldn't find the league repo with this access key. Check the key is limited to the right repo with Contents: Read and write.";
+  if(e&&e.message&&!e.status)return e.message;
+  return"Couldn't save. Check your connection and try again.";
+}
+
+/* ===== Domain ===== */
+function players(){return S.league?S.league.players:[]}
+function pmap(){return new Map(players().map(p=>[p.u,p]))}
+function me(){return S.session?.user||null}
+function isHost(){const p=pmap().get(me());return !!(p&&p.host)}
+function teamOf(u){return pmap().get(u)?.team||""}
+function gameFor(home,away){return S.league.games.find(g=>g.home===home&&g.away===away)}
+/* Double round robin via the circle method: leg 1 then leg 2 with home and away swapped. */
+function buildRounds(){
+  const ps=players().map(p=>p.u);if(ps.length<2)return[];
+  const arr=[...ps];if(arr.length%2)arr.push(null);
+  const n=arr.length,leg=[];
+  let rot=[...arr];
+  for(let r=0;r<n-1;r++){
+    const pairs=[],bye=[];
+    for(let i=0;i<n/2;i++){
+      const a=rot[i],b=rot[n-1-i];
+      if(a===null||b===null){bye.push(a??b);continue}
+      const flip=(i===0)?(r%2===1):(i%2===1);
+      pairs.push(flip?[b,a]:[a,b]);
+    }
+    leg.push({pairs,bye});
+    rot=[rot[0],rot[n-1],...rot.slice(1,n-1)];
+  }
+  const rounds=leg.map((x,i)=>({n:i+1,pairs:x.pairs,bye:x.bye}));
+  leg.forEach((x,i)=>rounds.push({n:leg.length+i+1,pairs:x.pairs.map(([a,b])=>[b,a]),bye:x.bye}));
+  return rounds;
+}
+function computeTable(){
+  const rows=new Map(players().map(p=>[p.u,{u:p.u,p,gp:0,w:0,l:0,otl:0,gf:0,ga:0,log:[]}]));
+  const games=[...S.league.games].sort((a,b)=>(a.playedAt+a.createdAt).localeCompare(b.playedAt+b.createdAt));
+  for(const g of games){
+    const H=rows.get(g.home),A=rows.get(g.away);if(!H||!A)continue;
+    const homeWon=g.hs>g.as,extra=g.result!=="REG";
+    for(const[r,mine,theirs,won]of[[H,g.hs,g.as,homeWon],[A,g.as,g.hs,!homeWon]]){
+      r.gp++;r.gf+=mine;r.ga+=theirs;
+      if(won){r.w++;r.log.push("W")}else if(extra){r.otl++;r.log.push("O")}else{r.l++;r.log.push("L")}
+    }
+  }
+  const total=Math.max(0,(players().length-1)*2);
+  const out=[...rows.values()].map(r=>{r.pts=r.w*2+r.otl;r.gd=r.gf-r.ga;r.left=Math.max(0,total-r.gp);
+    let s="";if(r.log.length){const last=r.log.at(-1);let n=0;for(let i=r.log.length-1;i>=0&&r.log[i]===last;i--)n++;s=(last==="O"?"OT":last)+n}r.streak=s;return r});
+  out.sort((a,b)=>b.pts-a.pts||b.w-a.w||b.gd-a.gd||b.gf-a.gf||a.u.localeCompare(b.u));
+  return out;
+}
+
+/* ===== Render ===== */
+const TABS=["standings","schedule","results","log","players"];
+function show(t){if(!TABS.includes(t))t="standings";S.tab=t;store.set("nhl27-tab",t);
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  TABS.forEach(x=>$("p-"+x).hidden=!S.league||x!==t)}
+function renderAcct(){
+  const a=$("acct");a.replaceChildren();
+  if(!S.league)return;
+  if(me()){a.append(h("span",{},"Signed in as ",h("b",{},me())),h("button",{type:"button",onclick:signOut},"Sign out"))}
+  else a.append(h("button",{type:"button",onclick:()=>openLogin()},"Sign in"));
+}
+function playerFilter(sel,cur){
+  sel.replaceChildren(h("option",{value:"all"},"All players"),...players().map(p=>h("option",{value:p.u},p.u)));
+  sel.value=pmap().has(cur)?cur:"all";return sel.value;
+}
+function gameCard(home,away,g,extra){
+  const homeWon=g?g.hs>g.as:null;
+  return h("div",{class:"game"},
+    h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},h("b",{},home),h("small",{},teamOf(home)||"Home")),
+    g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":"Final/"+g.result)):h("div",{class:"score pending"},"vs"),
+    h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},h("b",{},away),h("small",{},teamOf(away)||"Away")),
+    h("div",{class:"meta"},extra));
+}
+function render(){
+  const L=S.league;
+  $("setup").hidden=!(S.loaded&&S.missing);
+  $("tabs").hidden=!L;
+  renderAcct();
+  if(!L){show(S.tab);return}
+  document.title=L.name||"NHL 27 League";
+  $("lname").textContent=L.name||"NHL 27 League";$("season").textContent=L.season||"";
+  const total=players().length*(players().length-1);
+  $("t-players").textContent=players().length;$("t-games").textContent=L.games.length;$("t-left").textContent=Math.max(0,total-L.games.length);
+  const signedIn=!!me()&&pmap().has(me());
+  document.querySelector('#tabs [data-tab="log"]').hidden=!signedIn;
+
+  /* standings */
+  const table=computeTable(),st=$("standings");st.replaceChildren();
+  if(!table.length)st.append(h("div",{class:"empty"},h("b",{},"No players yet"),"The host adds players on the Players tab."));
+  else st.append(h("table",{},
+    h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{},"GP"),h("th",{},"W"),h("th",{},"L"),h("th",{},"OTL"),h("th",{},"PTS"),h("th",{class:"hide-sm"},"GF"),h("th",{class:"hide-sm"},"GA"),h("th",{},"DIFF"),h("th",{class:"l hide-sm"},"Last 5"),h("th",{class:"hide-sm"},"STRK"),h("th",{class:"hide-sm"},"Left"))),
+    h("tbody",{},table.map((r,i)=>h("tr",{class:r.u===me()?"me":null},
+      h("td",{class:"l rank"},i+1),
+      h("td",{class:"l"},h("div",{class:"who"},h("b",{},r.u),r.p.team?h("small",{},r.p.team):null)),
+      h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts"},r.pts),
+      h("td",{class:"hide-sm"},r.gf),h("td",{class:"hide-sm"},r.ga),h("td",{},(r.gd>0?"+":"")+r.gd),
+      h("td",{class:"l hide-sm"},h("span",{class:"form"},r.log.slice(-5).map(x=>h("span",{class:"chip "+x,title:x==="O"?"OT/SO loss":x==="W"?"Win":"Loss"},x==="O"?"OT":x)))),
+      h("td",{class:"hide-sm"},r.streak||"–"),h("td",{class:"hide-sm"},r.left))))));
+
+  /* schedule */
+  S.schFilter=playerFilter($("sch-filter"),S.schFilter);
+  const sc=$("schedule");sc.replaceChildren();
+  const rounds=buildRounds();
+  if(!rounds.length)sc.append(h("div",{class:"empty"},h("b",{},"No schedule yet"),"The schedule appears once there are at least two players."));
+  for(const rd of rounds){
+    let pairs=rd.pairs;if(S.schFilter!=="all")pairs=pairs.filter(([a,b])=>a===S.schFilter||b===S.schFilter);
+    if(!pairs.length)continue;
+    const done=rd.pairs.filter(([a,b])=>gameFor(a,b)).length;
+    sc.append(h("div",{class:"round"},
+      h("div",{class:"round-head"},h("b",{},"Round "+rd.n),h("span",{},(rd.n>rounds.length/2?"Leg 2 · ":"Leg 1 · ")+done+"/"+rd.pairs.length+" played")),
+      pairs.map(([a,b])=>{const g=gameFor(a,b);
+        const act=g?h("span",{},fmtDate(g.playedAt)):(signedIn?h("button",{class:"sm go",type:"button",onclick:()=>{$("l-fixture").value=a+">"+b;syncFixture();show("log")}},"Log result"):h("span",{},"Not played"));
+        return gameCard(a,b,g,[act])}),
+      rd.bye.length&&S.schFilter==="all"?h("div",{class:"bye"},"Off this round: "+rd.bye.join(", ")):null));
+  }
+
+  /* results */
+  S.resFilter=playerFilter($("res-filter"),S.resFilter);
+  const rs=$("results");rs.replaceChildren();
+  let gs=[...L.games].sort((a,b)=>(b.playedAt+b.createdAt).localeCompare(a.playedAt+a.createdAt));
+  if(S.resFilter!=="all")gs=gs.filter(g=>g.home===S.resFilter||g.away===S.resFilter);
+  if(!gs.length)rs.append(h("div",{class:"empty"},h("b",{},"No games logged"),"Finish a game, sign in, and use Log a game to record the score."));
+  for(const g of gs){
+    const canDel=signedIn&&(isHost()||g.loggedBy===me());
+    rs.append(gameCard(g.home,g.away,g,[h("span",{},fmtDate(g.playedAt)+(g.note?" · "+g.note:"")),canDel?h("button",{class:"sm",type:"button",onclick:ev=>armDelete(ev.currentTarget,g.id)},"Delete"):null]));
+  }
+
+  /* log form */
+  const fx=$("l-fixture"),cur=fx.value;
+  const todo=[];for(const rd of rounds)for(const[a,b]of rd.pairs)if(!gameFor(a,b))todo.push([a,b,rd.n]);
+  todo.sort((x,y)=>{const mx=(x[0]===me()||x[1]===me())?0:1,my=(y[0]===me()||y[1]===me())?0:1;return mx-my||x[2]-y[2]});
+  fx.replaceChildren(h("option",{value:""},todo.length?"Choose a matchup":"Every game has been played"),...todo.map(([a,b,n])=>h("option",{value:a+">"+b},`${a} (home) vs ${b} (away) · Round ${n}`)));
+  if([...fx.options].some(o=>o.value===cur))fx.value=cur;
+  syncFixture();
+  const blocked=$("log-blocked");
+  if(players().length<2){$("log-form").hidden=true;blocked.hidden=false;blocked.replaceChildren(h("b",{},"Need two players"),"The host has to add at least two players first.")}
+  else{$("log-form").hidden=false;blocked.hidden=true}
+
+  /* players */
+  const pl=$("players");pl.replaceChildren();
+  for(const p of players()){
+    const played=L.games.filter(g=>g.home===p.u||g.away===p.u).length;
+    const acts=h("div",{class:"acts"});
+    const row=h("div",{class:"player"},h("div",{class:"who"},h("b",{},p.u,p.host?h("span",{class:"host"},"Host"):null),h("small",{},(p.team||"No team")+" · "+played+" played")),acts);
+    if(signedIn&&isHost()){
+      acts.append(
+        h("button",{class:"sm",type:"button",onclick:()=>inlineEdit(row,p,"team")},"Edit team"),
+        p.u!==me()?h("button",{class:"sm",type:"button",onclick:()=>inlineEdit(row,p,"pass")},"Reset password"):null,
+        !p.host?h("button",{class:"sm",type:"button",onclick:ev=>armRemove(ev.currentTarget,p,played)},"Remove"):null);
+    }
+    pl.append(row);
+  }
+  if(!players().length)pl.append(h("div",{class:"empty"},"No players yet."));
+  $("host-tools").hidden=!(signedIn&&isHost());
+  $("me-tools").hidden=!signedIn;
+  if(signedIn&&isHost()){if(document.activeElement!==$("g-name"))$("g-name").value=L.name||"";if(document.activeElement!==$("g-season"))$("g-season").value=L.season||""}
+  show(S.tab);
+}
+function syncFixture(){const v=$("l-fixture").value;const[a,b]=v?v.split(">"):["",""];$("l-hname").textContent=a||"–";$("l-aname").textContent=b||"–"}
+
+/* ===== Interactions ===== */
+function armDelete(btn,id){
+  if(btn.classList.contains("armed")){btn.disabled=true;btn.textContent="Deleting…";
+    mutate("Delete game",L=>{L.games=L.games.filter(g=>g.id!==id)}).catch(e=>{btn.disabled=false;btn.textContent="Couldn't delete";$("status").hidden=false;$("status").replaceChildren(h("p",{},saveErr(e)))});return}
+  btn.classList.add("armed");btn.textContent="Tap again to delete";
+  setTimeout(()=>{if(btn.isConnected&&!btn.disabled){btn.classList.remove("armed");btn.textContent="Delete"}},3500);
+}
+function armRemove(btn,p,played){
+  if(played){btn.textContent=`Has ${played} game${played>1?"s":""}; delete those first`;btn.disabled=true;return}
+  if(btn.classList.contains("armed")){btn.disabled=true;btn.textContent="Removing…";
+    mutate(`Remove ${p.u}`,L=>{if(L.games.some(g=>g.home===p.u||g.away===p.u))throw new Error(`${p.u} has games logged.`);L.players=L.players.filter(x=>x.u!==p.u);delete L.auth[p.u]}).catch(e=>{btn.textContent=saveErr(e)});return}
+  btn.classList.add("armed");btn.textContent="Tap again to remove";
+  setTimeout(()=>{if(btn.isConnected&&!btn.disabled){btn.classList.remove("armed");btn.textContent="Remove"}},3500);
+}
+function inlineEdit(row,p,kind){
+  row.querySelector(".inline")?.remove();
+  const inp=h("input",{id:"edit-"+kind+"-"+p.u,list:kind==="team"?"teams":null,maxlength:"32",placeholder:kind==="team"?"Team":"New password (6+ characters)",value:kind==="team"?p.team||"":null,"aria-label":kind==="team"?"Team":"New password"});
+  const msg=h("span",{class:"msg"});
+  const save=h("button",{class:"sm go",type:"button",onclick:async()=>{
+    const v=inp.value.trim();
+    if(kind==="pass"&&v.length<6){msg.textContent="Use at least 6 characters.";msg.className="msg err";return}
+    save.disabled=true;msg.textContent="Saving…";msg.className="msg";
+    try{
+      if(kind==="team")await mutate(`Update ${p.u} team`,L=>{const x=L.players.find(y=>y.u===p.u);if(x)x.team=v.slice(0,32)});
+      else{const blob=await lockForUser(p.u,v,b64ToBytes(S.session.K));await mutate(`Reset ${p.u} password`,L=>{L.auth[p.u]=blob})}
+    }catch(e){save.disabled=false;msg.textContent=saveErr(e);msg.className="msg err"}
+  }},"Save");
+  row.append(h("div",{class:"inline"},inp,save,h("button",{class:"sm",type:"button",onclick:()=>row.querySelector(".inline")?.remove()},"Cancel"),msg));
+  inp.focus();
+}
+
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
+$("l-result").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;S.result=b.dataset.v;[...$("l-result").children].forEach(x=>x.setAttribute("aria-pressed",x===b))});
+$("l-fixture").addEventListener("change",syncFixture);
+$("sch-filter").addEventListener("change",e=>{S.schFilter=e.target.value;render()});
+$("res-filter").addEventListener("change",e=>{S.resFilter=e.target.value;render()});
+$("teams").append(...TEAMS.map(t=>h("option",{value:t})));
+$("l-date").value=today();
+
+$("log-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=$("l-fixture").value;if(!v)return setMsg("log-msg","Choose a matchup.","err");
+  const[home,away]=v.split(">");
+  const hs=parseInt($("l-hs").value,10),as=parseInt($("l-as").value,10),date=$("l-date").value,note=$("l-note").value.trim();
+  if(!Number.isInteger(hs)||!Number.isInteger(as)||hs<0||as<0)return setMsg("log-msg","Enter both scores.","err");
+  if(hs===as)return setMsg("log-msg","NHL games can't end tied. Enter the final score including the OT or shootout winner.","err");
+  if(S.result!=="REG"&&Math.abs(hs-as)!==1)return setMsg("log-msg","Overtime and shootout games are decided by one goal.","err");
+  if(!date)return setMsg("log-msg","Pick the date you played.","err");
+  $("l-submit").disabled=true;setMsg("log-msg","Saving…");
+  try{
+    await mutate(`${home} ${hs}-${as} ${away}`,L=>{
+      if(L.games.some(g=>g.home===home&&g.away===away))throw new Error("Someone already logged this game.");
+      L.games.push({id:uid(),home,away,hs,as,result:S.result,playedAt:date,note,loggedBy:me(),createdAt:new Date().toISOString()});
+    });
+    setMsg("log-msg",`Saved: ${home} ${hs}, ${away} ${as}.`,"ok");
+    $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-fixture").value="";syncFixture();
+  }catch(err){setMsg("log-msg",saveErr(err),"err")}
+  finally{$("l-submit").disabled=false}
+});
+
+$("add-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const u=normUser($("a-user").value),pw=$("a-pass").value,team=$("a-team").value.trim();
+  if(!validUser(u))return setMsg("add-msg","Usernames are 2–20 characters: letters, numbers, dot, dash or underscore.","err");
+  if(pmap().has(u))return setMsg("add-msg","That username is taken.","err");
+  if(pw.length<6)return setMsg("add-msg","Use a password of at least 6 characters.","err");
+  setMsg("add-msg","Adding…");
+  try{
+    const blob=await lockForUser(u,pw,b64ToBytes(S.session.K));
+    await mutate(`Add player ${u}`,L=>{if(L.players.some(p=>p.u===u))throw new Error("That username is taken.");L.players.push({u,team:team.slice(0,32),host:false});L.auth[u]=blob});
+    setMsg("add-msg",`Added ${u}. Send them their username and password.`,"ok");
+    $("a-user").value="";$("a-pass").value="";$("a-team").value="";
+  }catch(err){setMsg("add-msg",saveErr(err),"err")}
+});
+$("league-form").addEventListener("submit",async e=>{
+  e.preventDefault();const name=$("g-name").value.trim().slice(0,40),season=$("g-season").value.trim().slice(0,30);
+  if(!name)return;
+  try{await mutate("Update league settings",L=>{L.name=name;L.season=season});setMsg("league-msg","Saved.","ok")}catch(err){setMsg("league-msg",saveErr(err),"err")}
+});
+$("token-form").addEventListener("submit",async e=>{
+  e.preventDefault();const token=$("k-token").value.trim();if(!token)return;
+  setMsg("token-msg","Checking the new key…");
+  try{
+    const box=await lockToken(b64ToBytes(S.session.K),token);
+    await mutate("Replace access key",L=>{L.tokenBox=box},token);
+    S.session.token=token;store.set("nhl27-session",S.session);$("k-token").value="";
+    setMsg("token-msg","Key replaced. Everyone can keep saving games.","ok");
+  }catch(err){setMsg("token-msg",saveErr(err),"err")}
+});
+$("pw-form").addEventListener("submit",async e=>{
+  e.preventDefault();const pw=$("pw-new").value;if(pw.length<6)return setMsg("pw-msg","Use at least 6 characters.","err");
+  setMsg("pw-msg","Saving…");
+  try{const blob=await lockForUser(me(),pw,b64ToBytes(S.session.K));await mutate(`Change ${me()} password`,L=>{L.auth[me()]=blob});$("pw-new").value="";setMsg("pw-msg","Password changed.","ok")}
+  catch(err){setMsg("pw-msg",saveErr(err),"err")}
+});
+
+/* ===== Sign in / out ===== */
+function openLogin(){$("login").hidden=false;setMsg("login-msg","");$("li-user").focus()}
+$("li-cancel").addEventListener("click",()=>{$("login").hidden=true});
+$("login").addEventListener("click",e=>{if(e.target.id==="login")$("login").hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("login").hidden=true});
+$("login-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const u=normUser($("li-user").value),pw=$("li-pass").value;
+  const blob=S.league?.auth?.[u];
+  $("li-submit").disabled=true;setMsg("login-msg","Checking…");
+  try{
+    if(!blob)throw new Error("bad");
+    let K;try{K=await unlockUser(u,pw,blob)}catch(_){throw new Error("bad")}
+    const token=await unlockToken(K,S.league.tokenBox);
+    S.session={user:u,K:bytesToB64(K),token};store.set("nhl27-session",S.session);
+    $("li-pass").value="";$("login").hidden=true;render();
+  }catch(err){setMsg("login-msg",err.message==="bad"?"That username and password don't match. Ask the host to reset your password.":"Couldn't sign in. Try again.","err")}
+  finally{$("li-submit").disabled=false}
+});
+function signOut(){S.session=null;store.del("nhl27-session");render()}
+
+/* ===== First-run setup ===== */
+$("setup-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=$("s-name").value.trim().slice(0,40)||"NHL 27 League",season=$("s-season").value.trim().slice(0,30);
+  const u=normUser($("s-user").value),pw=$("s-pass").value,team=$("s-team").value.trim().slice(0,32),token=$("s-token").value.trim();
+  if(!validUser(u))return setMsg("setup-msg","Usernames are 2–20 characters: letters, numbers, dot, dash or underscore.","err");
+  if(pw.length<8)return setMsg("setup-msg","Use a host password of at least 8 characters.","err");
+  if(!token)return setMsg("setup-msg","Paste the GitHub access key.","err");
+  $("s-submit").disabled=true;setMsg("setup-msg","Creating the league…");
+  try{
+    const existing=await fetchLeague({token});
+    if(!existing.missing){setMsg("setup-msg","A league already exists. Reloading…");location.reload();return}
+    const K=crypto.getRandomValues(new Uint8Array(32));
+    const league={v:1,name,season,createdAt:new Date().toISOString(),players:[{u,team,host:true}],auth:{[u]:await lockForUser(u,pw,K)},tokenBox:await lockToken(K,token),games:[]};
+    const sha=await putLeague(token,league,null,"Create league");
+    S.league=league;S.sha=sha;S.missing=false;
+    S.session={user:u,K:bytesToB64(K),token};store.set("nhl27-session",S.session);
+    S.tab="players";render();
+  }catch(err){setMsg("setup-msg",saveErr(err),"err")}
+  finally{$("s-submit").disabled=false}
+});
+
+/* ===== Load + refresh ===== */
+async function load(first){
+  try{
+    const res=await fetchLeague({token:S.session?.token,useEtag:!first});
+    S.loaded=true;
+    if(res.unchanged)return;
+    if(res.missing){S.missing=true;S.league=null;$("status").hidden=true;render();return}
+    S.missing=false;S.league=res.league;S.sha=res.sha;S.etag=res.etag;
+    if(S.session&&!pmap().has(S.session.user))signOut();
+    $("status").hidden=true;render();
+  }catch(e){
+    if(e.status===401&&S.session){signOut();return load(first)}
+    if(first||!S.league){$("status").hidden=false;$("status").replaceChildren(h("p",{},e.status===403?"GitHub is limiting requests from your network. Wait a few minutes and reload.":"Couldn't load the league. Check your connection and reload."))}
+  }
+}
+load(true);
+setInterval(()=>{if(document.visibilityState==="visible")load(false)},S.session?30000:90000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")load(false)});
+</script>
+</body>
+</html>
