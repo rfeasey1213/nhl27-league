@@ -356,7 +356,8 @@ async function putLeague(token,league,sha,message){
   const body={message,content:strToB64(JSON.stringify(league,null,1)),branch:BRANCH};if(sha)body.sha=sha;
   const r=await fetch(`${API}/contents/${FILE}`,{method:"PUT",headers:{...authHeaders(token),"Content-Type":"application/json"},body:JSON.stringify(body)});
   if(r.ok){const j=await r.json();return j.content.sha}
-  const e=new Error("save");e.status=r.status;throw e;
+  let gm="";try{gm=(await r.json()).message||""}catch(_){}
+  const e=new Error("save");e.status=r.status;e.gh=gm;throw e;
 }
 /* Read the latest file, apply a change, save; retry if someone else saved first. */
 async function mutate(message,fn,tokenOverride){
@@ -373,7 +374,11 @@ async function mutate(message,fn,tokenOverride){
 }
 function saveErr(e){
   if(e&&e.status===401)return"The league's GitHub access key has expired or been revoked. The host needs to replace it on the Players tab.";
-  if(e&&e.status===403)return"GitHub refused the save. The access key may be missing write permission, or you hit a rate limit. Wait a minute and try again.";
+  if(e&&e.status===403){
+    if(/not accessible by personal access token/i.test(e.gh||""))return"GitHub says this access key isn't allowed to write to the nhl27-league repo. Edit the key: Repository access must be \"Only select repositories\" with nhl27-league picked, and Contents must be \"Read and write\". (GitHub: "+e.gh+")";
+    if(/rate limit/i.test(e.gh||""))return"GitHub is rate-limiting saves. Wait a minute and try again. (GitHub: "+e.gh+")";
+    return"GitHub refused the save. (GitHub: "+(e.gh||"no reason given")+")";
+  }
   if(e&&e.status===404)return"GitHub couldn't find the league repo with this access key. Check the key is limited to the right repo with Contents: Read and write.";
   if(e&&e.message&&!e.status)return e.message;
   return"Couldn't save. Check your connection and try again.";
