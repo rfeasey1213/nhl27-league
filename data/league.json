@@ -8,6 +8,11 @@
    "u": "ryan",
    "team": "Sharks",
    "host": true
+  },
+  {
+   "u": "jarvis",
+   "team": "Colorado Avalanche",
+   "host": false
   }
  ],
  "auth": {
@@ -15,6 +20,11 @@
    "salt": "R15EdT+lQPW5Y4E/kLJBQA==",
    "iv": "sNyXAW5OyjkMOzUS",
    "ct": "Zpp3o7h+SR03d4K1xYRY2uvo+bSFB43znuoEdWIz9rQoezrKS+PTKYLJEaXpM5rq"
+  },
+  "jarvis": {
+   "salt": "xw4nME+MTUND0gQLuXSeDQ==",
+   "iv": "NWKyDT2qAXPFz10X",
+   "ct": "Phq3c9nn4rQIgHLsxB1XgLWCivGPnvzfZ8rHoCHQIqVWl0DsQ/suqCrnQKl1E0aQ"
   }
  },
  "tokenBox": {
