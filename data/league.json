@@ -31,5 +31,18 @@
   "iv": "6FC9GCSZkEgBUq5Z",
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
- "games": []
+ "games": [
+  {
+   "id": "mv745smmijpl5",
+   "home": "ryan",
+   "away": "jarvis",
+   "hs": 1,
+   "as": 3,
+   "result": "REG",
+   "playedAt": "2026-10-13",
+   "note": "",
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-13T20:08:34.606Z"
+  }
+ ]
 }
