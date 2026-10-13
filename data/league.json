@@ -1,0 +1,25 @@
+{
+ "v": 1,
+ "name": "NHL 27 League",
+ "season": "Season 1",
+ "createdAt": "2026-10-13T20:03:46.747Z",
+ "players": [
+  {
+   "u": "ryan",
+   "team": "Sharks",
+   "host": true
+  }
+ ],
+ "auth": {
+  "ryan": {
+   "salt": "R15EdT+lQPW5Y4E/kLJBQA==",
+   "iv": "sNyXAW5OyjkMOzUS",
+   "ct": "Zpp3o7h+SR03d4K1xYRY2uvo+bSFB43znuoEdWIz9rQoezrKS+PTKYLJEaXpM5rq"
+  }
+ },
+ "tokenBox": {
+  "iv": "6FC9GCSZkEgBUq5Z",
+  "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
+ },
+ "games": []
+}
