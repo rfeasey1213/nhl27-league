@@ -146,6 +146,12 @@ async function main() {
   const teams = {};
   for (const p of players) (teams[p.team] ||= { roster: [] }).roster.push({ name: p.name, pos: p.pos, ovr: p.ovr, stats: p.stats, ability: p.ability || undefined });
   for (const [ab, t] of Object.entries(teams)) { t.roster.sort((a, b) => b.ovr - a.ovr); Object.assign(t, teamRatings(t.roster)); }
+  // Teams with no goalie in EA's top-300 list: estimate one just below the lowest listed goalie.
+  const goalies = players.filter(p => p.pos === "G").map(p => p.ovr);
+  const gEst = goalies.length ? Math.min(...goalies) - 2 : 80;
+  for (const t of Object.values(teams)) if (t.goal == null && t.off != null && t.def != null) {
+    t.goal = gEst; t.goalEst = true; t.ovr = Math.round(t.off * 0.45 + t.def * 0.3 + t.goal * 0.25);
+  }
   debug.teamCount = Object.keys(teams).length;
   await fs.mkdir("data", { recursive: true });
   await fs.writeFile(DEBUG, JSON.stringify(debug, null, 1));

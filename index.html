@@ -92,6 +92,17 @@ header.board::after{content:"";position:absolute;top:-60%;right:-8%;width:46%;he
 .morebtn{justify-self:center}
 @media (max-width:560px){.pro-head h2{font-size:34px!important}.dialog.profile{padding:0;place-items:start stretch}.pro{border-radius:0!important;min-height:100%;width:100%!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat b{font-size:26px}}
 
+/* Ratings */
+.tm{grid-template-columns:40px minmax(0,1fr) auto!important}
+.tm .ovr{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;line-height:.9;color:var(--glacier);text-align:right}
+.tm .ovr small{display:block;font:700 9.5px var(--data);letter-spacing:.12em;color:var(--muted);font-style:normal;text-transform:uppercase}
+.tm .sub{grid-column:1/-1;font:600 11.5px var(--data);color:var(--muted);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.tlink{cursor:pointer}
+.tlink:hover{color:var(--glacier);text-decoration:underline;text-underline-offset:3px}
+.rbar{display:inline-block;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--glacier-2),var(--glacier));vertical-align:middle}
+.upset{color:var(--gold)}
+.src{font-size:12px;color:var(--muted)}
+
 /* Season picker */
 .viewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .viewbar select{width:auto;min-width:220px;max-width:100%}
@@ -528,6 +539,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
   </section>
 </div>
 
+<div class="dialog profile" id="teamdlg" hidden>
+  <section class="panel pro" role="dialog" aria-modal="true" aria-labelledby="team-name">
+    <button class="sm pro-close" type="button" id="team-close" aria-label="Close roster">Close</button>
+    <div id="team-body"></div>
+  </section>
+</div>
+
 <div class="dialog profile" id="profile" hidden>
   <section class="panel pro" role="dialog" aria-modal="true" aria-labelledby="pro-name">
     <button class="sm pro-close" type="button" id="pro-close" aria-label="Close profile">Close</button>
@@ -929,12 +947,13 @@ function gameCard(g,home,away,extra,tag){
     h("div",{class:"meta"},tag?h("span",{class:"tagpo"},tag):null,extra)];
   if(g&&((g.goals?.h||[]).some(Boolean)||(g.goals?.a||[]).some(Boolean)))
     kids.push(h("div",{class:"scorers"},h("div",{},scorerLine(g.goals.h)||"–"),h("div",{},scorerLine(g.goals.a)||"–")));
-  const rv=rivalryText(home,away);if(rv)kids.push(h("div",{class:"rival"},rv));
+  const rv=rivalryText(home,away),rn=ratingNote(g,home,away);if(rv||rn)kids.push(h("div",{class:"rival"},[rv,rn].filter(Boolean).join(" · ")));
   return h("div",{class:"game"},kids);
 }
 
 /* --- Draft --- */
-function renderDraft(L){
+function renderDraft(L){renderDraftBody(L);const t=teamRatingsTable(L);if(t&&!L.allTime)$("p-draft").append(t)}
+function renderDraftBody(L){
   const p=$("p-draft");p.replaceChildren();
   const host=signedIn()&&isHost();
   if(L.phase==="setup"){
@@ -980,7 +999,8 @@ function renderDraft(L){
       p.append(h("div",{class:"nhl-div"},h("h3",{},d.div),h("div",{class:"teams"},d.teams.map(([ab,name])=>{
         const by=taken[ab];
         return h("button",{type:"button",class:"tm"+(by?" taken":"")+(S.draftSel===ab?" sel":""),disabled:!!by||!canPick,"aria-pressed":S.draftSel===ab?"true":"false",
-          onclick:()=>{S.draftSel=S.draftSel===ab?null:ab;renderDraft(L)}},logo(ab,"lg"),h("div",{class:"nm"},h("b",{},ab),h("span",{},by?"Taken by "+by:name)))}))));
+          onclick:()=>{S.draftSel=S.draftSel===ab?null:ab;renderDraft(L)}},logo(ab,"lg"),h("div",{class:"nm"},h("b",{},ab),h("span",{},by?"Taken by "+by:name)),TR(ab)?h("div",{class:"ovr"},TR(ab).ovr??"–",h("small",{},"OVR")):h("span",{}),
+          TR(ab)?h("div",{class:"sub",title:TR(ab).roster.slice(0,3).map(x=>x.name+" "+x.ovr).join(", ")},`OFF ${TR(ab).off??"–"} · DEF ${TR(ab).def??"–"} · G ${gTxt(TR(ab))} · ${TR(ab).roster[0]?.name.split(" ").slice(-1)[0]||""} ${TR(ab).roster[0]?.ovr||""}`):null)}))));
     }
     if(canPick&&S.draftSel&&!taken[S.draftSel]){
       const msg=h("span",{class:"msg"});
@@ -995,7 +1015,7 @@ function renderDraft(L){
           if(!draftOnClock(X)){assignDivisions(X);X.phase="season";X.draft.doneAt=new Date().toISOString()}
         });S.draftSel=null;renderDraft(S.league)}
         catch(e){msg.textContent=saveErr(e);msg.className="msg err";go.disabled=false}}},"Confirm pick");
-      p.append(h("div",{class:"confirm"},h("div",{class:"pl"},logo(ab,"lg"),h("p",{},`Draft ${TEAM_NAME[ab]} for ${clock===me()?"yourself":clock}?`)),h("div",{class:"row"},go,h("button",{class:"btn ghost",type:"button",onclick:()=>{S.draftSel=null;renderDraft(L)}},"Cancel")),msg));
+      p.append(h("div",{class:"confirm"},h("div",{class:"pl"},logo(ab,"lg"),h("p",{},`Draft ${TEAM_NAME[ab]} for ${clock===me()?"yourself":clock}?`,TR(ab)?h("span",{class:"src"},` OVR ${TR(ab).ovr} · `,T(ab,"view roster")):null)),h("div",{class:"row"},go,h("button",{class:"btn ghost",type:"button",onclick:()=>{S.draftSel=null;renderDraft(L)}},"Cancel")),msg));
     }
     if(signedIn()&&isHost()){
       const last=[...D.order].reverse().find(u=>D.picks[u]);
@@ -1014,7 +1034,7 @@ function standingsTable(L,rows,cutAfter){
     h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{},"GP"),h("th",{},"W"),h("th",{},"L"),h("th",{},"OTL"),h("th",{},"PTS"),h("th",{class:"hide-sm"},"GF"),h("th",{class:"hide-sm"},"GA"),h("th",{},"DIFF"),h("th",{class:"l hide-sm"},"Last 5"),h("th",{class:"hide-sm"},"STRK"),h("th",{class:"hide-sm"},"Left"))),
     h("tbody",{},rows.map((r,i)=>h("tr",{class:[r.u===me()?"me":"",cutAfter&&i===cutAfter-1&&i<rows.length-1?"cut":""].join(" ").trim()||null},
       h("td",{class:"l rank"},i+1),
-      h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},P(r.u),r.p.team?h("small",{},r.p.team):null))),
+      h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},P(r.u),r.p.team?h("small",{},abOf(r.u)?T(abOf(r.u),r.p.team):r.p.team):null))),
       h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts"},r.pts),
       h("td",{class:"hide-sm"},r.gf),h("td",{class:"hide-sm"},r.ga),h("td",{},(r.gd>0?"+":"")+r.gd),
       h("td",{class:"l hide-sm"},h("span",{class:"form"},r.log.slice(-5).map(x=>h("span",{class:"chip "+x,title:x==="O"?"OT/SO loss":x==="W"?"Win":"Loss"},x==="O"?"OT":x)))),
@@ -1192,7 +1212,7 @@ function syncFixture(){
   renderGoalInputs();
 }
 function setResult(v){S.result=v;[...$("l-result").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===v))}
-function knownScorers(u){const s=new Set();for(const g of S.league?.games||[])for(const[side,x]of[["h",g.home],["a",g.away]])if(x===u)for(const n of g.goals?.[side]||[])if(n)s.add(n);return[...s].sort()}
+function knownScorers(u){const s=new Set();for(const p of TR(abOf(u))?.roster||[])if(p.pos!=="G")s.add(p.name.split(" ").slice(-1)[0]);for(const g of S.league?.games||[])for(const[side,x]of[["h",g.home],["a",g.away]])if(x===u)for(const n of g.goals?.[side]||[])if(n)s.add(n);return[...s].sort()}
 function renderGoalInputs(){
   const f=currentFixture();
   for(const side of["h","a"]){
@@ -1324,6 +1344,53 @@ function inlinePass(row,p){
   row.append(h("div",{class:"inline"},inp,save,h("button",{class:"sm",type:"button",onclick:()=>row.querySelector(".inline")?.remove()},"Cancel"),msg));
   inp.focus();
 }
+
+/* ===== NHL 27 ratings (data/ratings.json, refreshed weekly from EA's ratings pages) ===== */
+function gTxt(t){return t?.goal==null?"–":(t.goalEst?"~":"")+t.goal}
+function TR(ab){return ab?S.ratings?.teams?.[ab]||null:null}
+async function loadRatings(){try{const r=await fetch("data/ratings.json?d="+today(),{cache:"no-cache"});if(r.ok){S.ratings=await r.json();if(S.league)render()}}catch(e){}}
+function T(ab,text){return h("span",{class:"tlink","data-team":ab,role:"button",tabindex:"0",title:"View the "+(TEAM_NAME[ab]||ab)+" roster"},text??TEAM_NAME[ab]??ab)}
+const KEY_STATS=[["speed","SPD"],["deking","DEK"],["passing","PAS"],["wristshotAccuracy","WSA"],["offensiveAwareness","OAW"],["defensiveAwareness","DAW"]];
+const GOALIE_STATS=[["glovesideHigh","GLH"],["sticksideHigh","STH"],["fiveHole","5H"],["reboundControl","RBD"],["angles","ANG"],["breakaway","BRK"]];
+function openTeam(ab){S.teamOpen=ab;$("teamdlg").hidden=false;renderTeam(ab);$("team-close").focus()}
+function closeTeam(){$("teamdlg").hidden=true;S.teamOpen=null}
+function renderTeam(ab){
+  const b=$("team-body");b.replaceChildren();const t=TR(ab);
+  const L=S.league,owner=L?.draft?.picks?Object.entries(L.draft.picks).find(([,x])=>x===ab)?.[0]:null;
+  b.append(h("div",{class:"pro-head"},logo(ab,"xl"),h("div",{},h("h2",{id:"team-name"},TEAM_NAME[ab]||ab),h("small",{},owner?["Drafted by ",P(owner)]:"Not drafted this season"))));
+  if(!t){b.append(h("p",{class:"hint"},"No NHL 27 ratings loaded for this team yet."));return}
+  b.append(h("div",{class:"stats"},
+    h("div",{class:"stat"},h("span",{},"Team overall"),h("b",{},t.ovr??"–"),h("small",{},"Site calculation")),
+    h("div",{class:"stat"},h("span",{},"Offense"),h("b",{},t.off??"–"),h("small",{},"Top forwards")),
+    h("div",{class:"stat"},h("span",{},"Defense"),h("b",{},t.def??"–"),h("small",{},"Top defensemen")),
+    h("div",{class:"stat"},h("span",{},"Goalie"),h("b",{},gTxt(t)),h("small",{},t.goalEst?"Estimate: no goalie in EA's top 300":"Starting goalie"))));
+  b.append(h("h3",{},"Top players"),h("p",{class:"hint"},"EA's NHL 27 ratings site lists the league's top 300 players, so this is each team's best players rather than the full roster."));
+  const sk=t.roster.filter(p=>p.pos!=="G"),gk=t.roster.filter(p=>p.pos==="G");
+  const table=(rows,stats)=>h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"Player"),h("th",{class:"l"},"Pos"),h("th",{},"OVR"),stats.map(([,lab])=>h("th",{class:"hide-sm"},lab)))),
+    h("tbody",{},rows.map(p=>h("tr",{},h("td",{class:"l"},h("b",{},p.name),p.ability?h("small",{class:"src"}," · "+p.ability):null),h("td",{class:"l"},p.pos),h("td",{class:"pts"},p.ovr),stats.map(([k])=>h("td",{class:"hide-sm"},p.stats?.[k]||"–")))))));
+  if(sk.length)b.append(table(sk,KEY_STATS));
+  if(gk.length)b.append(h("h3",{},"Goalies"),table(gk,GOALIE_STATS));
+  b.append(h("p",{class:"src"},"Ratings: EA SPORTS NHL 27 (ea.com), updated "+fmtDate((S.ratings.updatedAt||"").slice(0,10))+". Team ratings are this site's own calculation from those players."));
+}
+function teamRatingsTable(L){
+  const teams=S.ratings?.teams;if(!teams)return null;
+  const taken=takenBy(L);
+  const rows=Object.entries(teams).sort((a,b)=>(b[1].ovr??0)-(a[1].ovr??0));
+  return h("div",{class:"div-block"},h("h3",{},"NHL 27 team ratings"),h("p",{class:"hint"},"Tap a team to see its top players. Overall is this site's blend of the top forwards (45%), defensemen (30%) and starting goalie (25%) from EA's ratings. ~ marks an estimated goalie for teams without one in EA's top 300."),
+    h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Team"),h("th",{},"OVR"),h("th",{},"OFF"),h("th",{},"DEF"),h("th",{},"G"),h("th",{class:"l hide-sm"},"Best player"),h("th",{class:"l"},"Drafted by"))),
+      h("tbody",{},rows.map(([ab,t],i)=>h("tr",{},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(ab),T(ab))),h("td",{class:"pts"},t.ovr??"–"),h("td",{},t.off??"–"),h("td",{},t.def??"–"),h("td",{},gTxt(t)),h("td",{class:"l hide-sm"},t.roster[0]?`${t.roster[0].name} ${t.roster[0].ovr}`:"–"),h("td",{class:"l"},taken[ab]?P(taken[ab]):"–")))))));
+}
+function ratingNote(g,home,away){
+  const ha=TR(g?.hab||abOf(home)),aa=TR(g?.aab||abOf(away));
+  if(!ha?.ovr||!aa?.ovr)return"";
+  let t=`OVR ${ha.ovr} vs ${aa.ovr}`;
+  if(g){const w=g.hs>g.as?ha:aa,l=g.hs>g.as?aa:ha;if(l.ovr-w.ovr>=3)t+=" · Upset";}
+  return t;
+}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-team]");if(t){e.preventDefault();e.stopPropagation();openTeam(t.dataset.team)}},true);
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches?.("[data-team]")){e.preventDefault();openTeam(e.target.dataset.team)}if(e.key==="Escape"&&!$("teamdlg").hidden)closeTeam()});
+$("team-close").addEventListener("click",closeTeam);
+$("teamdlg").addEventListener("click",e=>{if(e.target.id==="teamdlg")closeTeam()});
 
 /* ===== Player links ===== */
 function P(u,text){return h("b",{class:"plink","data-profile":u,role:"button",tabindex:"0",title:"View "+u+"'s profile"},text??u)}
@@ -1485,7 +1552,7 @@ function renderProfile(u){
   let pw=0,pl=0;for(const g of po){const mine=g.home===u?g.hs:g.as,th=g.home===u?g.as:g.hs;if(mine>th)pw++;else pl++}
   const st=streaks(games,u);
   body.append(h("div",{class:"pro-head"},logo(abOf(u),"xl")||h("span",{class:"logo-fb xl"},u.slice(0,2).toUpperCase()),
-    h("div",{},h("h2",{id:"pro-name"},u),h("small",{},[curP?.host?"League host":null,curP?.team?curP.team+" · "+(L.season||""):null,titles?`${titles}× champion`:null,!curP?"No longer in the league":null].filter(Boolean).join(" · ")||"No team yet"))));
+    h("div",{},h("h2",{id:"pro-name"},u),h("small",{},[curP?.host?"League host":null,curP?.team?(curP.team+" · "+(L.season||"")):null,titles?`${titles}× champion`:null,!curP?"No longer in the league":null].filter(Boolean).join(" · ")||"No team yet"))));
   body.append(h("div",{class:"stats"},
     h("div",{class:"stat"},h("span",{},"Record"),h("b",{},`${w}–${l}–${otl}`),h("small",{},"Regular season, all-time")),
     h("div",{class:"stat"},h("span",{},"Points"),h("b",{},w*2+otl),h("small",{},rs.length+" games")),
@@ -1702,6 +1769,7 @@ async function load(first){
 }
 function nextDelay(){const live=S.league?.phase==="draft";return S.session?(live?4000:30000):(live?75000:90000)}
 async function loop(){if(document.visibilityState==="visible")await load(false);setTimeout(loop,nextDelay())}
+loadRatings();
 load(true).then(()=>{const m=/^#player-([a-z0-9_.-]+)$/.exec(location.hash);if(m&&S.league)openProfile(m[1]);setTimeout(loop,nextDelay())});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")load(false)});
 </script>

@@ -36,6 +36,14 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 - **Rivalries:** every game card shows the all-time series between the two players. The All-time view has a full rivalry grid.
 - **Awards:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero. The Awards tab shows the race during the season. MVP voting opens when the regular season ends. Everything becomes final, and votes are revealed, when the host starts the next season.
 
+## NHL 27 ratings
+
+A GitHub Action (`.github/workflows/ratings.yml`) runs every Monday and whenever the importer changes. It reads EA SPORTS' public NHL 27 ratings pages and saves `data/ratings.json`. EA's site lists the league's top 300 players, so each team shows its best 7–10 players. Team overall = 45% top forwards + 30% top defensemen + 25% starting goalie (estimated for teams with no goalie in EA's list). You can also run it by hand from the repo's **Actions** tab → *Update NHL 27 ratings* → **Run workflow**.
+
+## Playoff settings (host)
+
+Players tab → **Playoff settings**: division brackets or one league-wide bracket; how many make it; series length for the first round, later rounds and the final (1, 3, 5 or 7 games); home ice (alternating or NHL 2-2-1-1-1); shootouts allowed or not; and whether the playoffs start automatically. Settings lock while a playoff is running.
+
 ## Scoring
 
 - 2 points for a win, 1 for an overtime or shootout loss, 0 for a regulation loss.
