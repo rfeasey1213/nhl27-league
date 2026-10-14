@@ -1,0 +1,27 @@
+name: Update NHL 27 ratings
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 10 * * 1"   # Mondays, early morning US time
+  push:
+    paths: ["scripts/fetch-ratings.mjs", ".github/workflows/ratings.yml"]
+permissions:
+  contents: write
+concurrency: { group: ratings, cancel-in-progress: false }
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node scripts/fetch-ratings.mjs
+      - name: Commit ratings
+        run: |
+          git config user.name "ratings-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ratings.json data/ratings-debug.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Update NHL 27 ratings"
+          for i in 1 2 3 4 5; do git pull --rebase origin main && git push && exit 0; sleep 5; done
+          exit 1
