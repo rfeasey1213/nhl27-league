@@ -6,13 +6,13 @@
  "players": [
   {
    "u": "ryan",
-   "team": "Colorado Avalanche",
+   "team": "",
    "host": true,
    "tier": 4
   },
   {
    "u": "jarvis",
-   "team": "New York Islanders",
+   "team": "",
    "host": false,
    "tier": 4
   },
@@ -132,11 +132,8 @@
    "gio",
    "graham"
   ],
-  "picks": {
-   "jarvis": "NYI",
-   "ryan": "COL"
-  },
-  "startedAt": "2026-10-14T18:58:04.499Z"
+  "picks": {},
+  "startedAt": "2026-10-14T18:58:29.627Z"
  },
  "archive": [],
  "mvpVotes": {},
