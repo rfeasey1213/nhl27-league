@@ -136,6 +136,11 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story.s-hat .kind,.story.s-champ .kind,.story.s-lottery .kind{color:var(--gold)}
 .story.s-champ{border-color:rgba(255,214,107,.6);box-shadow:0 0 22px rgba(255,214,107,.15)}
 .story.s-host{border-color:var(--glacier)}
+.story.s-tyf{border-color:var(--line-2);background:linear-gradient(120deg,rgba(150,215,255,.08),rgba(4,14,30,.5))}
+.story.s-tyf .kind{color:var(--muted)}
+.tyf{display:flex;align-items:center;gap:14px}
+.tyf .headline{font-size:34px!important;letter-spacing:.02em!important;text-transform:uppercase!important;color:var(--frost)!important}
+.tyf-who{font:600 13px var(--data);color:var(--muted)}
 .story .headline{margin:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;line-height:1;text-transform:none;letter-spacing:0;color:var(--ink)}
 .story p{margin:0;color:var(--muted)}
 .story .game{background:rgba(3,14,30,.35)}
@@ -1758,7 +1763,7 @@ setInterval(()=>{
 },1000);
 
 /* ===== News: written from the league's own results ===== */
-const NEWS_KIND={up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Chirp",ot:"Free hockey"};
+const NEWS_KIND={tyf:"Season over",up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Chirp",ot:"Free hockey"};
 function teamShort(ab){return ab?(TEAM_NAME[ab]||ab).split(" ").slice(-1)[0]:""}
 /* Stable pick from a list so a story reads the same on every refresh. */
 function hashStr(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
@@ -1816,6 +1821,12 @@ const LINES={
   chirpRecord:[["Chirp: {u} sitting at {rec}","{gp} games in and {u}, a preseason top dog, is under .500. The {team} were supposed to be a contender, not a cellar dweller."],
                ["Chirp: {u} at {rec}, and the {team} are taking calls","{gp} games, a {rec} record. GMs across the league are hanging up on {u}'s trade requests out of pity."],
                ["Chirp: {u} at {rec} after {gp}, is this a rebuild or a cry for help","Preseason top dog to basement dweller. The {team} fan base has switched to watching curling."]],
+  tyfMiss:[["Thank You Fans","{u} and the {team} would like to thank the fans for their support this season. {rec} wasn't good enough to make the dance. Tee times are booked and the clubs have been regripped. See you next year."],
+           ["Thank You Fans","It's been a season. The {team} finished {rec} and missed the playoffs. {u} thanks everyone who believed. Both of you."],
+           ["Thank You Fans","{u}'s {team} close the book at {rec}, on the outside looking in. The golf bag has already been spotted in the car."]],
+  tyfOut:[["Thank You Fans","{u} and the {team} were sent home by {w}, {sr}. {u} thanks the fans for an unforgettable run. Locker clean-out is tomorrow."],
+          ["Thank You Fans","The ride is over for {u}. {w} took the series {sr}. The {team} salute the fans and head for the first tee."],
+          ["Thank You Fans","Eliminated by {w}, {sr}. {u} raises the stick to the crowd one last time this season. Thank you, fans. See you in October."]],
   chirpExit:[["Chirp: {u} bounced early","Top seed or not, {u} got sent packing by {w}. Tee times are booked, boys."],
              ["Chirp: {u}'s playoff run lasted shorter than a Zamboni lap","{w} sent them home. {u} has already been spotted at the driving range in full gear."],
              ["Chirp: {u} choked harder than a guy eating dry Timbits","Out in the playoffs to {w}. Somebody get {u} a glass of water and a new hobby."]]
@@ -1864,10 +1875,13 @@ function buildNews(V){
   // playoffs
   if(V.playoffs){items.push({k:"start",title:"Playoff picture is set, boys",body:Object.entries(V.playoffs.seeds).map(([d,l])=>(d==="L"?"League":divName(V,d))+": "+l.map((u,i)=>`#${i+1} ${u}`).join(", ")).join(" · ")+". Second season starts now.",at:(V.playoffs.startedAt||"").replace("Z","")});
     const br=buildBracket(V);
+    const seeded=new Set(Object.values(V.playoffs.seeds).flat()),tbl=computeTable(V),startAt=(V.playoffs.startedAt||"").replace("Z","");
+    for(const r of tbl)if(!seeded.has(r.u)){const ab=V.draft?.picks?.[r.u];add("tyf",LINES.tyfMiss,"miss"+r.u+(V.season||""),{u:r.u,team:ab?TEAM_NAME[ab]:"squad",rec:`${r.w}–${r.l}–${r.otl}`},startAt+"0",{ab,who:r.u})}
     for(const sx of br?.all||[])if(sx.winner){const last=sx.games.at(-1),lo=sx.winner===sx.a?sx.b:sx.a,ww=Math.max(sx.wa,sx.wb),ll=Math.min(sx.wa,sx.wb);
       const at=(last?.playedAt||"")+"T"+((last?.createdAt||"").slice(11)||"12:00")+"3";
       if(sx.final||sx.id==="F")items.push({k:"champ",title:`${sx.winner} lifts the trophy!`,body:`${sx.winner} beat ${lo} ${ww}–${ll} in the final${teamOf(sx.winner)?" with the "+teamOf(sx.winner):""}. Champions. Somebody grab the cooler, it's a parade.`,at:at+"9"});
-      else{items.push({k:"series",title:`${sx.winner} ${ll===0&&ww>1?"sweeps":"sends home"} ${lo}, ${ww}–${ll}`,body:`${seriesLabel(V,sx)} is in the books. ${lo} is booking tee times, ${sx.winner} moves on.`,at});
+      {const lab=V.draft?.picks?.[lo];add("tyf",LINES.tyfOut,"out"+lo+sx.id,{u:lo,w:sx.winner,sr:`${ww}–${ll}`,team:lab?TEAM_NAME[lab]:"squad"},at+"1",{ab:lab,who:lo})}
+      if(!(sx.final||sx.id==="F")){items.push({k:"series",title:`${sx.winner} ${ll===0&&ww>1?"sweeps":"sends home"} ${lo}, ${ww}–${ll}`,body:`${seriesLabel(V,sx)} is in the books. ${lo} is booking tee times, ${sx.winner} moves on.`,at});
         if(TOP.has(lo)&&(lo===sx.a))add("chirp",LINES.chirpExit,sx.id+"x",{u:lo,w:sx.winner},at+"5")}}
   }
   // draft + lottery
@@ -1895,7 +1909,7 @@ function renderNews(V){
   if(!items.length){box.append(h("div",{class:"empty"},h("b",{},"No news yet"),"Hat tricks, upsets, shutouts, comebacks, heaters, chirps and playoff results show up here once the puck drops."));return}
   box.append(h("div",{class:"news"},items.slice(0,80).map(n=>h("article",{class:"story s-"+n.k},
     h("div",{class:"story-top"},h("span",{class:"kind"},NEWS_KIND[n.k]||"News"),h("span",{class:"when"},n.at?fmtDate(n.at.slice(0,10)):"")),
-    h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null,
+    n.k==="tyf"?h("div",{class:"tyf"},logo(n.ab,"xl"),h("div",{},h("h3",{class:"headline"},n.title),h("span",{class:"tyf-who"},P(n.who),n.ab?" · "+TEAM_NAME[n.ab]:""))):h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null,
     n.game?gameCard(n.game,n.game.home,n.game.away,[],null):null,
     n.k==="host"&&host?h("button",{class:"sm",type:"button",style:"justify-self:start",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
 }
