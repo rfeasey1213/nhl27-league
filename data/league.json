@@ -38,6 +38,11 @@
    "u": "mains",
    "team": "",
    "host": false
+  },
+  {
+   "u": "gio",
+   "team": "",
+   "host": false
   }
  ],
  "auth": {
@@ -75,6 +80,11 @@
    "salt": "BQNTn+xD0m9gOH+hpEos5g==",
    "iv": "eIK5s4Y2199vYG32",
    "ct": "sNssdFqVzf8w9pjgapiFuNWq7EjtEXcT156q4aftt0aU4y45Pf9h5LbVl0Q0sRWM"
+  },
+  "gio": {
+   "salt": "9L2Fj0BUlKZCqIB9zHdsBg==",
+   "iv": "E0ZHDr/M+3assdm8",
+   "ct": "HDS5VH2K8d95OAnQId4wPca1LN+0sv3IdZ2BK6GQre+RKDPVhmIvQUIDyFzDFt/g"
   }
  },
  "tokenBox": {
@@ -99,7 +109,8 @@
   "aj",
   "graham",
   "freakas",
-  "mains"
+  "mains",
+  "gio"
  ],
  "playoffs": null,
  "draft": null,
