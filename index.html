@@ -1857,6 +1857,9 @@ function buildNews(V){
     if(D.auto?.[u])items.push({k:"chirp",title:`Chirp: ${u} fell asleep at the draft`,body:`The clock ran out, so the computer took the ${TEAM_NAME[ab]}${TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:""} for ${u}. Probably a better pick anyway.`,at});
     else if(i===0)items.push({k:"draft",title:`${u} takes the ${TEAM_NAME[ab]} first overall`,body:TR(ab)?`Team rating ${TR(ab).ovr}, led by ${TR(ab).roster[0]?.name}. No pressure, bud.`:"",at})}}
   for(const n of V.news||[])items.push({k:"host",title:n.title,body:n.body,at:(n.at||"").replace("Z",""),id:n.id,by:n.by});
+  // Chirps use each player's chirp nickname (set by the host)
+  const nick=V.players.filter(p=>p.nick).map(p=>[new RegExp("(^|[^A-Za-z0-9_.-])"+p.u.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?![A-Za-z0-9_-])","g"),p.nick]);
+  if(nick.length)for(const it of items)if(it.k==="chirp")for(const[re,nk]of nick){it.title=it.title.replace(re,"$1"+nk);it.body=it.body.replace(re,"$1"+nk)}
   return items.sort((a,b)=>(b.at||"").localeCompare(a.at||""));
 }
 function renderNews(V){
@@ -1889,7 +1892,8 @@ function renderCommish(L){
       h("td",{class:"l"},h("select",{id:"cm-div-"+p.u,"aria-label":"Division for "+p.u},[h("option",{value:""},"–"),h("option",{value:"A",selected:p.div==="A"},divName(L,"A")),h("option",{value:"B",selected:p.div==="B"},divName(L,"B"))])),
       h("td",{class:"l"},h("select",{id:"cm-tier-"+p.u,"aria-label":"Tier for "+p.u},[1,2,3,4].map(t=>h("option",{value:t,selected:t===tierOf(p)},"Tier "+t)))),
       h("td",{},h("input",{id:"cm-adj-"+p.u,type:"number",min:"-99",max:"99",value:adj.pts||0,"aria-label":"Point adjustment for "+p.u,style:"width:72px"})),
-      h("td",{class:"l"},h("input",{id:"cm-why-"+p.u,maxlength:"60",value:adj.reason||"",placeholder:"Reason","aria-label":"Reason for "+p.u})))});
+      h("td",{class:"l"},h("input",{id:"cm-why-"+p.u,maxlength:"60",value:adj.reason||"",placeholder:"Reason","aria-label":"Reason for "+p.u})),
+      h("td",{class:"l"},h("input",{id:"cm-nick-"+p.u,maxlength:"30",value:p.nick||"",placeholder:"Chirp name","aria-label":"Chirp nickname for "+p.u})))});
   const msg=h("p",{class:"msg"});
   const save=h("button",{class:"btn",type:"button",onclick:async()=>{save.disabled=true;msg.textContent="Saving…";msg.className="msg";
     try{await mutate("Commissioner changes",X=>{
@@ -1901,10 +1905,11 @@ function renderCommish(L){
         if(dv==="A"||dv==="B")q.div=dv;else if(X.phase==="setup"||X.phase==="draft")delete q.div;
         if(tr>=1&&tr<=4)q.tier=tr;
         X.adjust=X.adjust||{};if(pts||why)X.adjust[q.u]={pts,reason:why};else delete X.adjust[q.u];
+        const nk=($("cm-nick-"+q.u)?.value||"").trim().slice(0,30);if(nk)q.nick=nk;else delete q.nick;
       }
     });msg.textContent="Saved.";msg.className="msg ok"}catch(e){msg.textContent=saveErr(e);msg.className="msg err"}finally{save.disabled=false}}},"Save commissioner changes");
-  box.append(h("p",{class:"hint"},"Change any player's NHL team, division, tier or points. Point adjustments are added to the standings (use a negative number to take points away) and the reason shows on hover. Teams can be changed once the draft has started."),
-    h("div",{class:"scroll"},h("table",{class:"cm"},h("thead",{},h("tr",{},h("th",{class:"l"},"Player"),h("th",{class:"l"},"NHL team"),h("th",{class:"l"},"Division"),h("th",{class:"l"},"Tier"),h("th",{},"Pts +/-"),h("th",{class:"l"},"Reason"))),h("tbody",{},rows))),
+  box.append(h("p",{class:"hint"},"Change any player's NHL team, division, tier or points, or give them a chirp name that the News uses when chirping them. Point adjustments are added to the standings (use a negative number to take points away) and the reason shows on hover. Teams can be changed once the draft has started."),
+    h("div",{class:"scroll"},h("table",{class:"cm"},h("thead",{},h("tr",{},h("th",{class:"l"},"Player"),h("th",{class:"l"},"NHL team"),h("th",{class:"l"},"Division"),h("th",{class:"l"},"Tier"),h("th",{},"Pts +/-"),h("th",{class:"l"},"Reason"),h("th",{class:"l"},"Chirp name"))),h("tbody",{},rows))),
     h("div",{class:"row"},save),msg);
   // Playoff seeds
   if(L.playoffs){
