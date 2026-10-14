@@ -6,7 +6,7 @@
  "players": [
   {
    "u": "ryan",
-   "team": "",
+   "team": "San Jose Sharks",
    "host": true
   },
   {
@@ -52,7 +52,9 @@
    "ryan",
    "jarvis"
   ],
-  "picks": {},
+  "picks": {
+   "ryan": "SJS"
+  },
   "startedAt": "2026-10-14T14:15:27.672Z"
  }
 }
