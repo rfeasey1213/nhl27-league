@@ -252,6 +252,14 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
   .teams{grid-template-columns:repeat(2,minmax(0,1fr))}
   .clock b{font-size:38px}
   .panel{padding:14px}
+  .confirm{padding:8px 10px;gap:8px}
+  .confirm p{flex:1 1 100%;font-size:14px}
+  .confirm .row{flex-wrap:nowrap;gap:8px;width:100%}
+  .confirm .btn{padding:10px 14px;font-size:13px;flex:1;text-align:center}
+  .confirm .pl{flex:1 1 100%}
+  nav.tabs{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+  .matchup{gap:8px}
+  .vs{font-size:20px;padding-top:60px}
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.panel,.notice{background:rgba(9,30,56,.94)}}
 </style>
@@ -1072,7 +1080,7 @@ function renderGoalInputs(){
     let dl=document.getElementById(listId);if(!dl){dl=h("datalist",{id:listId});document.body.append(dl)}
     dl.replaceChildren(...(u?knownScorers(u):[]).map(x=>h("option",{value:x})));
     const vals=S.goalDraft[side];
-    box.replaceChildren(...Array.from({length:n},(_,i)=>h("input",{id:`goal-${side}-${i}`,list:listId,maxlength:"30",placeholder:`Goal ${i+1} scorer`,"aria-label":`${side==="h"?"Home":"Away"} goal ${i+1} scorer`,value:vals[i]||"",oninput:e=>{S.goalDraft[side][i]=e.target.value}})));
+    box.replaceChildren(...Array.from({length:n},(_,i)=>h("input",{id:`goal-${side}-${i}`,list:listId,maxlength:"30",placeholder:`Goal ${i+1}`,"aria-label":`${side==="h"?"Home":"Away"} goal ${i+1} scorer`,value:vals[i]||"",oninput:e=>{S.goalDraft[side][i]=e.target.value}})));
   }
 }
 
