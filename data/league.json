@@ -8,49 +8,49 @@
    "u": "ryan",
    "team": "",
    "host": true,
-   "tier": 4
+   "tier": 2
   },
   {
    "u": "jarvis",
    "team": "",
    "host": false,
-   "tier": 4
+   "tier": 1
   },
   {
    "u": "jamie",
    "team": "",
    "host": false,
-   "tier": 3
+   "tier": 1
   },
   {
    "u": "aj",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 4
   },
   {
    "u": "graham",
    "team": "",
    "host": false,
-   "tier": 1
+   "tier": 3
   },
   {
    "u": "freakas",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 3
   },
   {
    "u": "mains",
    "team": "",
    "host": false,
-   "tier": 3
+   "tier": 4
   },
   {
    "u": "gio",
    "team": "",
    "host": false,
-   "tier": 1
+   "tier": 2
   }
  ],
  "auth": {
