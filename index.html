@@ -197,7 +197,7 @@ svg.race.focus .rl{opacity:.18}svg.race.focus .rl.on{opacity:1;stroke-width:3}
 .pl.r{flex-direction:row-reverse;text-align:right}
 
 /* Champion */
-.champ-banner{display:flex;align-items:center;gap:14px;border:1px solid rgba(255,214,107,.55);border-radius:12px;padding:14px 18px;background:linear-gradient(110deg,rgba(255,214,107,.16),rgba(95,227,255,.08) 70%);box-shadow:0 0 30px rgba(255,214,107,.18)}
+.champ-banner{display:flex;flex-wrap:wrap;align-items:center;gap:14px;border:1px solid rgba(255,214,107,.55);border-radius:12px;padding:14px 18px;background:linear-gradient(110deg,rgba(255,214,107,.16),rgba(95,227,255,.08) 70%);box-shadow:0 0 30px rgba(255,214,107,.18)}
 .champ-banner b{font-family:var(--display);font-style:italic;font-size:34px;line-height:.95;font-weight:800;text-transform:uppercase;color:var(--gold)}
 .champ-banner span{display:block;font:700 12px var(--data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 
@@ -439,9 +439,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <button role="tab" data-tab="standings" aria-selected="true">Standings</button>
     <button role="tab" data-tab="schedule" aria-selected="false">Schedule</button>
     <button role="tab" data-tab="playoffs" aria-selected="false">Playoffs</button>
-    <button role="tab" data-tab="awards" aria-selected="false">Awards</button>
     <button role="tab" data-tab="results" aria-selected="false">Results</button>
-    <button role="tab" data-tab="scorers" aria-selected="false">Scorers</button>
     <button role="tab" data-tab="stats" aria-selected="false">Stats</button>
     <button role="tab" data-tab="log" aria-selected="false">My games</button>
     <button role="tab" data-tab="players" aria-selected="false">Players</button>
@@ -450,6 +448,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
   <div class="viewbar" id="viewbar" hidden>
     <label for="view-sel">Viewing</label>
     <select id="view-sel"></select>
+    <button class="sm go" type="button" id="rev-open" hidden>Season review</button>
   </div>
 
   <section class="panel" id="p-draft" hidden></section>
@@ -479,10 +478,6 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <div id="news"></div>
   </section>
 
-  <section class="panel" id="p-awards" hidden>
-    <h2>Awards</h2>
-    <div id="awards"></div>
-  </section>
 
   <section class="panel" id="p-results" hidden>
     <div class="filter">
@@ -504,10 +499,6 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <div id="stats"></div>
   </section>
 
-  <section class="panel" id="p-scorers" hidden>
-    <h2>Goal scorers</h2>
-    <div class="scroll" id="scorers"></div>
-  </section>
 
   <section class="panel" id="p-log" hidden>
     <div class="filter">
@@ -552,6 +543,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     </form>
     <p class="msg" id="log-msg"></p>
     <div id="log-list"></div>
+    <div id="me-tools" hidden>
+      <h3>Change my password</h3>
+      <form id="pw-form">
+        <div class="row">
+          <div class="field"><label for="pw-new">New password</label><input id="pw-new" type="password" minlength="6" autocomplete="new-password" required></div>
+          <div class="end"><button class="btn ghost" type="submit">Change</button></div>
+        </div>
+        <p class="msg" id="pw-msg"></p>
+      </form>
+    </div>
   </section>
 
   <section class="panel" id="p-players" hidden>
@@ -639,16 +640,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
       </form>
     </div>
 
-    <div id="me-tools" hidden>
-      <h3>Change my password</h3>
-      <form id="pw-form">
-        <div class="row">
-          <div class="field"><label for="pw-new">New password</label><input id="pw-new" type="password" minlength="6" autocomplete="new-password" required></div>
-          <div class="end"><button class="btn ghost" type="submit">Change</button></div>
-        </div>
-        <p class="msg" id="pw-msg"></p>
-      </form>
-    </div>
+  </section>
+</div>
+
+<div class="dialog profile" id="reviewdlg" hidden>
+  <section class="panel pro" role="dialog" aria-modal="true" aria-labelledby="rev-title">
+    <button class="sm pro-close" type="button" id="rev-close" aria-label="Close season review">Close</button>
+    <div id="rev-body"></div>
   </section>
 </div>
 
@@ -1043,7 +1041,7 @@ function isHost(){return !!pmap().get(me())?.host}
 function teamOf(u){return ((VIEW||S.league)?.players||[]).find(p=>p.u===u)?.team||""}
 
 /* ===== Render ===== */
-const TABS=["draft","news","standings","schedule","playoffs","awards","results","scorers","stats","log","players"];
+const TABS=["draft","news","standings","schedule","playoffs","results","stats","log","players"];
 function show(t){if(!TABS.includes(t))t="standings";S.tab=t;store.set("nhl27-tab",t);
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   TABS.forEach(x=>$("p-"+x).hidden=!S.league||x!==t)}
@@ -1067,6 +1065,7 @@ function renderViewBar(L){
   if(!L.archive.length)return;
   sel.replaceChildren(h("option",{value:"current"},(L.season||"This season")+" (current)"),...L.archive.map((a,i)=>[a,i]).reverse().map(([a,i])=>h("option",{value:String(i)},a.season+(a.champion?" · won by "+a.champion:""))),h("option",{value:"all"},"All-time"));
   sel.value=S.view==="current"?"current":String(S.view);
+  const rb=$("rev-open");rb.hidden=S.view==="current";rb.textContent=S.view==="all"?"Trophy cabinet":"Season review";
 }
 
 function render(){
@@ -1093,16 +1092,19 @@ function render(){
   const champ=$("champ");
   if(br?.champion){
     const hostNext=V===L&&signedIn()&&isHost()?h("button",{class:"btn",type:"button",style:"margin-left:auto",onclick:ev=>twoTap(ev.currentTarget,"Tap again: archive and start "+nextSeasonName(L.season),()=>newSeason())},"Start "+nextSeasonName(L.season)):null;
-    champ.hidden=false;champ.replaceChildren(...[logo(abOf(br.champion),"xl"),h("div",{},h("span",{},(V.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):""))),hostNext].filter(Boolean))}
+    const revBtn=h("button",{class:"btn ghost",type:"button",style:hostNext?null:"margin-left:auto",onclick:()=>openReview()},"Season review");
+    champ.hidden=false;champ.replaceChildren(...[logo(abOf(br.champion),"xl"),h("div",{},h("span",{},(V.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):""))),hostNext?h("div",{class:"row",style:"margin-left:auto"},revBtn,hostNext):revBtn].filter(Boolean));if(hostNext)hostNext.style.marginLeft=""}
   else champ.hidden=true;
 
   const tabBtn=t=>document.querySelector(`#tabs [data-tab="${t}"]`);
   tabBtn("log").hidden=!signedIn()||V!==L;
+  tabBtn("players").hidden=!(signedIn()&&isHost());
+  if(S.tab==="players"&&tabBtn("players").hidden)S.tab="standings";
   tabBtn("draft").hidden=!!V.allTime;tabBtn("schedule").hidden=!!V.allTime;
   tabBtn("draft").replaceChildren(...["Draft",L.phase==="draft"&&V===L?h("span",{class:"live","aria-label":"live"}):null].filter(Boolean));
   if((V!==L&&S.tab==="log")||(V.allTime&&(S.tab==="draft"||S.tab==="schedule")))S.tab="standings";
 
-  renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderAwards(V);renderNews(V);renderResults(V);renderScorers(V);renderStats(V);
+  renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderNews(V);if(!$("reviewdlg").hidden)renderReview(V);renderResults(V);renderStats(V);
   if(S.profile&&!$("profile").hidden)renderProfile(S.profile);
   show(S.tab);
 }
@@ -1376,6 +1378,7 @@ function seriesCard(L,s,isFinal){
 function renderPlayoffs(L,br){
   const p=$("playoffs");p.replaceChildren();
   if(L.allTime){renderHistory(S.league,p,true);return}
+  if(L===S.league&&L.phase==="playoffs")p.append(renderVote(L));
   if(!br){
     const c=poSettings(L);
     p.append(h("div",{class:"empty"},h("b",{},"Not started"),`Format: ${poSummary(c,playoffSpots(L))}. ${c.auto?"They start automatically once every regular season game is played.":"The host starts them from the Players tab."}`));
@@ -1432,16 +1435,6 @@ function deleteGame(id){
 }
 
 /* --- Scorers --- */
-function renderScorers(L){
-  const box=$("scorers");box.replaceChildren();
-  const m=new Map();
-  for(const g of L.games)for(const[side,u]of[["h",g.home],["a",g.away]]){const ab=(side==="h"?g.hab:g.aab)||abOf(u)||"";for(const n of g.goals?.[side]||[]){
-    if(!n)continue;const k=u+"|"+ab+"|"+n.toLowerCase();const r=m.get(k)||{name:n,u,ab,rs:0,po:0};r[g.stage==="po"?"po":"rs"]++;m.set(k,r)}}
-  const rows=[...m.values()].sort((a,b)=>(b.rs+b.po)-(a.rs+a.po)||b.po-a.po||a.name.localeCompare(b.name));
-  if(!rows.length){box.append(h("div",{class:"empty"},h("b",{},"No goals recorded"),"Add goal scorers when you log a game and the leaders show up here."));return}
-  box.append(h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Scorer"),h("th",{class:"l"},"Player"),h("th",{},"Season"),h("th",{},"Playoffs"),h("th",{},"Total"))),
-    h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||teamOf(r.u))))),h("td",{class:"l"},P(r.u)),h("td",{},r.rs),h("td",{},r.po),h("td",{class:"pts"},r.rs+r.po))))));
-}
 
 /* --- Log a game --- */
 /* Who may edit a logged game: the two players, whoever logged it, or the host. */
@@ -2013,6 +2006,25 @@ function renderStats(V){
     hi?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Highest-scoring game"),h("small",{},`${hi.home} ${hi.hs}–${hi.as} ${hi.away} · ${hi.hs+hi.as} goals${hi._season?" · "+hi._season:""}`))):null,
     topGame?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Most goals by one scorer in a game"),h("small",{},`${topGame.n} (${topGame.u}) with ${topGame.k} vs ${topGame.u===topGame.g.home?topGame.g.away:topGame.g.home}`))):null,
     streakBest?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Longest win streak"),h("small",{},`${streakBest.u}: ${streakBest.best} straight`))):null));
+  box.append(scorersTable(V,games,stage));
+}
+/* Goal scorers: the NHL players typed in as scorers, ranked by goals. */
+function scorersTable(V,games,stage){
+  const m=new Map(),gp=new Map();
+  for(const g of games)for(const[side,u]of[["h",g.home],["a",g.away]]){
+    const ab=(side==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"";gp.set(u+"|"+ab,(gp.get(u+"|"+ab)||0)+1);
+    const c=new Map();for(const n of g.goals?.[side]||[]){if(!n)continue;c.set(n,(c.get(n)||0)+1)}
+    for(const[n,k]of c){const key=u+"|"+ab+"|"+n.toLowerCase();const r=m.get(key)||{name:n,u,ab,rs:0,po:0,hat:0};r[g.stage==="po"?"po":"rs"]+=k;if(k>=3)r.hat++;m.set(key,r)}}
+  const rows=[...m.values()].map(r=>({...r,g:r.rs+r.po,gpg:(r.rs+r.po)/(gp.get(r.u+"|"+r.ab)||1)})).sort((a,b)=>b.g-a.g||b.gpg-a.gpg||a.name.localeCompare(b.name));
+  const wrap=h("div",{class:"div-block"},h("h3",{},"Goal scorers"));
+  if(!rows.length){wrap.append(h("p",{class:"hint"},"Add goal scorers when you log a game and the leaders show up here."));return wrap}
+  const both=stage==="all";
+  wrap.append(h("p",{class:"hint"},"The NHL players typed in as goal scorers. G/GP is goals per game that player's league owner played with that team."),
+    h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Scorer"),h("th",{class:"l"},"Owner"),both?h("th",{},"Season"):null,both?h("th",{},"Playoffs"):null,h("th",{},"Goals"),h("th",{},"G/GP"),h("th",{class:"hide-sm"},"Hat tricks"))),
+      h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),
+        h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||teamOf(r.u))))),
+        h("td",{class:"l"},P(r.u)),both?h("td",{},r.rs):null,both?h("td",{},r.po):null,h("td",{class:"pts"},r.g),h("td",{},r.gpg.toFixed(2)),h("td",{class:"hide-sm"},r.hat||"–")))))));
+  return wrap;
 }
 $("stat-stage").addEventListener("change",()=>renderStats(VIEW||S.league));
 
@@ -2094,32 +2106,51 @@ function awardsByPlayer(L){
   L.archive.forEach((A,i)=>{for(const a of seasonAwards(archiveView(L,i),{revealMvp:true}))for(const x of a.winners){const l=m.get(x.u)||[];l.push({season:A.season,title:a.title,key:a.key,note:x.note});m.set(x.u,l)}});
   return m;
 }
-function renderAwards(V){
-  const box=$("awards");box.replaceChildren();const L=S.league;
+function openReview(){$("reviewdlg").hidden=false;renderReview(VIEW||S.league);$("rev-close").focus()}
+function closeReview(){$("reviewdlg").hidden=true}
+function renderReview(V){
+  const box=$("rev-body");box.replaceChildren();const L=S.league;
   if(V.allTime){
+    box.append(h("div",{class:"pro-head"},h("div",{},h("h2",{id:"rev-title"},"Trophy cabinet"),h("small",{},"Every award from every finished season"))));
     const by=awardsByPlayer(L);
-    if(!by.size){box.append(h("div",{class:"empty"},h("b",{},"No awards yet"),"Awards are handed out when a season is archived."));return}
+    if(!by.size){box.append(h("div",{class:"empty"},h("b",{},"No awards yet"),"Awards are handed out when a season wraps up."));return}
     const us=[...by.keys()].sort((a,b)=>by.get(b).length-by.get(a).length);
-    box.append(h("p",{class:"hint"},"Every award won across archived seasons."),h("div",{class:"scroll"},h("table",{},
+    box.append(h("div",{class:"scroll"},h("table",{},
       h("thead",{},h("tr",{},h("th",{class:"l"},"Player"),AWARDS.map(a=>h("th",{},a.title)),h("th",{},"Total"))),
       h("tbody",{},us.map(u=>{const l=by.get(u);return h("tr",{class:u===me()?"me":null},h("td",{class:"l"},P(u)),AWARDS.map(a=>h("td",{},l.filter(x=>x.key===a.key).length||"–")),h("td",{class:"pts"},l.length))})))));
-    for(let i=L.archive.length-1;i>=0;i--){const aw=seasonAwards(archiveView(L,i),{revealMvp:true});if(aw.length)box.append(h("div",{class:"div-block"},h("h3",{},L.archive[i].season)),h("div",{class:"awards"},aw.map(a=>awardCard(a))))}
+    for(let i=L.archive.length-1;i>=0;i--){const aw=seasonAwards(archiveView(L,i),{revealMvp:true});if(aw.length)box.append(h("h3",{},L.archive[i].season),h("div",{class:"awards"},aw.map(a=>awardCard(a))))}
     return;
   }
-  if(V.archived){
-    const aw=seasonAwards(V,{revealMvp:true});
-    if(!aw.length){box.append(h("div",{class:"empty"},"No games were played this season."));return}
-    box.append(h("p",{class:"hint"},"Final awards for "+V.season+"."),h("div",{class:"awards"},aw.map(a=>awardCard(a))));
-    const t=mvpTally(V.mvpVotes);if(t.size)box.append(h("p",{class:"legend"},"MVP votes: "+[...t].sort((a,b)=>b[1]-a[1]).map(([u,n])=>`${u} ${n}`).join(", ")));
-    return;
-  }
-  if(L.phase==="setup"||L.phase==="draft"){box.append(h("div",{class:"empty"},h("b",{},"After the draft"),"The award race starts with the first game. Awards are final when the host starts the next season."));return}
-  box.append(h("p",{class:"hint"},"The race so far. Awards become final, and MVP votes are revealed, when the host starts the next season."));
-  box.append(renderVote(L));
-  const aw=seasonAwards(L);
-  if(aw.length)box.append(h("div",{class:"awards"},aw.map(a=>awardCard(a,a.key!=="champ"))));
-  else box.append(h("div",{class:"empty"},"No games yet."));
+  const br=buildBracket(V),final=!!V.archived;
+  box.append(h("div",{class:"pro-head"},br?.champion?logo(abOf(br.champion),"xl"):null,h("div",{},h("h2",{id:"rev-title"},`${V.season||"Season"} in review`),
+    h("small",{},br?.champion?[`Champion: `,P(br.champion),teamOf(br.champion)?" · "+teamOf(br.champion):""]:"No champion crowned"))));
+  if(!V.games.length){box.append(h("div",{class:"empty"},"No games were played this season."));return}
+  // Awards
+  const aw=seasonAwards(V,{revealMvp:final});
+  box.append(h("h3",{},"Awards"));
+  if(!final)box.append(h("p",{class:"hint"},"Awards lock in, and MVP votes are revealed, when the host starts the next season."));
+  box.append(h("div",{class:"awards"},aw.map(a=>awardCard(a))));
+  if(final){const t=mvpTally(V.mvpVotes);if(t.size)box.append(h("p",{class:"legend"},"MVP votes: "+[...t].sort((a,b)=>b[1]-a[1]).map(([u,n])=>`${u} ${n}`).join(", ")))}
+  else{const n=Object.keys(V.mvpVotes||{}).length;box.append(h("p",{class:"legend"},`MVP: ${n} of ${V.players.length} players have voted.`))}
+  // Final standings
+  const t=computeTable(V).filter(r=>r.gp>0);
+  box.append(h("h3",{},"Final standings"),h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{},"Record"),h("th",{},"PTS"),h("th",{},"DIFF"),h("th",{class:"l"},"Playoffs"))),
+    h("tbody",{},t.map((r,i)=>h("tr",{},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),P(r.u))),h("td",{},`${r.w}–${r.l}–${r.otl}`),h("td",{class:"pts"},r.pts),h("td",{},(r.gd>0?"+":"")+r.gd),h("td",{class:"l"},playoffFinish(V,r.u))))))));
+  // Top scorers
+  const sc=new Map();for(const g of V.games)for(const[side,u]of[["h",g.home],["a",g.away]]){const ab=(side==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"";for(const n of g.goals?.[side]||[]){if(!n)continue;const k=u+"|"+ab+"|"+n.toLowerCase();const r=sc.get(k)||{name:n,u,ab,n:0};r.n++;sc.set(k,r)}}
+  const top=[...sc.values()].sort((a,b)=>b.n-a.n).slice(0,5);
+  if(top.length)box.append(h("h3",{},"Top goal scorers"),h("div",{class:"list"},top.map((r,i)=>h("div",{class:"player"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},`${i+1}. ${r.name}`),h("small",{},[(r.ab&&TEAM_NAME[r.ab])||"",", owned by ",P(r.u)]))),h("b",{class:"pts",style:"font-family:var(--display);font-style:italic;font-size:24px;color:var(--glacier)"},r.n+" G")))));
+  // Biggest moments (from the news feed)
+  const moments=buildNews(V).filter(n=>["up","hat","cb","so","bo","gf","streak","champ","series"].includes(n.k)).slice(0,6);
+  if(moments.length)box.append(h("h3",{},"Biggest moments"),h("div",{class:"news"},moments.map(n=>h("article",{class:"story s-"+n.k},h("div",{class:"story-top"},h("span",{class:"kind"},NEWS_KIND[n.k]||"News"),h("span",{class:"when"},n.at?fmtDate(n.at.slice(0,10)):"")),h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null))));
+  // Season by the numbers
+  const goals=V.games.reduce((a,g)=>a+g.hs+g.as,0),bs=V.games.flatMap(g=>gameBadges(g));
+  box.append(h("h3",{},"By the numbers"),h("div",{class:"stats stats4"},statTile("Games",V.games.length),statTile("Goals",goals,(goals/V.games.length).toFixed(2)+" per game"),statTile("Hat tricks",bs.filter(b=>b.k==="hat").length),statTile("Upsets",bs.filter(b=>b.k==="up").length)));
 }
+$("rev-open").addEventListener("click",openReview);
+$("rev-close").addEventListener("click",closeReview);
+$("reviewdlg").addEventListener("click",e=>{if(e.target.id==="reviewdlg")closeReview()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("reviewdlg").hidden)closeReview()});
 function renderVote(L){
   const n=Object.keys(L.mvpVotes||{}).filter(u=>L.players.some(p=>p.u===u)).length;
   const box=h("div",{class:"vote"},h("h3",{style:"margin:0"},"MVP vote"));

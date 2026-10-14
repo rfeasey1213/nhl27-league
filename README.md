@@ -34,7 +34,7 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 
 - **Profiles:** tap any player's name to see their all-time record, points, goals, playoff record, longest and current win streak, head-to-head against every friend, best scorers, awards, season-by-season finishes and every game they've played.
 - **Rivalries:** every game card shows the all-time series between the two players. The All-time view has a full rivalry grid.
-- **Awards:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero. The Awards tab shows the race during the season. MVP voting opens when the regular season ends. Everything becomes final, and votes are revealed, when the host starts the next season.
+- **Awards and Season review:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero appear in the **Season review** (button on the champion banner, or next to the season picker for past seasons), along with final standings, top scorers, biggest moments and season totals. MVP voting sits on the Playoffs tab during the playoffs; awards lock in and votes are revealed when the host starts the next season. All-time → **Trophy cabinet** lists every award.
 
 ## Draft lottery
 
@@ -51,7 +51,7 @@ Signed-in players see only their own schedule and can log any of their games in 
 
 ## Stats
 
-The **Stats** tab (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
+The **Stats** tab, which also holds the goal scorers leaderboard, (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
 
 ## Draft clock
 
