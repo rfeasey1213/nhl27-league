@@ -36,6 +36,19 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 - **Rivalries:** every game card shows the all-time series between the two players. The All-time view has a full rivalry grid.
 - **Awards:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero. The Awards tab shows the race during the season. MVP voting opens when the regular season ends. Everything becomes final, and votes are revealed, when the host starts the next season.
 
+## Draft lottery
+
+Before the draft the host gives every player a tier (Tier 1 = most skilled, Tier 4 = least) on the Draft tab. Each player gets lottery balls by tier (default 40 / 25 / 15 / 8 for Tiers 4 / 3 / 2 / 1). The top 3 picks are drawn by weighted lottery; everyone else follows in reverse tier order, shuffled within each tier. The host reveals the picks live, last to first. Every run is saved and visible, including re-runs.
+
+## My games
+
+Signed-in players see only their own schedule and can log any of their games in any order. Logged games can be edited later by either player, whoever logged it, or the host. Playoff edits that would undo a series result later games depend on are blocked.
+
+## Resets (host)
+
+- **Back to draft day:** clears games, playoffs, divisions and picks, then restarts the draft with the same order.
+- **Reset league:** also clears the draft and lottery and goes back to setting tiers and the order.
+
 ## NHL 27 ratings
 
 A GitHub Action (`.github/workflows/ratings.yml`) runs every Monday and whenever the importer changes. It reads EA SPORTS' public NHL 27 ratings pages and saves `data/ratings.json`. EA's site lists the league's top 300 players, so each team shows its best 7–10 players. Team overall = 45% top forwards + 30% top defensemen + 25% starting goalie (estimated for teams with no goalie in EA's list). You can also run it by hand from the repo's **Actions** tab → *Update NHL 27 ratings* → **Run workflow**.

@@ -103,6 +103,30 @@ header.board::after{content:"";position:absolute;top:-60%;right:-8%;width:46%;he
 .upset{color:var(--gold)}
 .src{font-size:12px;color:var(--muted)}
 
+/* My games */
+.log-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--glacier);border-radius:10px;background:rgba(95,227,255,.07)}
+.log-title b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase}
+#log-form{padding:14px;border:1px solid var(--line-2);border-radius:12px;background:rgba(3,14,30,.35)}
+.game.sel{border-color:var(--glacier);box-shadow:0 0 16px rgba(95,227,255,.25)}
+
+/* Lottery */
+.lot{display:grid;gap:10px;padding:14px;border:1px solid var(--glacier);border-radius:12px;background:linear-gradient(160deg,rgba(42,168,255,.14),rgba(4,14,30,.5));box-shadow:0 0 26px rgba(95,227,255,.15)}
+.lot-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.lot-head b{font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;text-transform:uppercase}
+.lot-head span{font:600 12px var(--data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lot-list{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.lot-list li{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--glass-2)}
+.lot-list li .pk{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;line-height:1;color:var(--frost)}
+.lot-list li .pl small{color:var(--muted);font-size:12.5px;margin-left:6px}
+.lot-list li .q{font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;color:var(--muted);letter-spacing:.2em}
+.lot-list li .tag{font:700 10.5px var(--data);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lot-list li.drawn .tag{color:var(--gold)}
+.lot-list li.drawn:not(.hidden-pick){border-color:rgba(255,214,107,.45)}
+.lot-list li.hidden-pick{opacity:.6;border-style:dashed}
+.lot-list li.new{border-color:var(--glacier);box-shadow:0 0 18px rgba(95,227,255,.35)}
+@media (prefers-reduced-motion:no-preference){.lot-list li.new{animation:pop .6s ease-out}}
+@keyframes pop{0%{transform:scale(.96);opacity:.2}100%{transform:none;opacity:1}}
+
 /* Season picker */
 .viewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .viewbar select{width:auto;min-width:220px;max-width:100%}
@@ -362,7 +386,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <button role="tab" data-tab="awards" aria-selected="false">Awards</button>
     <button role="tab" data-tab="results" aria-selected="false">Results</button>
     <button role="tab" data-tab="scorers" aria-selected="false">Scorers</button>
-    <button role="tab" data-tab="log" aria-selected="false">Log a game</button>
+    <button role="tab" data-tab="log" aria-selected="false">My games</button>
     <button role="tab" data-tab="players" aria-selected="false">Players</button>
   </nav>
 
@@ -412,13 +436,16 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
   </section>
 
   <section class="panel" id="p-log" hidden>
-    <h2>Log a game</h2>
+    <div class="filter">
+      <h2>My games</h2>
+      <select id="log-scope" aria-label="Whose games to show" hidden>
+        <option value="mine">My games</option>
+        <option value="all">Everyone's games (host)</option>
+      </select>
+    </div>
     <div id="log-blocked" class="empty" hidden></div>
-    <form id="log-form">
-      <div class="field">
-        <label for="l-fixture">Matchup</label>
-        <select id="l-fixture" required></select>
-      </div>
+    <form id="log-form" hidden>
+      <div class="log-title"><b id="log-title">Log a result</b><button class="sm" type="button" id="log-cancel">Cancel</button></div>
       <div class="matchup">
         <div class="field"><span class="lbl">Home</span><span class="team" id="l-hname">–</span><span class="club" id="l-hclub"></span>
           <input id="l-hs" class="goals" type="number" min="0" max="20" inputmode="numeric" required aria-label="Home goals" value="0">
@@ -442,8 +469,9 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
       </div>
       <div class="field"><label for="l-note">Note (optional)</label><input id="l-note" maxlength="120" placeholder="e.g. Comeback in the 3rd"></div>
       <button class="btn" type="submit" id="l-submit">Save result</button>
-      <p class="msg" id="log-msg"></p>
     </form>
+    <p class="msg" id="log-msg"></p>
+    <div id="log-list"></div>
   </section>
 
   <section class="panel" id="p-players" hidden>
@@ -620,7 +648,7 @@ async function unlockToken(K,box){return dec.decode(await unseal(await rawKey(K)
 
 /* ===== League model ===== */
 function norm(L){
-  L.phase=L.phase||"setup";L.players=L.players||[];L.games=L.games||[];L.auth=L.auth||{};L.history=L.history||[];L.archive=L.archive||[];L.mvpVotes=L.mvpVotes||{};
+  L.phase=L.phase||"setup";L.players=L.players||[];L.games=L.games||[];L.auth=L.auth||{};L.history=L.history||[];L.archive=L.archive||[];L.mvpVotes=L.mvpVotes||{};L.lotteryRuns=L.lotteryRuns||[];
   L.divisions=L.divisions||{A:{name:"Division A"},B:{name:"Division B"}};
   if(!L.gamesPer)L.gamesPer=12;if(!L.playoffSpots)L.playoffSpots=2;
   for(const g of L.games){g.stage=g.stage||"rs";g.goals=g.goals||{h:[],a:[]}}
@@ -684,7 +712,7 @@ function applyPlayoffs(X){
 }
 function computeTable(L){
   const rows=new Map(L.players.map(p=>[p.u,{u:p.u,p,gp:0,w:0,l:0,otl:0,gf:0,ga:0,log:[]}]));
-  const games=rsGames(L).sort((a,b)=>(a.playedAt+a.createdAt).localeCompare(b.playedAt+b.createdAt));
+  const games=rsGames(L).sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||"")));
   for(const g of games){
     const H=rows.get(g.home),A=rows.get(g.away);if(!H||!A)continue;
     const homeWon=g.hs>g.as,extra=g.result!=="REG";
@@ -698,6 +726,35 @@ function computeTable(L){
     let s="";if(r.log.length){const last=r.log.at(-1);let n=0;for(let i=r.log.length-1;i>=0&&r.log[i]===last;i--)n++;s=(last==="O"?"OT":last)+n}r.streak=s;return r});
   out.sort((a,b)=>b.pts-a.pts||b.w-a.w||b.gd-a.gd||b.gf-a.gf||a.u.localeCompare(b.u));
   return out;
+}
+/* Draft lottery: each player gets balls by tier (Tier 4 = least skilled = most balls).
+   The first `draws` picks are drawn by weighted lottery without replacement; everyone
+   else follows in reverse tier order (Tier 4 first), shuffled within each tier. */
+const TIER_NAMES={1:"Tier 1 · most skilled",2:"Tier 2",3:"Tier 3",4:"Tier 4 · least skilled"};
+function lotteryCfg(L){const c=L.lottery||{},b=c.balls||{};const v=(x,d)=>{x=parseInt(x,10);return Number.isFinite(x)&&x>=0&&x<=999?x:d};
+  return{balls:{1:v(b[1],8),2:v(b[2],15),3:v(b[3],25),4:v(b[4],40)},draws:Math.max(1,Math.min(5,parseInt(c.draws,10)||3))}}
+function tierOf(p){const t=parseInt(p?.tier,10);return t>=1&&t<=4?t:2}
+/* Exact chance of each player landing each of the lottery picks. */
+function lotteryOdds(players,tiers,cfg){
+  const us=players.map(p=>p.u),w=Object.fromEntries(us.map(u=>[u,cfg.balls[tiers[u]]??0]));
+  const k=Math.min(cfg.draws,us.length),P=Object.fromEntries(us.map(u=>[u,Array(k).fill(0)]));
+  (function rec(left,pos,prob){if(pos>=k||!left.length||prob<1e-12)return;
+    const tot=left.reduce((s,u)=>s+w[u],0);
+    for(const u of left){const q=tot>0?w[u]/tot:1/left.length;if(!q)continue;P[u][pos]+=prob*q;rec(left.filter(x=>x!==u),pos+1,prob*q)}})(us,0,1);
+  return us.map(u=>({u,tier:tiers[u],balls:w[u],first:P[u][0]||0,top:P[u].reduce((a,b)=>a+b,0)}));
+}
+function drawLottery(players,tiers,cfg,rand){
+  let left=players.map(p=>p.u);const drawn=[],k=Math.min(cfg.draws,left.length);
+  const odds=Object.fromEntries(lotteryOdds(players,tiers,cfg).map(o=>[o.u,o.first]));
+  for(let i=0;i<k;i++){
+    const w=left.map(u=>cfg.balls[tiers[u]]??0),tot=w.reduce((a,b)=>a+b,0);
+    let x=rand()*(tot||left.length),j=0;
+    if(tot>0){while(j<left.length-1&&x>=w[j]){x-=w[j];j++}}else j=Math.floor(x);
+    drawn.push(left[j]);left.splice(j,1);
+  }
+  const shuffled=[...left];for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]}
+  shuffled.sort((a,b)=>tiers[b]-tiers[a]);
+  return{order:[...drawn,...shuffled],lotteryPicks:drawn.length,firstOdds:odds};
 }
 /* Draft */
 function draftOnClock(L){if(L.phase!=="draft"||!L.draft)return null;return L.draft.order.find(u=>!L.draft.picks[u])||null}
@@ -765,6 +822,8 @@ function buildBracket(L){
 function validatePlayoffs(L){
   const br=buildBracket(L);if(!br)return poGames(L).length===0;
   const map=new Map(br.all.map(s=>[s.id,s]));
+  for(const s of br.all){if(s.pending)continue;const need=Math.ceil(s.bo/2);let a=0,b=0;
+    for(const g of s.games){if(a>=need||b>=need)return false;const w=g.hs>g.as?g.home:g.away;if(w===s.a)a++;else b++}}
   for(const g of poGames(L)){const s=map.get(g.series);
     if(!s||s.pending)return false;
     if(!((g.home===s.a&&g.away===s.b)||(g.home===s.b&&g.away===s.a)))return false}
@@ -870,7 +929,7 @@ function show(t){if(!TABS.includes(t))t="standings";S.tab=t;store.set("nhl27-tab
 const PHASE_LABEL={setup:"Pre-draft",draft:"Draft live",season:"Regular season",playoffs:"Playoffs",done:"Archived season"};
 /* ===== Season archive ===== */
 function archiveView(L,i){const A=L.archive[i];if(!A)return null;
-  return{name:L.name,season:A.season,phase:"done",archived:true,players:A.players.map(p=>({...p,host:false})),games:A.games||[],playoffs:A.playoffs||null,draft:A.draft||null,divisions:A.divisions||L.divisions,gamesPer:A.gamesPer||12,history:L.history,archive:[],mvpVotes:A.mvpVotes||{}}}
+  return{name:L.name,season:A.season,phase:"done",archived:true,players:A.players.map(p=>({...p,host:false})),games:A.games||[],playoffs:A.playoffs||null,draft:A.draft||null,divisions:A.divisions||L.divisions,gamesPer:A.gamesPer||12,history:L.history,archive:[],mvpVotes:A.mvpVotes||{},lotteryRuns:A.lotteryRuns||[]}}
 function allTimeView(L){
   const seasons=[...L.archive.map(a=>({label:a.season,games:a.games||[]})),{label:L.season,games:L.games}];
   const us=[];for(const a of L.archive)for(const p of a.players)if(!us.includes(p.u))us.push(p.u);for(const p of L.players)if(!us.includes(p.u))us.push(p.u);
@@ -960,9 +1019,12 @@ function renderDraftBody(L){
     p.append(h("h2",{},"Draft"));
     const order=S.orderDraft&&S.orderDraft.length===L.draftOrder.length&&S.orderDraft.every(u=>L.draftOrder.includes(u))?S.orderDraft:[...L.draftOrder];
     const dirty=order.join()!==L.draftOrder.join();
-    p.append(h("p",{class:"hint"},host?"Set the pick order, then start the draft when everyone's ready. Each player picks one NHL team on their turn.":"The draft hasn't started yet. Here's the pick order the host has set."));
+    p.append(h("p",{class:"hint"},host?"Set each player's tier and run the lottery to decide the pick order (or arrange it by hand below), then start the draft. Each player picks one NHL team on their turn.":"The draft hasn't started yet. The host sets tiers and runs the lottery to decide the pick order."));
     if(L.players.length<2){p.append(h("div",{class:"empty"},h("b",{},"Need two players"),"The host adds players on the Players tab."));return}
-    p.append(h("ol",{class:"order"},order.map((u,i)=>h("li",{},h("span",{},u),h("span",{class:"t"},"–"),
+    renderLottery(p,L,host);
+    if(L.lotteryLive){p.append(h("p",{class:"hint"},"The draft order appears once the lottery is fully revealed."));return}
+    p.append(h("h3",{},"Draft order"));
+    p.append(h("ol",{class:"order"},order.map((u,i)=>h("li",{},h("span",{},u),h("span",{class:"t"},"Tier "+tierOf(L.players.find(x=>x.u===u))),
       host?h("span",{class:"mv"},
         h("button",{class:"sm",type:"button","aria-label":"Move "+u+" up",disabled:i===0,onclick:()=>{const o=[...order];[o[i-1],o[i]]=[o[i],o[i-1]];S.orderDraft=o;renderDraft(L)}},"↑"),
         h("button",{class:"sm",type:"button","aria-label":"Move "+u+" down",disabled:i===order.length-1,onclick:()=>{const o=[...order];[o[i+1],o[i]]=[o[i],o[i+1]];S.orderDraft=o;renderDraft(L)}},"↓")):h("span",{})))));
@@ -974,6 +1036,7 @@ function renderDraftBody(L){
       const n=rsGames(L).length+poGames(L).length;
       const start=h("button",{class:"btn",type:"button",disabled:dirty,onclick:ev=>twoTap(ev.currentTarget,n?`Tap again: clears ${n} logged game${n>1?"s":""}`:"Tap again to start",()=>mutate("Start draft",X=>{
         if(X.phase!=="setup")throw new Error("The draft already started.");if(X.players.length<2)throw new Error("Add at least two players first.");
+        if(X.lotteryLive)throw new Error("Finish revealing the lottery first.");
         X.games=[];X.playoffs=null;for(const q of X.players){q.team="";delete q.div}
         X.draft={order:[...X.draftOrder],picks:{},startedAt:new Date().toISOString()};X.phase="draft"}))},"Start draft");
       p.append(h("div",{class:"row"},save,start),msg);
@@ -1025,7 +1088,73 @@ function renderDraftBody(L){
     }
   }else{
     p.append(h("p",{class:"hint"},"Players were split randomly into two divisions when the draft finished."));
+    if(L.lotteryRuns?.length)p.append(lotteryBoard(L,L.lotteryRuns.at(-1),null,false));
   }
+}
+
+/* --- Draft lottery UI --- */
+const pct=x=>(x*100>=10?(x*100).toFixed(0):(x*100).toFixed(1))+"%";
+function lotteryBoard(L,run,revealed,live){
+  const N=run.order.length,shownFrom=revealed==null?0:N-revealed;
+  const box=h("div",{class:"lot"},h("div",{class:"lot-head"},h("b",{},live?"Lottery live":"Draft lottery"),h("span",{},`${fmtDate(run.at.slice(0,10))} · ${run.lotteryPicks} pick${run.lotteryPicks>1?"s":""} drawn`)));
+  box.append(h("ol",{class:"lot-list"},run.order.map((u,i)=>{
+    const shown=i>=shownFrom,isNew=live&&i===shownFrom;
+    return h("li",{class:(shown?"":"hidden-pick")+(i<run.lotteryPicks?" drawn":"")+(isNew?" new":"")},
+      h("span",{class:"pk"},"#"+(i+1)),
+      shown?h("span",{class:"pl"},logo(null),P(u),h("small",{},`Tier ${run.tiers[u]} · ${pct(run.firstOdds?.[u]||0)} to win #1`)):h("span",{class:"q"},"?"),
+      h("span",{class:"tag"},shown?(i<run.lotteryPicks?"Lottery":"By tier"):""));
+  })));
+  return box;
+}
+function renderLottery(p,L,host){
+  const cfgSaved=lotteryCfg(L);
+  const live=L.lotteryLive,run=live?L.lotteryRuns[live.run]:L.lotteryRuns.at(-1);
+  if(live&&run){
+    p.append(lotteryBoard(L,run,live.revealed,true));
+    if(host){const nextPick=run.order.length-live.revealed;
+      const reveal=(all)=>mutate(all?"Reveal the whole lottery":`Lottery: reveal pick #${nextPick}`,X=>{const lv=X.lotteryLive;if(!lv)return;const r=X.lotteryRuns[lv.run];lv.revealed=all?r.order.length:Math.min(r.order.length,lv.revealed+1);if(lv.revealed>=r.order.length){r.revealedAt=new Date().toISOString();X.lotteryLive=null}});
+      const b1=h("button",{class:"btn",type:"button",onclick:async()=>{b1.disabled=true;try{await reveal(false)}catch(e){flash(saveErr(e));b1.disabled=false}}},nextPick===1?"Reveal the #1 pick":`Reveal pick #${nextPick}`);
+      const b2=h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to reveal everything",()=>reveal(true))},"Reveal all");
+      p.append(h("div",{class:"row"},b1,b2),h("p",{class:"hint"},"Everyone with the page open sees each pick within a few seconds. Picks are revealed from last to first."));
+    }else p.append(h("p",{class:"hint"},"The host is revealing the lottery. This page updates every few seconds."+(signedIn()?"":" Sign in to see picks live.")));
+    return;
+  }
+  if(run&&run.revealedAt)p.append(lotteryBoard(L,run,null,false));
+  if(L.lotteryRuns.length>1)p.append(h("p",{class:"legend"},"Lottery runs this season: "+L.lotteryRuns.map((r,i)=>`#${i+1} at ${new Date(r.at).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})} (#1 pick: ${r.order[0]})`).join(" · ")+". The latest run sets the order."));
+  // Tiers + odds
+  const tiers=Object.fromEntries(L.players.map(q=>[q.u,S.tierDraft?.[q.u]??tierOf(q)]));
+  const cfg=S.lotDraft||cfgSaved;
+  const odds=lotteryOdds(L.players,tiers,cfg).sort((a,b)=>b.first-a.first||a.u.localeCompare(b.u));
+  const dirty=!!(S.tierDraft&&Object.keys(S.tierDraft).length)||!!S.lotDraft;
+  const sec=h("div",{class:"ctl"},h("h3",{style:"margin:0"},"Draft lottery"),
+    h("p",{class:"hint"},`Tier 1 is the most skilled, Tier 4 the least. More balls means better odds. The top ${cfg.draws} pick${cfg.draws>1?"s are":" is"} drawn by lottery; everyone else picks in reverse tier order (Tier 4 first), shuffled within each tier.`));
+  sec.append(h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"Player"),h("th",{class:"l"},"Tier"),h("th",{},"Balls"),h("th",{},"#1 pick"),h("th",{},`Top ${Math.min(cfg.draws,L.players.length)}`))),
+    h("tbody",{},odds.map(o=>h("tr",{},h("td",{class:"l"},P(o.u)),
+      h("td",{class:"l"},host?h("select",{id:"tier-"+o.u,"aria-label":"Tier for "+o.u,style:"width:auto;padding:5px 8px;font-size:14px",onchange:e=>{S.tierDraft={...(S.tierDraft||{}),[o.u]:parseInt(e.target.value,10)};renderDraft(S.league)}},[1,2,3,4].map(t=>h("option",{value:t,selected:t===o.tier},"Tier "+t))):"Tier "+o.tier),
+      h("td",{},o.balls),h("td",{class:"pts"},pct(o.first)),h("td",{},pct(o.top))))))));
+  const byTier=[4,3,2,1].map(t=>{const sum=odds.filter(o=>o.tier===t).reduce((a,o)=>a+o.first,0);return`Tier ${t}: ${pct(sum)}`});
+  sec.append(h("p",{class:"legend"},"Chance the #1 pick goes to each tier: "+byTier.join(" · ")));
+  if(host){
+    const bf=(t)=>h("div",{class:"field",style:"flex:1 1 90px"},h("label",{for:"balls-"+t},`Tier ${t} balls`),h("input",{id:"balls-"+t,type:"number",min:"0",max:"999",inputmode:"numeric",value:cfg.balls[t],onchange:e=>{const c=structuredClone(cfg);c.balls[t]=Math.max(0,Math.min(999,parseInt(e.target.value,10)||0));S.lotDraft=c;renderDraft(S.league)}}));
+    const dsel=h("select",{id:"lot-draws",onchange:e=>{const c=structuredClone(cfg);c.draws=parseInt(e.target.value,10);S.lotDraft=c;renderDraft(S.league)}},[1,2,3,4,5].filter(n=>n<=L.players.length).map(n=>h("option",{value:n,selected:n===cfg.draws},`Top ${n} drawn`)));
+    sec.append(h("div",{class:"row"},bf(4),bf(3),bf(2),bf(1),h("div",{class:"field",style:"flex:1 1 140px"},h("label",{for:"lot-draws"},"Lottery picks"),dsel)));
+    const msg=h("p",{class:"msg"});
+    const save=h("button",{class:"btn ghost",type:"button",disabled:!dirty,onclick:async()=>{save.disabled=true;msg.textContent="Saving…";msg.className="msg";
+      try{await mutate("Set lottery tiers",X=>{if(X.phase!=="setup")throw new Error("The draft already started.");for(const q of X.players)if(tiers[q.u])q.tier=tiers[q.u];X.lottery={balls:cfg.balls,draws:cfg.draws}});S.tierDraft=null;S.lotDraft=null;msg.textContent="Saved.";msg.className="msg ok"}
+      catch(e){msg.textContent=saveErr(e);msg.className="msg err";save.disabled=false}}},"Save tiers");
+    const runIt=()=>mutate("Run the draft lottery",X=>{
+      if(X.phase!=="setup")throw new Error("The draft already started.");if(X.lotteryLive)throw new Error("A lottery reveal is already in progress.");
+      const tz=Object.fromEntries(X.players.map(q=>[q.u,tierOf(q)])),c=lotteryCfg(X);
+      const rand=()=>crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;
+      const res=drawLottery(X.players,tz,c,rand);
+      X.lotteryRuns.push({at:new Date().toISOString(),by:me(),tiers:tz,balls:c.balls,draws:c.draws,...res});
+      X.draftOrder=[...res.order];X.lotteryLive={run:X.lotteryRuns.length-1,revealed:0};
+    }).then(()=>{S.orderDraft=null});
+    const runBtn=h("button",{class:"btn",type:"button",disabled:dirty,onclick:ev=>L.lotteryRuns.length?confirmTap(ev.currentTarget,["Run it again? Tap again",`Last chance: replaces run #${L.lotteryRuns.length} (everyone can see both)`],runIt):twoTap(ev.currentTarget,"Tap again to run the lottery",runIt)},L.lotteryRuns.length?"Re-run lottery":"Run lottery");
+    sec.append(h("div",{class:"row"},save,runBtn),msg);
+    if(dirty)sec.append(h("p",{class:"hint"},"Save the tiers before running the lottery."));
+  }
+  p.append(sec);
 }
 
 /* --- Standings --- */
@@ -1160,7 +1289,8 @@ function renderResults(L){
     if(g.stage==="po"){const s=smap.get(g.series);canDel=canDel&&!!s&&s.games.at(-1)?.id===g.id}
     let tag=g.stage==="po"?(smap.get(g.series)?seriesLabel(L,smap.get(g.series))+" · G"+g.gameNo:"Playoffs"):null;
     if(L.allTime)tag=g._season+(g.stage==="po"?" · Playoffs":"");
-    rs.append(gameCard(g,g.home,g.away,[h("span",{},fmtDate(g.playedAt)+(g.note?" · "+g.note:"")),canDel?h("button",{class:"sm",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>deleteGame(g.id))},"Delete"):null],tag));
+    const canEd=L===S.league&&signedIn()&&canEditGame(L,g,me());
+    rs.append(gameCard(g,g.home,g.away,[h("span",{},fmtDate(g.playedAt)+(g.note?" · "+g.note:"")),canEd?h("button",{class:"sm",type:"button",onclick:()=>openEdit(g)},"Edit"):null,canDel?h("button",{class:"sm",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>deleteGame(g.id))},"Delete"):null],tag));
   }
 }
 function deleteGame(id){
@@ -1185,23 +1315,46 @@ function renderScorers(L){
 }
 
 /* --- Log a game --- */
+/* Who may edit a logged game: the two players, whoever logged it, or the host. */
+function canEditGame(X,g,u){
+  const pl=X.players.find(p=>p.u===u);if(!pl)return false;
+  const mine=pl.host||g.home===u||g.away===u||g.loggedBy===u;if(!mine)return false;
+  if(g.stage==="po")return X.phase==="playoffs";
+  return X.phase==="season"||(X.phase==="playoffs"&&!!pl.host);
+}
+function openLog(key){S.editId=null;S.logKey=key;S.goalDraft={h:[],a:[]};$("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-date").value=today();setResult("REG");setMsg("log-msg","");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
+function openEdit(g){S.logKey=null;S.editId=g.id;S.goalDraft={h:[...(g.goals?.h||[])],a:[...(g.goals?.a||[])]};$("l-hs").value=g.hs;$("l-as").value=g.as;$("l-note").value=g.note||"";$("l-date").value=g.playedAt||today();setResult(g.result||"REG");setMsg("log-msg","");show("log");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
+function closeLog(){S.logKey=null;S.editId=null;renderLog(S.league)}
 function renderLog(L){
-  const fx=$("l-fixture");
-  const open=openFixtures(L);
-  open.sort((x,y)=>{const mx=(x.home===me()||x.away===me())?0:1,my=(y.home===me()||y.away===me())?0:1;return mx-my||x.order-y.order});
-  const cur=S.fixtureKey||fx.value;
-  fx.replaceChildren(h("option",{value:""},open.length?"Choose a matchup":"No games to log right now"),...open.map(o=>h("option",{value:o.key},`${o.home} (home) vs ${o.away} (away) · ${o.label}`)));
-  if(open.some(o=>o.key===cur))fx.value=cur;else fx.value="";
-  S.fixtureKey=null;
-  const blocked=$("log-blocked");
-  let why=null;
-  if(L.phase==="setup"||L.phase==="draft")why=["After the draft","Games can be logged once everyone has drafted a team."];
-  else if(!open.length)why=L.phase==="playoffs"?(buildBracket(L)?.champion?["Season complete","The champion has been crowned."]:["Waiting","No playoff series is ready for its next game."]):["All played","Every regular season game is in. The host can start the playoffs."];
-  if(why){$("log-form").hidden=true;blocked.hidden=false;blocked.replaceChildren(h("b",{},why[0]),why[1])}
-  else{$("log-form").hidden=false;blocked.hidden=true}
+  if(S.fixtureKey){S.logKey=S.fixtureKey;S.editId=null;S.fixtureKey=null;S.goalDraft={h:[],a:[]}}
+  const host=signedIn()&&isHost(),scopeSel=$("log-scope");
+  scopeSel.hidden=!host;if(!host)S.logAll=false;scopeSel.value=S.logAll?"all":"mine";
+  const mine=g=>S.logAll||g.home===me()||g.away===me();
+  const open=openFixtures(L).filter(mine).sort((x,y)=>x.order-y.order);
+  const played=L.games.filter(mine).sort((a,b)=>(b.playedAt+b.createdAt).localeCompare(a.playedAt+a.createdAt));
+  if(S.logKey&&!openFixtures(L).some(o=>o.key===S.logKey))S.logKey=null;
+  if(S.editId&&!L.games.some(g=>g.id===S.editId))S.editId=null;
+  const blocked=$("log-blocked"),list=$("log-list");list.replaceChildren();
+  if(L.phase==="setup"||L.phase==="draft"){blocked.hidden=false;blocked.replaceChildren(h("b",{},"After the draft"),"Your schedule shows up here once everyone has drafted a team.");$("log-form").hidden=true;return}
+  blocked.hidden=true;
+  $("log-form").hidden=!(S.logKey||S.editId);
+  const f=currentFixture();
+  $("log-title").textContent=S.editId?`Edit: ${f?.home||""} vs ${f?.away||""}`:f?`${f.label}: ${f.home} (home) vs ${f.away}`:"Log a result";
+  $("l-submit").textContent=S.editId?"Save changes":"Save result";
+  const playoffsOver=L.phase==="playoffs"&&buildBracket(L)?.champion;
+  list.append(h("h3",{},`To play (${open.length})`));
+  if(!open.length)list.append(h("p",{class:"hint"},playoffsOver?"The season is over. The champion has been crowned.":L.phase==="playoffs"?(S.logAll?"No playoff series is waiting on a game.":"You have no playoff games to play right now."):"You've played all your regular season games."));
+  else list.append(h("div",{class:"list"},open.map(o=>{const c=gameCard(null,o.home,o.away,[h("span",{},o.label),h("button",{class:"sm go",type:"button",onclick:()=>openLog(o.key)},"Log result")]);if(o.key===S.logKey)c.classList.add("sel");return c})));
+  list.append(h("h3",{},`Played (${played.length})`));
+  if(!played.length)list.append(h("p",{class:"hint"},"Nothing logged yet."));
+  else list.append(h("div",{class:"list"},played.map(g=>{const ed=canEditGame(L,g,me());const c=gameCard(g,g.home,g.away,[h("span",{},fmtDate(g.playedAt)),ed?h("button",{class:"sm",type:"button",onclick:()=>openEdit(g)},"Edit"):null],g.stage==="po"?"Playoffs · G"+g.gameNo:null);if(g.id===S.editId)c.classList.add("sel");return c})));
   syncFixture();
 }
-function currentFixture(){const v=$("l-fixture").value;return v?openFixtures(S.league).find(o=>o.key===v)||null:null}
+function currentFixture(){
+  const L=S.league;if(!L)return null;
+  if(S.editId){const g=L.games.find(x=>x.id===S.editId);return g?{edit:true,id:g.id,home:g.home,away:g.away,stage:g.stage,label:g.stage==="po"?"Playoffs":"Regular season"}:null}
+  return S.logKey?openFixtures(L).find(o=>o.key===S.logKey)||null:null;
+}
 function syncFixture(){
   const f=currentFixture();
   $("l-hname").textContent=f?.home||"–";$("l-aname").textContent=f?.away||"–";
@@ -1274,7 +1427,7 @@ function renderPoForm(L){
 }
 function renderSeasonCtl(L,br){
   const c=$("season-ctl");c.replaceChildren();
-  $("reset-ctl").replaceChildren(...(L.phase==="setup"&&!L.games.length?[]:[resetButton(L)]));
+  $("reset-ctl").replaceChildren(...(L.phase==="setup"&&!L.games.length&&!L.lotteryRuns?.length?[]:[resetButton(L)]));
   const rsN=rsGames(L).length,poN=poGames(L).length;
   if(L.phase==="setup"){
     c.append(h("p",{class:"hint"},`Pre-draft. Add everyone below, then set the pick order and start the draft on the Draft tab.`),h("button",{class:"btn ghost",type:"button",onclick:()=>show("draft")},"Go to draft"));
@@ -1296,15 +1449,26 @@ function renderSeasonCtl(L,br){
 }
 function resetLeague(){
   return mutate("Reset league",X=>{
-    X.games=[];X.playoffs=null;X.draft=null;X.phase="setup";X.mvpVotes={};
+    X.games=[];X.playoffs=null;X.draft=null;X.phase="setup";X.mvpVotes={};X.lotteryRuns=[];X.lotteryLive=null;
     for(const q of X.players){q.team="";delete q.div}
   }).then(()=>{S.orderDraft=null;show("draft")});
 }
+function backToDraftDay(){
+  return mutate("Back to draft day",X=>{
+    if(!X.draft)throw new Error("There's no draft to go back to yet. Use the Draft tab to start one.");
+    X.games=[];X.playoffs=null;X.mvpVotes={};
+    for(const q of X.players){q.team="";delete q.div}
+    X.draft={order:[...X.draft.order],picks:{},startedAt:new Date().toISOString()};X.phase="draft";
+  }).then(()=>{S.tab="draft";render()});
+}
 function resetButton(L){
   const n=L.games.length;
-  return h("div",{class:"ctl"},
-    h("p",{class:"hint"},"Reset the league to the start: clears every game, the draft, divisions and playoffs, then takes you back to setting the draft order. Players, passwords and archived seasons stay."),
-    h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Are you sure? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and reset`:"Last chance: tap to reset"],resetLeague)},"Reset league"));
+  const day=L.draft?h("div",{class:"ctl"},
+    h("p",{class:"hint"},"Back to draft day: clears every game, the playoffs, divisions and team picks, then restarts the draft with the same pick order. Players, passwords, tiers and the lottery result stay."),
+    h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Back to draft day? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and redo the draft`:"Last chance: tap to restart the draft"],backToDraftDay)},"Back to draft day")):null;
+  return h("div",{style:"display:grid;gap:12px"},day,h("div",{class:"ctl"},
+    h("p",{class:"hint"},"Reset league: clears every game, the draft, divisions, playoffs and the lottery, then goes back to setting tiers and the draft order. Players, passwords and archived seasons stay."),
+    h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Are you sure? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and reset`:"Last chance: tap to reset"],resetLeague)},"Reset league")));
 }
 function startPlayoffs(){
   return mutate("Start playoffs",X=>{
@@ -1324,9 +1488,10 @@ function newSeason(){
       players:X.players.map(p=>({u:p.u,team:p.team||"",div:p.div||null})),
       draft:X.draft?structuredClone(X.draft):null,playoffs:X.playoffs?structuredClone(X.playoffs):null,
       games:X.games.map(g=>({...g,hab:g.hab||picks[g.home]||null,aab:g.aab||picks[g.away]||null})),
-      mvpVotes:structuredClone(X.mvpVotes||{})
+      mvpVotes:structuredClone(X.mvpVotes||{}),
+      lotteryRuns:structuredClone(X.lotteryRuns||[])
     });
-    X.mvpVotes={};
+    X.mvpVotes={};X.lotteryRuns=[];X.lotteryLive=null;
     if(champ)X.history.push({season:X.season||"",champion:champ,team:X.players.find(p=>p.u===champ)?.team||"",at:new Date().toISOString()});
     X.games=[];X.playoffs=null;X.draft=null;X.phase="setup";for(const q of X.players){q.team="";delete q.div}
     X.season=nextSeasonName(X.season);
@@ -1609,7 +1774,8 @@ $("profile").addEventListener("click",e=>{if(e.target.id==="profile")closeProfil
 /* ===== Wiring ===== */
 document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
 $("l-result").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setResult(b.dataset.v)});
-$("l-fixture").addEventListener("change",()=>{S.goalDraft={h:[],a:[]};syncFixture()});
+$("log-cancel").addEventListener("click",closeLog);
+$("log-scope").addEventListener("change",e=>{S.logAll=e.target.value==="all";renderLog(S.league)});
 $("l-hs").addEventListener("input",renderGoalInputs);$("l-as").addEventListener("input",renderGoalInputs);
 $("sch-filter").addEventListener("change",e=>{S.schFilter=e.target.value;renderSchedule(S.league)});
 $("res-filter").addEventListener("change",e=>{S.resFilter=e.target.value;renderResults(S.league)});
@@ -1628,6 +1794,19 @@ $("log-form").addEventListener("submit",async e=>{
   const goals={h:S.goalDraft.h.slice(0,hs).map(x=>(x||"").trim().slice(0,30)),a:S.goalDraft.a.slice(0,as).map(x=>(x||"").trim().slice(0,30))};
   while(goals.h.length<hs)goals.h.push("");while(goals.a.length<as)goals.a.push("");
   $("l-submit").disabled=true;setMsg("log-msg","Saving…");
+  if(f.edit){
+    try{
+      await mutate(`Edit: ${f.home} ${hs}-${as} ${f.away}`,X=>{
+        const g=X.games.find(x=>x.id===f.id);if(!g)throw new Error("That game was deleted.");
+        if(!canEditGame(X,g,me()))throw new Error(g.stage==="rs"&&X.phase==="playoffs"?"Regular season games are locked once the playoffs start (the host can still edit them).":"You can't edit this game.");
+        Object.assign(g,{hs,as,result:S.result,playedAt:date,note,goals,editedBy:me(),editedAt:new Date().toISOString()});
+        if(g.stage==="po"&&!validatePlayoffs(X))throw new Error("That change would undo a series result that later playoff games depend on. Delete those later games first.");
+      });
+      setMsg("log-msg",`Updated: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");S.editId=null;S.goalDraft={h:[],a:[]};renderLog(S.league);
+    }catch(err){setMsg("log-msg",saveErr(err),"err")}
+    finally{$("l-submit").disabled=false}
+    return;
+  }
   try{
     await mutate(`${f.stage==="po"?"Playoffs: ":""}${f.home} ${hs}-${as} ${f.away}`,X=>{
       const now=openFixtures(X).find(o=>o.key===f.key);
@@ -1639,7 +1818,7 @@ $("log-form").addEventListener("submit",async e=>{
       if(f.stage==="rs"&&!openFixtures(X).length&&poSettings(X).auto)applyPlayoffs(X);
     });
     setMsg("log-msg",`Saved: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");
-    $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-fixture").value="";S.goalDraft={h:[],a:[]};setResult("REG");syncFixture();
+    $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";S.logKey=null;S.goalDraft={h:[],a:[]};setResult("REG");renderLog(S.league);
   }catch(err){setMsg("log-msg",saveErr(err),"err")}
   finally{$("l-submit").disabled=false}
 });
@@ -1767,7 +1946,7 @@ async function load(first){
     if(first||!S.league){$("status").hidden=false;$("status").replaceChildren(h("p",{},e.status===403?"GitHub is limiting requests from your network. Wait a few minutes and reload.":"Couldn't load the league. Check your connection and reload."))}
   }
 }
-function nextDelay(){const live=S.league?.phase==="draft";return S.session?(live?4000:30000):(live?75000:90000)}
+function nextDelay(){const live=S.league?.phase==="draft"||!!S.league?.lotteryLive;return S.session?(live?4000:30000):(live?75000:90000)}
 async function loop(){if(document.visibilityState==="visible")await load(false);setTimeout(loop,nextDelay())}
 loadRatings();
 load(true).then(()=>{const m=/^#player-([a-z0-9_.-]+)$/.exec(location.hash);if(m&&S.league)openProfile(m[1]);setTimeout(loop,nextDelay())});
