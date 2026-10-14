@@ -1349,7 +1349,7 @@ function standingsTable(L,rows,cutAfter){
     h("tbody",{},rows.map((r,i)=>h("tr",{class:[r.u===me()?"me":"",cutAfter&&i===cutAfter-1&&i<rows.length-1?"cut":""].join(" ").trim()||null},
       h("td",{class:"l rank"},i+1),
       h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},P(r.u),r.p.team?h("small",{},abOf(r.u)?T(abOf(r.u),r.p.team):r.p.team):null))),
-      h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts",title:r.adj?`Includes ${r.adj>0?"+":""}${r.adj} from the commissioner${L.adjust?.[r.u]?.reason?": "+L.adjust[r.u].reason:""}`:null},r.pts,r.adj?h("sup",{class:"adj"},(r.adj>0?"+":"")+r.adj):null),
+      h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts",title:r.adj?`Includes ${r.adj>0?"+":""}${r.adj} from a league ruling${L.adjust?.[r.u]?.reason?": "+L.adjust[r.u].reason:""}`:null},r.pts,r.adj?h("sup",{class:"adj"},(r.adj>0?"+":"")+r.adj):null),
       h("td",{class:"hide-sm"},r.gf),h("td",{class:"hide-sm"},r.ga),h("td",{},(r.gd>0?"+":"")+r.gd),
       h("td",{class:"l hide-sm"},h("span",{class:"form"},r.log.slice(-5).map(x=>h("span",{class:"chip "+x,title:x==="O"?"OT/SO loss":x==="W"?"Win":"Loss"},x==="O"?"OT":x)))),
       h("td",{class:"hide-sm"},r.streak||"–"),h("td",{class:"hide-sm"},r.left))))));
