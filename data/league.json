@@ -111,14 +111,14 @@
   }
  },
  "draftOrder": [
-  "jarvis",
-  "ryan",
   "aj",
-  "mains",
-  "jamie",
   "freakas",
+  "ryan",
+  "mains",
+  "graham",
   "gio",
-  "graham"
+  "jarvis",
+  "jamie"
  ],
  "playoffs": null,
  "draft": null,
@@ -126,7 +126,50 @@
  "mvpVotes": {},
  "gamesPer": 12,
  "playoffSpots": 2,
- "lotteryRuns": [],
+ "lotteryRuns": [
+  {
+   "at": "2026-10-14T18:59:44.126Z",
+   "by": "ryan",
+   "tiers": {
+    "ryan": 2,
+    "jarvis": 1,
+    "jamie": 1,
+    "aj": 4,
+    "graham": 3,
+    "freakas": 3,
+    "mains": 4,
+    "gio": 2
+   },
+   "balls": {
+    "1": 8,
+    "2": 15,
+    "3": 25,
+    "4": 40
+   },
+   "draws": 3,
+   "order": [
+    "aj",
+    "freakas",
+    "ryan",
+    "mains",
+    "graham",
+    "gio",
+    "jarvis",
+    "jamie"
+   ],
+   "lotteryPicks": 3,
+   "firstOdds": {
+    "ryan": 0.08522727272727272,
+    "jarvis": 0.045454545454545456,
+    "jamie": 0.045454545454545456,
+    "aj": 0.22727272727272727,
+    "graham": 0.14204545454545456,
+    "freakas": 0.14204545454545456,
+    "mains": 0.22727272727272727,
+    "gio": 0.08522727272727272
+   }
+  }
+ ],
  "lottery": {
   "balls": {
    "1": 8,
@@ -136,5 +179,8 @@
   },
   "draws": 3
  },
- "lotteryLive": null
+ "lotteryLive": {
+  "run": 0,
+  "revealed": 0
+ }
 }
