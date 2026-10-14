@@ -49,6 +49,18 @@ Signed-in players see only their own schedule and can log any of their games in 
 - **Back to draft day:** clears games, playoffs, divisions and picks, then restarts the draft with the same order.
 - **Reset league:** also clears the draft and lottery and goes back to setting tiers and the order.
 
+## Draft clock
+
+Each pick has a timer (default 2 minutes; the host can change it in League settings or turn it off). When it runs out, the best-rated team left is picked automatically and marked **Auto**. Auto-picks happen when anyone signed in has the site open. The host can pause, resume, or auto-pick early.
+
+## Commissioner (host)
+
+Players tab → **Commissioner**: change any player's NHL team, division and tier, and add or remove standings points with a reason. Edit playoff seeds before the first playoff game. Log, edit or delete any game, including forfeits.
+
+## Badges and news
+
+Games get badges for hat tricks, shutouts, comebacks (entered when logging), blowouts (4+ goals), goal fests (10+ total) and upsets. An upset compares team rating plus a bonus for the player's preseason tier (Tier 1 +9, Tier 2 +6, Tier 3 +3, Tier 4 +0): 5+ points is an upset, 10+ a big upset. The **News** tab writes headlines from these, plus win streaks, snapped streaks, series results, the lottery and draft. The host can post announcements.
+
 ## NHL 27 ratings
 
 A GitHub Action (`.github/workflows/ratings.yml`) runs every Monday and whenever the importer changes. It reads EA SPORTS' public NHL 27 ratings pages and saves `data/ratings.json`. EA's site lists the league's top 300 players, so each team shows its best 7–10 players. Team overall = 45% top forwards + 30% top defensemen + 25% starting goalie (estimated for teams with no goalie in EA's list). You can also run it by hand from the repo's **Actions** tab → *Update NHL 27 ratings* → **Run workflow**.
