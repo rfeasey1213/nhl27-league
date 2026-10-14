@@ -1,6 +1,6 @@
 # NHL 27 League
 
-A league tracker for our NHL 27 group. It shows standings, a home-and-away schedule where everyone plays everyone twice, and results. Players sign in with a username and password the host creates. Nobody needs a GitHub or Claude account.
+A league tracker for our NHL 27 group, styled like a Frozen Frenzy night on the ice. It runs a live draft, a 12-game season split into two divisions, best-of-3 playoffs, and tracks goal scorers. Players sign in with a username and password the host creates. Nobody needs a GitHub or Claude account.
 
 Live site: https://rfeasey1213.github.io/nhl27-league/
 
@@ -25,8 +25,8 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 1. **Pre-draft:** the host adds players on the Players tab and sets the pick order on the Draft tab.
 2. **Live draft:** each player signs in and picks one NHL team on their turn. The page updates every few seconds. The host can pick for anyone who's away, undo the last pick, or cancel.
 3. **Divisions:** when the last pick is in, players are split randomly into two divisions. The host can reshuffle before any game is played and rename the divisions in League settings.
-4. **Regular season:** everyone plays everyone twice, once home and once away. Goal scorers can be added to each game.
-5. **Playoffs:** the host picks how many players make it from each division. Series are best of 3, played within each division, and the two division champions meet in the league final. Playoff games go to overtime, never a shootout.
+4. **Regular season:** each player plays 12 games, 6 at home and 6 away (the host can change the number before the season starts). Goal scorers can be added to each game.
+5. **Playoffs:** they start automatically after the last regular season game, using the host's playoff spots per division (default top 2). The host can also start them early. Series are best of 3, played within each division, and the two division champions meet in the league final. Playoff games go to overtime, never a shootout.
 6. **New season:** after a champion is crowned, the host starts a new season. Players and passwords stay; games, teams and the bracket reset, and the champion is added to Past champions.
 
 ## Scoring
