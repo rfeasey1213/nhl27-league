@@ -1,5 +1,7 @@
 # NHL 27 League
 
+Tabs: **Home** (what's happening now, standings snapshot, latest results, leaders and the news feed), **Standings** (regular season / playoffs), **Games** (schedule / results), **Stats**, **My games** (signed in), **Draft** (before and during the draft; recap linked from Home afterwards) and **Players** (host only).
+
 A league tracker for our NHL 27 group, styled like a Frozen Frenzy night on the ice. It runs a live draft, a 12-game season split into two divisions, best-of-3 playoffs, and tracks goal scorers. Players sign in with a username and password the host creates. Nobody needs a GitHub or Claude account.
 
 Live site: https://rfeasey1213.github.io/nhl27-league/
