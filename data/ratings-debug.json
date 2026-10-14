@@ -1,0 +1,812 @@
+{
+ "startedAt": "2026-10-14T18:34:38.473Z",
+ "attempts": [
+  {
+   "url": "https://drop-api.ea.com/rating/nhl-27?locale=en&limit=100&offset=0",
+   "status": 204,
+   "type": null,
+   "bytes": 0,
+   "head": ""
+  },
+  {
+   "url": "https://drop-api.ea.com/rating/nhl?locale=en&limit=100&offset=0",
+   "status": 200,
+   "type": "application/json; charset=utf-8",
+   "bytes": 27,
+   "head": "{\"items\":[],\"totalItems\":0}"
+  },
+  {
+   "url": "https://drop-api.ea.com/rating/nhl-26?locale=en&limit=100&offset=0",
+   "status": 204,
+   "type": null,
+   "bytes": 0,
+   "head": ""
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/atlantic-division/0",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 1554494,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Atlan"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/atlantic-division/0?page=2",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 965926,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Atlan"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/metropolitan-division/1",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 1542376,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Metro"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/metropolitan-division/1?page=2",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 977664,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Metro"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/central-division/2",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 1536891,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Centr"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/central-division/2?page=2",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 824163,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Centr"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/pacific-division/3",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 1532983,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Pacif"
+  },
+  {
+   "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/pacific-division/3?page=2",
+   "status": 200,
+   "type": "text/html; charset=utf-8",
+   "bytes": 648684,
+   "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Pacif"
+  }
+ ],
+ "apiSample": {
+  "slug": "nhl",
+  "keys": [
+   "items",
+   "totalItems"
+  ],
+  "total": 0,
+  "first": []
+ },
+ "htmlSample": {
+  "slug": "atlantic-division",
+  "hasNextData": true,
+  "tableHtml": "<table class=\"Table_table__quVoB\" role=\"table\"><thead class=\"Table_thead__E_oOJ\" style=\"top:calc(0px - 2px);transition-duration:0.25s;transition-timing-function:cubic-bezier(0.86, 0, 0.07, 1)\"><tr class=\"Table_row__TmIgZ\"><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye Table_constrained__wC8ok\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">RANK</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye Table_headingAligned__pJ_7F Table_mobileShow__kVP0l\" scope=\"col\" style=\"--text-align-sm:start\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">PLAYER</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye Table_headingAligned__pJ_7F\" scope=\"col\" style=\"--text-align-sm:end;--text-align-xl:center\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">ABILITY</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">POS</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">TEAM</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">OVR</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">ACL</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">SPD</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">DEK</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">PAS</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">SLP</button></th><th class=\"Table_headingCell__qFT_X generated_utility18__G41Ye\" scope=\"col\"><button data-state=\"closed\" class=\"Table_tooltipTrigger__xCVRV\">WSP</button></th></tr></thead><tbody class=\"Table_tbody__tDz_g\" data-type=\"v2\"><tr aria-hidden=\"true\"><td colSpan=\"999\" style=\"border:none;height:0;padding:0\"></td></tr><tr class=\"Table_row__TmIgZ\"><td class=\"Table_cell__LDG_T\" data-mobile=\"true\" data-type=\"rank\"><div class=\"Table_centerCell__DeDTT\"><div class=\"Table_rankCell__dg1ym generated_headline5__Qi8nQ\">3</div></div></td><td class=\"Table_cell__LDG_T\" data-type=\"profile\"><div class=\"Table_centerCell__DeDTT\"><a class=\"Table_profileCellAnchor__3zq_D\" href=\"/games/nhl/ratings/player-ratings/nikita-kucherov/10071\"><div class=\"Table_profileCell__2qKMJ Table_anchorCell__TQQ6J generated_utility18sm__JlPy0 generated_utility17md__MiiOs\"><span class=\"Table_imageWrapper__xR4Ia\"> <div class=\"Table_profileImage__sT55F Table_profileImageBorderRadius__RvAau\"><div class=\"Picture_responsiveImageWrap__fk2m9\" style=\"--width-sm:52px;--width-md:48px;aspect-ratio:1/1\"><div style=\"background-color:var(--drop-background-color-50);width:100%;height:100%\"></div></div><div class=\"Table_profileImageForeground__KPdcG\" style=\"left:0%;top:0%\"><div class=\"Picture_responsiveImageWrap__fk2m9\" style=\"--width-sm:52px;--width-md:48px;aspect-ratio:1/1\"><picture><source media=\"screen and (min-width: 1280px)\" srcSet=\"https://ratings-images-prod.pulse.ea.com/NHL27/portraits/p10071.png?im=FaceCrop,padding=0.7,width=256,height=256;Resize=(48)&amp;q=85 1x, https://ratings-images-prod.pulse.ea.com/NHL27/portraits/p10071.png?im=FaceCrop,padding=0.7,width=256,height=256;Resize=(96)&amp;q=80 2x, https://ratings-images-prod.pulse.ea.com/NHL27/portraits/p10071.png?im=FaceCrop,padding=0.7,width=256,height=256;Resize=(144)&amp;q=40 3x\"/><source media=\"screen and (min-width: 840px)\" ",
+  "firstParsed": [
+   {
+    "_json": {
+     "id": 10071,
+     "firstName": "Nikita",
+     "lastName": "Kucherov",
+     "overallRating": 97,
+     "jerseyNum": 86,
+     "rank": 3,
+     "playerAbilities": [
+      {
+       "id": "Pressure",
+       "label": "Pressure+",
+       "description": "Build up momentum with shots that generate bonus pressure on every save.",
+       "imageUrl": "https://drop-assets.ea.com/images/E2lRhUCL16sNt9nTBeJc1/82554b12597bae8c647686c18c03cfff/xfactor6_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      },
+      {
+       "id": "Quick Release",
+       "label": "Quick Release",
+       "description": "Get shots off lightning quick with an extra fast shot release. Decrease goalies readiness on both snap shots and wrist shots.",
+       "imageUrl": "https://drop-assets.ea.com/images/7C2laRLYTlELymgK8ScIpf/f449f8d48c6db554298b5f3732e5df65/xfactor4_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      },
+      {
+       "id": "Tape to Tape",
+       "label": "Tape to Tape",
+       "description": "Feather saucer passes and make snappy passes in and out of vision with increased Pass Power and Accuracy. \n\nUnlocks the ability for these players to perform automatic saucer passes. ",
+       "imageUrl": "https://drop-assets.ea.com/images/13Xtyuk5BtcMnaoQlmoyVS/0a7cd4be4564ef075d2dc9af5821f11c/xfactor9_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      }
+     ],
+     "avatarUrl": "https://ratings-images-prod.pulse.ea.com/NHL27/portraits/p10071.png?im=FaceCrop,padding=0.7,width=256,height=256",
+     "playerStyle": null,
+     "gender": {
+      "id": 0,
+      "label": "Men's Hockey"
+     },
+     "nationality": {
+      "id": 76,
+      "label": "Russia",
+      "imageUrl": "https://drop-assets.ea.com/images/suPDOJ1jWN5nkIqfnv6um/d53a8b288a88e2c2ff8c7158d8962215/f_40.png"
+     },
+     "team": {
+      "id": 26,
+      "label": "Tampa Bay Lightning",
+      "imageUrl": "https://drop-assets.ea.com/images/587WddIwuMYEk2uoczyIkD/4776f96d48eecec93dfc4ed50925daed/Tampa_Bay_Lightning.png",
+      "isPopular": false
+     },
+     "position": {
+      "id": "Right Wing",
+      "shortLabel": "RW",
+      "label": "Right Wing",
+      "positionType": null
+     },
+     "iteration": null,
+     "availableIterations": [],
+     "stats": {
+      "acceleration": {
+       "value": 90,
+       "diff": 0
+      },
+      "agility": {
+       "value": 92,
+       "diff": 0
+      },
+      "jumping": {
+       "value": 0,
+       "diff": 0
+      },
+      "stamina": {
+       "value": 0,
+       "diff": 0
+      },
+      "strength": {
+       "value": 93,
+       "diff": 0
+      },
+      "aggression": {
+       "value": 82,
+       "diff": 0
+      },
+      "balance": {
+       "value": 95,
+       "diff": 0
+      },
+      "bodyChecking": {
+       "value": 86,
+       "diff": 0
+      },
+      "defensiveAwareness": {
+       "value": 93,
+       "diff": 0
+      },
+      "handeye": {
+       "value": 95,
+       "diff": 0
+      },
+      "deking": {
+       "value": 98,
+       "diff": 0
+      },
+      "discipline": {
+       "value": 84,
+       "diff": 0
+      },
+      "durability": {
+       "value": 91,
+       "diff": 0
+      },
+      "endurance": {
+       "value": 85,
+       "diff": 0
+      },
+      "faceoffs": {
+       "value": 70,
+       "diff": 0
+      },
+      "offensiveAwareness": {
+       "value": 98,
+       "diff": 0
+      },
+      "passing": {
+       "value": 98,
+       "diff": 0
+      },
+      "poise": {
+       "value": 95,
+       "diff": 0
+      },
+      "puckControl": {
+       "value": 98,
+       "diff": 0
+      },
+      "shotBlocking": {
+       "value": 86,
+       "diff": 0
+      },
+      "slapshotAccuracy": {
+       "value": 96,
+       "diff": 0
+      },
+      "slapshotPower": {
+       "value": 93,
+       "diff": 0
+      },
+      "speed": {
+       "value": 90,
+       "diff": 0
+      },
+      "fightingSkill": {
+       "value": 65,
+       "diff": 0
+      },
+      "stickChecking": {
+       "value": 94,
+       "diff": 0
+      },
+      "wristshotAccuracy": {
+       "value": 96,
+       "diff": 0
+      },
+      "wristshotPower": {
+       "value": 93,
+       "diff": 0
+      },
+      "shotRecover": {
+       "value": 0,
+       "diff": 0
+      },
+      "glovesideHigh": {
+       "value": 0,
+       "diff": 0
+      },
+      "glovesideLow": {
+       "value": 0,
+       "diff": 0
+      },
+      "sticksideHigh": {
+       "value": 0,
+       "diff": 0
+      },
+      "sticksideLow": {
+       "value": 0,
+       "diff": 0
+      },
+      "fiveHole": {
+       "value": 0,
+       "diff": 0
+      },
+      "pokeCheck": {
+       "value": 0,
+       "diff": 0
+      },
+      "angles": {
+       "value": 0,
+       "diff": 0
+      },
+      "reboundControl": {
+       "value": 0,
+       "diff": 0
+      },
+      "breakaway": {
+       "value": 0,
+       "diff": 0
+      },
+      "puckplayingFrequency": {
+       "value": 0,
+       "diff": 0
+      },
+      "aggressiveness": {
+       "value": 0,
+       "diff": 0
+      },
+      "vision": {
+       "value": 0,
+       "diff": 0
+      }
+     }
+    }
+   },
+   {
+    "_json": {
+     "id": 11798,
+     "firstName": "David",
+     "lastName": "Pastrnak",
+     "overallRating": 95,
+     "jerseyNum": 88,
+     "rank": 7,
+     "playerAbilities": [
+      {
+       "id": "Ankle Breaker",
+       "label": "Ankle Breaker",
+       "description": "Create separation using dekes with a temporary boost of speed when using a Deke to successfully get around a Defender. \n\nSuccessful Dekes can trigger larger panic reactions on opposing players.",
+       "imageUrl": "https://drop-assets.ea.com/images/2pE6HXy5CqVzYQcVImUR2M/0ade840d539b04a0f0b595d3f46b7538/xfactor11_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      },
+      {
+       "id": "One Tee",
+       "label": "One T",
+       "description": "Become the ultimate threat with increased One T Shot Power and Accuracy. \n\nAllowed to be an additional Skill Based One Timer target when open.",
+       "imageUrl": "https://drop-assets.ea.com/images/1mbOJCBvqxoS62Tucxqgqz/92e57c24bbf964356ef9f443dc65e199/xfactor5_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      },
+      {
+       "id": "Quick Release",
+       "label": "Quick Release",
+       "description": "Get shots off lightning quick with an extra fast shot release. Decrease goalies readiness on both snap shots and wrist shots.",
+       "imageUrl": "https://drop-assets.ea.com/images/7C2laRLYTlELymgK8ScIpf/f449f8d48c6db554298b5f3732e5df65/xfactor4_1.png",
+       "type": {
+        "id": "nhlSuperstarAbility",
+        "label": "X-Factor",
+        "iconUrl": "https://drop-assets.ea.com/images/4vl3EKoK26fmvReCAkOjL2/f9c435973877afea511ecb84fc3b47fd/NHL_logos_XFactor_X_v001_512x512_-min.png"
+       }
+      }
+     ],
+     "avatarUrl": "https://ratings-images-prod.pulse.ea.com/NHL27/portraits/p11798.png?im=FaceCrop,padding=0.7,width=256,height=256",
+     "playerStyle": null,
+     "gender": {
+      "id": 0,
+      "label": "Men's Hockey"
+     },
+     "nationality": {
+      "id": 82,
+      "label": "Czechia",
+      "imageUrl": "https://drop-assets.ea.com/images/3P2oOb9uZOrACMnqR1SunQ/ccacf51db835e92cb221e3bd3a10cd59/f_12.png"
+     },
+     "team": {
+      "id": 2,
+      "label": "Boston Bruins",
+      "imageUrl": "https://drop-assets.ea.com/images/65HBbXrJ354FJJYrp4LqiO/2b982fcc96fde1b562c128b284e1cd93/NHL_BostonBruins_PrimaryLogo_DarkBackground.png",
+      "isPopular": false
+     },
+     "position": {
+      "id": "Right Wing",
+      "shortLabel": "RW",
+      "label": "Right Wing",
+      "positionType": null
+     },
+     "iteration": null,
+     "availableIterations": [],
+     "stats": {
+      "acceleration": {
+       "value": 90,
+       "diff": 0
+      },
+      "agility": {
+       "value": 92,
+       "diff": 0
+      },
+      "jumping": {
+       "value": 0,
+       "diff": 0
+      },
+      "stamina": {
+       "value": 0,
+       "diff": 0
+      },
+      "strength": {
+       "value": 87,
+       "diff": 0
+      },
+      "aggression": {
+       "value": 83,
+       "diff": 0
+      },
+      "balance": {
+       "value": 92,
+       "diff": 0
+      },
+      "bodyChecking": {
+       "value": 83,
+       "diff": 0
+      },
+      "defensiveAwareness": {
+       "value": 88,
+       "diff": 0
+      },
+      "handeye": {
+       "value": 93,
+       "diff": 0
+      },
+      "deking": {
+       "value": 96,
+       "diff": 0
+      },
+      "discipline": {
+       "value": 81,
+       "diff": 0
+      },
+      "durability": {
+       "value": 90,
+       "diff": 0
+      },
+      "endurance": {
+       "value": 86,
+       "diff": 0
+      },
+      "faceoffs": {
+       "value": 64,
+       "diff": 0
+      },
+      "offensiveAwareness": {
+       "value": 97,
+       "diff": 0
+      },
+      "passing": {
+       "value": 95,
+       "diff": 0
+      },
+      "poise": {
+       "value": 90,
+       "diff": 0
+      },
+      "puckControl": {
+       "value": 94,
+       "diff": 0
+      },
+      "shotBlocking": {
+       "value": 82,
+       "diff": 0
+      },
+      "slapshotAccuracy": {
+       "value": 94,
+       "diff": 0
+      },
+      "slapshotPower": {
+       "value": 93,
+       "diff": 0
+      },
+      "speed": {
+       "value": 89,
+       "diff": 0
+      },
+      "fightingSkill": {
+       "value": 65,
+       "diff": 0
+      },
+      "stickChecking": {
+       "value": 83,
+       "diff": 0
+      },
+      "wristshotAccuracy": {
+       "value": 95,
+       "diff": 0
+      },
+      "wristshotPower": {
+       "value": 94,
+       "diff": 0
+      },
+      "shotRecover": {
+       "value": 0,
+       "diff": 0
+      },
+      "glovesideHigh": {
+       "value": 0,
+       "diff": 0
+      },
+      "glovesideLow": {
+       "value": 0,
+       "diff": 0
+      },
+      "sticksideHigh": {
+       "value": 0,
+       "diff": 0
+      },
+      "sticksideLow": {
+       "value": 0,
+       "diff": 0
+      },
+      "fiveHole": {
+       "value": 0,
+       "diff": 0
+      },
+      "pokeCheck": {
+       "value": 0,
+       "diff": 0
+      },
+      "angles": {
+       "value": 0,
+       "diff": 0
+      },
+      "reboundControl": {
+       "value": 0,
+       "diff": 0
+      },
+      "breakaway": {
+       "value": 0,
+       "diff": 0
+      },
+      "puckplayingFrequency": {
+       "value": 0,
+       "diff": 0
+      },
+      "aggressiveness": {
+       "value": 0,
+       "diff": 0
+      },
+      "vision": {
+       "value": 0,
+       "diff": 0
+      }
+     }
+    }
+   }
+  ]
+ },
+ "source": "html",
+ "parsedCount": 300,
+ "parsedSample": [
+  {
+   "name": "Nikita Kucherov",
+   "team": "TBL",
+   "pos": "RW",
+   "ovr": 97,
+   "stats": {
+    "acceleration": 90,
+    "agility": 92,
+    "jumping": 0,
+    "stamina": 0,
+    "strength": 93,
+    "aggression": 82,
+    "balance": 95,
+    "bodyChecking": 86,
+    "defensiveAwareness": 93,
+    "handeye": 95,
+    "deking": 98,
+    "discipline": 84,
+    "durability": 91,
+    "endurance": 85,
+    "faceoffs": 70,
+    "offensiveAwareness": 98,
+    "passing": 98,
+    "poise": 95,
+    "puckControl": 98,
+    "shotBlocking": 86,
+    "slapshotAccuracy": 96,
+    "slapshotPower": 93,
+    "speed": 90,
+    "fightingSkill": 65,
+    "stickChecking": 94,
+    "wristshotAccuracy": 96,
+    "wristshotPower": 93,
+    "shotRecover": 0,
+    "glovesideHigh": 0,
+    "glovesideLow": 0,
+    "sticksideHigh": 0,
+    "sticksideLow": 0,
+    "fiveHole": 0,
+    "pokeCheck": 0,
+    "angles": 0,
+    "reboundControl": 0,
+    "breakaway": 0,
+    "puckplayingFrequency": 0,
+    "aggressiveness": 0,
+    "vision": 0
+   },
+   "ability": null
+  },
+  {
+   "name": "David Pastrnak",
+   "team": "BOS",
+   "pos": "RW",
+   "ovr": 95,
+   "stats": {
+    "acceleration": 90,
+    "agility": 92,
+    "jumping": 0,
+    "stamina": 0,
+    "strength": 87,
+    "aggression": 83,
+    "balance": 92,
+    "bodyChecking": 83,
+    "defensiveAwareness": 88,
+    "handeye": 93,
+    "deking": 96,
+    "discipline": 81,
+    "durability": 90,
+    "endurance": 86,
+    "faceoffs": 64,
+    "offensiveAwareness": 97,
+    "passing": 95,
+    "poise": 90,
+    "puckControl": 94,
+    "shotBlocking": 82,
+    "slapshotAccuracy": 94,
+    "slapshotPower": 93,
+    "speed": 89,
+    "fightingSkill": 65,
+    "stickChecking": 83,
+    "wristshotAccuracy": 95,
+    "wristshotPower": 94,
+    "shotRecover": 0,
+    "glovesideHigh": 0,
+    "glovesideLow": 0,
+    "sticksideHigh": 0,
+    "sticksideLow": 0,
+    "fiveHole": 0,
+    "pokeCheck": 0,
+    "angles": 0,
+    "reboundControl": 0,
+    "breakaway": 0,
+    "puckplayingFrequency": 0,
+    "aggressiveness": 0,
+    "vision": 0
+   },
+   "ability": null
+  },
+  {
+   "name": "Aleksander Barkov",
+   "team": "FLA",
+   "pos": "C",
+   "ovr": 95,
+   "stats": {
+    "acceleration": 86,
+    "agility": 89,
+    "jumping": 0,
+    "stamina": 0,
+    "strength": 92,
+    "aggression": 85,
+    "balance": 94,
+    "bodyChecking": 86,
+    "defensiveAwareness": 97,
+    "handeye": 94,
+    "deking": 93,
+    "discipline": 85,
+    "durability": 85,
+    "endurance": 90,
+    "faceoffs": 84,
+    "offensiveAwareness": 96,
+    "passing": 94,
+    "poise": 95,
+    "puckControl": 94,
+    "shotBlocking": 90,
+    "slapshotAccuracy": 89,
+    "slapshotPower": 87,
+    "speed": 87,
+    "fightingSkill": 75,
+    "stickChecking": 93,
+    "wristshotAccuracy": 92,
+    "wristshotPower": 87,
+    "shotRecover": 0,
+    "glovesideHigh": 0,
+    "glovesideLow": 0,
+    "sticksideHigh": 0,
+    "sticksideLow": 0,
+    "fiveHole": 0,
+    "pokeCheck": 0,
+    "angles": 0,
+    "reboundControl": 0,
+    "breakaway": 0,
+    "puckplayingFrequency": 0,
+    "aggressiveness": 0,
+    "vision": 0
+   },
+   "ability": null
+  },
+  {
+   "name": "Andrei Vasilevskiy",
+   "team": "TBL",
+   "pos": "G",
+   "ovr": 94,
+   "stats": {
+    "acceleration": 0,
+    "agility": 90,
+    "jumping": 0,
+    "stamina": 0,
+    "strength": 0,
+    "aggression": 0,
+    "balance": 0,
+    "bodyChecking": 0,
+    "defensiveAwareness": 0,
+    "handeye": 0,
+    "deking": 0,
+    "discipline": 0,
+    "durability": 95,
+    "endurance": 95,
+    "faceoffs": 0,
+    "offensiveAwareness": 0,
+    "passing": 87,
+    "poise": 90,
+    "puckControl": 0,
+    "shotBlocking": 0,
+    "slapshotAccuracy": 0,
+    "slapshotPower": 0,
+    "speed": 94,
+    "fightingSkill": 0,
+    "stickChecking": 0,
+    "wristshotAccuracy": 0,
+    "wristshotPower": 0,
+    "shotRecover": 94,
+    "glovesideHigh": 96,
+    "glovesideLow": 95,
+    "sticksideHigh": 92,
+    "sticksideLow": 96,
+    "fiveHole": 90,
+    "pokeCheck": 95,
+    "angles": 91,
+    "reboundControl": 90,
+    "breakaway": 90,
+    "puckplayingFrequency": 88,
+    "aggressiveness": 84,
+    "vision": 95
+   },
+   "ability": null
+  },
+  {
+   "name": "Rasmus Dahlin",
+   "team": "BUF",
+   "pos": "LD",
+   "ovr": 93,
+   "stats": {
+    "acceleration": 90,
+    "agility": 93,
+    "jumping": 0,
+    "stamina": 0,
+    "strength": 91,
+    "aggression": 82,
+    "balance": 94,
+    "bodyChecking": 86,
+    "defensiveAwareness": 92,
+    "handeye": 92,
+    "deking": 94,
+    "discipline": 80,
+    "durability": 89,
+    "endurance": 89,
+    "faceoffs": 55,
+    "offensiveAwareness": 95,
+    "passing": 94,
+    "poise": 92,
+    "puckControl": 94,
+    "shotBlocking": 89,
+    "slapshotAccuracy": 93,
+    "slapshotPower": 93,
+    "speed": 90,
+    "fightingSkill": 70,
+    "stickChecking": 86,
+    "wristshotAccuracy": 93,
+    "wristshotPower": 91,
+    "shotRecover": 0,
+    "glovesideHigh": 0,
+    "glovesideLow": 0,
+    "sticksideHigh": 0,
+    "sticksideLow": 0,
+    "fiveHole": 0,
+    "pokeCheck": 0,
+    "angles": 0,
+    "reboundControl": 0,
+    "breakaway": 0,
+    "puckplayingFrequency": 0,
+    "aggressiveness": 0,
+    "vision": 0
+   },
+   "ability": null
+  }
+ ],
+ "teamCount": 32
+}
