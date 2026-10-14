@@ -12,7 +12,7 @@
   },
   {
    "u": "jarvis",
-   "team": "",
+   "team": "New York Islanders",
    "host": false,
    "tier": 4
   },
@@ -132,7 +132,9 @@
    "gio",
    "graham"
   ],
-  "picks": {},
+  "picks": {
+   "jarvis": "NYI"
+  },
   "startedAt": "2026-10-14T18:58:04.499Z"
  },
  "archive": [],
