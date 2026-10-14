@@ -27,7 +27,8 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 3. **Divisions:** when the last pick is in, players are split randomly into two divisions. The host can reshuffle before any game is played and rename the divisions in League settings.
 4. **Regular season:** each player plays 12 games, 6 at home and 6 away (the host can change the number before the season starts). Goal scorers can be added to each game.
 5. **Playoffs:** they start automatically after the last regular season game, using the host's playoff spots per division (default top 2). The host can also start them early. Series are best of 3, played within each division, and the two division champions meet in the league final. Playoff games go to overtime, never a shootout.
-6. **New season:** after a champion is crowned, the host starts a new season. Players and passwords stay; games, teams and the bracket reset, and the champion is added to Past champions.
+6. **Next season:** after a champion is crowned, the host taps **Start Season 2** (or 3, 4…). The finished season is archived in full: every game, score and goal scorer, the draft, divisions and playoff bracket. Then a new draft opens. Players and passwords stay.
+7. **Archive:** the **Viewing** picker under the tabs switches between the current season, any past season, and **All-time** (career standings with titles and playoff records, plus all-time scorers).
 
 ## Scoring
 

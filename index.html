@@ -60,6 +60,11 @@ header.board::after{content:"";position:absolute;top:-60%;right:-8%;width:46%;he
 .acct button{font:700 13px var(--data);letter-spacing:.1em;text-transform:uppercase;background:transparent;color:var(--glacier);border:1px solid var(--line-2);border-radius:6px;padding:6px 11px;cursor:pointer}
 .acct button:hover{border-color:var(--glacier);box-shadow:0 0 12px rgba(95,227,255,.3)}
 
+/* Season picker */
+.viewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.viewbar select{width:auto;min-width:220px;max-width:100%}
+.viewbar label{color:var(--glacier)}
+
 /* Logos */
 .logo{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
 .logo img{width:100%;height:100%;object-fit:contain;display:block}
@@ -309,6 +314,11 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <button role="tab" data-tab="players" aria-selected="false">Players</button>
   </nav>
 
+  <div class="viewbar" id="viewbar" hidden>
+    <label for="view-sel">Viewing</label>
+    <select id="view-sel"></select>
+  </div>
+
   <section class="panel" id="p-draft" hidden></section>
 
   <section class="panel" id="p-standings" hidden>
@@ -511,7 +521,7 @@ async function unlockToken(K,box){return dec.decode(await unseal(await rawKey(K)
 
 /* ===== League model ===== */
 function norm(L){
-  L.phase=L.phase||"setup";L.players=L.players||[];L.games=L.games||[];L.auth=L.auth||{};L.history=L.history||[];
+  L.phase=L.phase||"setup";L.players=L.players||[];L.games=L.games||[];L.auth=L.auth||{};L.history=L.history||[];L.archive=L.archive||[];
   L.divisions=L.divisions||{A:{name:"Division A"},B:{name:"Division B"}};
   if(!L.gamesPer)L.gamesPer=12;if(!L.playoffSpots)L.playoffSpots=2;
   for(const g of L.games){g.stage=g.stage||"rs";g.goals=g.goals||{h:[],a:[]}}
@@ -641,7 +651,7 @@ function divName(L,d){return L.divisions?.[d]?.name||(d==="A"?"Division A":"Divi
 function scorerLine(names){const c=new Map();for(const n of names){if(!n)continue;c.set(n,(c.get(n)||0)+1)}return[...c].map(([n,k])=>k>1?`${n} ${k}`:n).join(", ")}
 
 /* ===== GitHub storage ===== */
-const S={league:null,sha:null,etag:null,session:store.get("nhl27-session"),tab:store.get("nhl27-tab")||"standings",result:"REG",schFilter:"all",resFilter:"all",loaded:false,missing:false,draftSel:null,orderDraft:null,goalDraft:{h:[],a:[]},lastPhase:null};
+const S={league:null,sha:null,etag:null,session:store.get("nhl27-session"),tab:store.get("nhl27-tab")||"standings",result:"REG",schFilter:"all",resFilter:"all",loaded:false,missing:false,draftSel:null,orderDraft:null,goalDraft:{h:[],a:[]},lastPhase:null,view:store.get("nhl27-view")??"current"};
 function authHeaders(token){const hd={"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};if(token)hd.Authorization="Bearer "+token;return hd}
 async function fetchLeague({token,useEtag}={}){
   const hd=authHeaders(token);if(useEtag&&S.etag)hd["If-None-Match"]=S.etag;
@@ -698,7 +708,8 @@ function logo(ab,size){
   img.addEventListener("error",()=>{if(pic.isConnected||pic.parentNode)pic.replaceWith(fallback())},{once:true});
   return pic;
 }
-function abOf(u){return S.league?.draft?.picks?.[u]||null}
+let VIEW=null; /* the season being displayed: current league, an archived season, or all-time */
+function abOf(u){return (VIEW||S.league)?.draft?.picks?.[u]||null}
 function confirmTap(btn,prompts,fn){
   const step=+(btn.dataset.step||0);
   clearTimeout(btn._t);
@@ -715,14 +726,34 @@ function pmap(){return new Map((S.league?.players||[]).map(p=>[p.u,p]))}
 function me(){return S.session?.user||null}
 function signedIn(){return !!me()&&pmap().has(me())}
 function isHost(){return !!pmap().get(me())?.host}
-function teamOf(u){return pmap().get(u)?.team||""}
+function teamOf(u){return ((VIEW||S.league)?.players||[]).find(p=>p.u===u)?.team||""}
 
 /* ===== Render ===== */
 const TABS=["draft","standings","schedule","playoffs","results","scorers","log","players"];
 function show(t){if(!TABS.includes(t))t="standings";S.tab=t;store.set("nhl27-tab",t);
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   TABS.forEach(x=>$("p-"+x).hidden=!S.league||x!==t)}
-const PHASE_LABEL={setup:"Pre-draft",draft:"Draft live",season:"Regular season",playoffs:"Playoffs"};
+const PHASE_LABEL={setup:"Pre-draft",draft:"Draft live",season:"Regular season",playoffs:"Playoffs",done:"Archived season"};
+/* ===== Season archive ===== */
+function archiveView(L,i){const A=L.archive[i];if(!A)return null;
+  return{name:L.name,season:A.season,phase:"done",archived:true,players:A.players.map(p=>({...p,host:false})),games:A.games||[],playoffs:A.playoffs||null,draft:A.draft||null,divisions:A.divisions||L.divisions,gamesPer:A.gamesPer||12,history:L.history,archive:[]}}
+function allTimeView(L){
+  const seasons=[...L.archive.map(a=>({label:a.season,games:a.games||[]})),{label:L.season,games:L.games}];
+  const us=[];for(const a of L.archive)for(const p of a.players)if(!us.includes(p.u))us.push(p.u);for(const p of L.players)if(!us.includes(p.u))us.push(p.u);
+  return{name:L.name,season:"All-time",phase:"done",allTime:true,players:us.map(u=>({u,team:"",host:false})),games:seasons.flatMap(x=>x.games.map(g=>({...g,_season:x.label}))),playoffs:null,draft:null,divisions:L.divisions,gamesPer:12,history:L.history,archive:[]}}
+function currentView(L){
+  if(S.view==="all"&&L.archive.length)return allTimeView(L);
+  if(typeof S.view==="number"&&L.archive[S.view])return archiveView(L,S.view);
+  S.view="current";return L;
+}
+function nextSeasonName(name){const m=/^(.*?)(\d+)\s*$/.exec(name||"");return m?m[1]+(parseInt(m[2],10)+1):(name||"Season")+" 2"}
+function renderViewBar(L){
+  const bar=$("viewbar"),sel=$("view-sel");
+  bar.hidden=!L.archive.length;
+  if(!L.archive.length)return;
+  sel.replaceChildren(h("option",{value:"current"},(L.season||"This season")+" (current)"),...L.archive.map((a,i)=>[a,i]).reverse().map(([a,i])=>h("option",{value:String(i)},a.season+(a.champion?" · won by "+a.champion:""))),h("option",{value:"all"},"All-time"));
+  sel.value=S.view==="current"?"current":String(S.view);
+}
 
 function render(){
   const L=S.league;
@@ -733,21 +764,30 @@ function render(){
   if(S.lastPhase&&S.lastPhase!==L.phase){if(L.phase==="draft")S.tab="draft";else if(L.phase==="season"&&S.tab==="draft")S.tab="standings";else if(L.phase==="playoffs")S.tab="playoffs"}
   if(!S.lastPhase&&L.phase==="draft")S.tab="draft";
   S.lastPhase=L.phase;
-  const br=buildBracket(L);
+  const brCur=buildBracket(L);
+  VIEW=L;renderLog(L);renderPlayers(L,brCur);
+  renderViewBar(L);
+  const V=currentView(L);VIEW=V;
+  const br=V.allTime?null:buildBracket(V);
   document.title=L.name||"NHL 27 League";
   $("lname").textContent=L.name||"NHL 27 League";
-  const ph=br?.champion?"Champion crowned":PHASE_LABEL[L.phase]||"";
-  $("season").replaceChildren((L.season||"")+(L.season?" · ":""),L.phase==="draft"?h("b",{},ph):ph);
-  const n=L.players.length,total=n*gamesPer(L)/2,rsN=rsGames(L).length;
-  $("t-players").textContent=n;$("t-games").textContent=L.games.length;$("t-left").textContent=L.phase==="season"?Math.max(0,total-rsN):0;
+  const ph=V.allTime?"Every season":V.archived?"Archived":(br?.champion?"Champion crowned":PHASE_LABEL[L.phase]||"");
+  $("season").replaceChildren((V.season||"")+(V.season?" · ":""),L.phase==="draft"&&V===L?h("b",{},ph):ph);
+  const n=V.players.length,total=n*gamesPer(V)/2,rsN=rsGames(V).length;
+  $("t-players").textContent=n;$("t-games").textContent=V.games.length;$("t-left").textContent=V===L&&L.phase==="season"?Math.max(0,total-rsN):0;
   const champ=$("champ");
-  if(br?.champion){champ.hidden=false;champ.replaceChildren(...[logo(abOf(br.champion),"xl"),h("div",{},h("span",{},(L.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):"")))].filter(Boolean))}else champ.hidden=true;
+  if(br?.champion){
+    const hostNext=V===L&&signedIn()&&isHost()?h("button",{class:"btn",type:"button",style:"margin-left:auto",onclick:ev=>twoTap(ev.currentTarget,"Tap again: archive and start "+nextSeasonName(L.season),()=>newSeason())},"Start "+nextSeasonName(L.season)):null;
+    champ.hidden=false;champ.replaceChildren(...[logo(abOf(br.champion),"xl"),h("div",{},h("span",{},(V.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):""))),hostNext].filter(Boolean))}
+  else champ.hidden=true;
 
   const tabBtn=t=>document.querySelector(`#tabs [data-tab="${t}"]`);
-  tabBtn("log").hidden=!signedIn();
-  tabBtn("draft").replaceChildren(...["Draft",L.phase==="draft"?h("span",{class:"live","aria-label":"live"}):null].filter(Boolean));
+  tabBtn("log").hidden=!signedIn()||V!==L;
+  tabBtn("draft").hidden=!!V.allTime;tabBtn("schedule").hidden=!!V.allTime;
+  tabBtn("draft").replaceChildren(...["Draft",L.phase==="draft"&&V===L?h("span",{class:"live","aria-label":"live"}):null].filter(Boolean));
+  if((V!==L&&S.tab==="log")||(V.allTime&&(S.tab==="draft"||S.tab==="schedule")))S.tab="standings";
 
-  renderDraft(L);renderStandings(L,br);renderSchedule(L);renderPlayoffs(L,br);renderResults(L);renderScorers(L);renderLog(L);renderPlayers(L,br);
+  renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderResults(V);renderScorers(V);
   show(S.tab);
 }
 function renderAcct(){
@@ -757,15 +797,17 @@ function renderAcct(){
   else a.append(h("button",{type:"button",onclick:()=>openLogin()},"Sign in"));
 }
 function playerFilter(sel,cur){
-  sel.replaceChildren(h("option",{value:"all"},"All players"),...S.league.players.map(p=>h("option",{value:p.u},p.u)));
-  sel.value=pmap().has(cur)?cur:"all";return sel.value;
+  const ps=(VIEW||S.league).players;
+  sel.replaceChildren(h("option",{value:"all"},"All players"),...ps.map(p=>h("option",{value:p.u},p.u)));
+  sel.value=ps.some(p=>p.u===cur)?cur:"all";return sel.value;
 }
 function gameCard(g,home,away,extra,tag){
   const homeWon=g?g.hs>g.as:null;
+  const hab=g?.hab||abOf(home),aab=g?.aab||abOf(away);
   const kids=[
-    h("div",{class:"pl"},logo(abOf(home)),h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},h("b",{},home),h("small",{},teamOf(home)||"Home"))),
+    h("div",{class:"pl"},logo(hab),h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},h("b",{},home),h("small",{},(hab&&TEAM_NAME[hab])||teamOf(home)||"Home"))),
     g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":"Final/"+g.result)):h("div",{class:"score pending"},"vs"),
-    h("div",{class:"pl r"},logo(abOf(away)),h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},h("b",{},away),h("small",{},teamOf(away)||"Away"))),
+    h("div",{class:"pl r"},logo(aab),h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},h("b",{},away),h("small",{},(aab&&TEAM_NAME[aab])||teamOf(away)||"Away"))),
     h("div",{class:"meta"},tag?h("span",{class:"tagpo"},tag):null,extra)];
   if(g&&((g.goals?.h||[]).some(Boolean)||(g.goals?.a||[]).some(Boolean)))
     kids.push(h("div",{class:"scorers"},h("div",{},scorerLine(g.goals.h)||"–"),h("div",{},scorerLine(g.goals.a)||"–")));
@@ -859,8 +901,27 @@ function standingsTable(L,rows,cutAfter){
       h("td",{class:"l hide-sm"},h("span",{class:"form"},r.log.slice(-5).map(x=>h("span",{class:"chip "+x,title:x==="O"?"OT/SO loss":x==="W"?"Win":"Loss"},x==="O"?"OT":x)))),
       h("td",{class:"hide-sm"},r.streak||"–"),h("td",{class:"hide-sm"},r.left))))));
 }
+function allTimeRows(L){
+  const rows=new Map();
+  const seasons=[...L.archive.map((_,i)=>archiveView(L,i)),L];
+  const champs=new Map();for(const a of L.archive)if(a.champion)champs.set(a.champion,(champs.get(a.champion)||0)+1);
+  for(const V of seasons){
+    for(const r of computeTable(V)){if(!r.gp&&V!==L)continue;const x=rows.get(r.u)||{u:r.u,seasons:0,gp:0,w:0,l:0,otl:0,gf:0,ga:0,pts:0,pw:0,pl:0};
+      if(r.gp)x.seasons++;x.gp+=r.gp;x.w+=r.w;x.l+=r.l;x.otl+=r.otl;x.gf+=r.gf;x.ga+=r.ga;x.pts+=r.pts;rows.set(r.u,x)}
+    for(const g of poGames(V)){const w=g.hs>g.as?g.home:g.away,l=w===g.home?g.away:g.home;for(const[u,k]of[[w,"pw"],[l,"pl"]]){const x=rows.get(u);if(x)x[k]++}}
+  }
+  return[...rows.values()].map(x=>({...x,titles:champs.get(x.u)||0,gd:x.gf-x.ga})).sort((a,b)=>b.titles-a.titles||b.pts-a.pts||b.w-a.w||b.gd-a.gd);
+}
+function renderAllTime(st){
+  const L=S.league,rows=allTimeRows(L);
+  st.append(h("p",{class:"hint"},`Every regular season and playoff game across ${L.archive.length+1} season${L.archive.length?"s":""}, including the current one. Sorted by titles, then points. Playoffs shows playoff game wins and losses.`));
+  st.append(h("div",{class:"scroll"},h("table",{},
+    h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{},"Titles"),h("th",{},"Seasons"),h("th",{},"GP"),h("th",{},"W"),h("th",{},"L"),h("th",{},"OTL"),h("th",{},"PTS"),h("th",{class:"hide-sm"},"GF"),h("th",{class:"hide-sm"},"GA"),h("th",{},"DIFF"),h("th",{},"Playoffs"))),
+    h("tbody",{},rows.map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("b",{},r.u)),h("td",{class:"pts",style:"color:var(--gold)"},r.titles||"–"),h("td",{},r.seasons),h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts"},r.pts),h("td",{class:"hide-sm"},r.gf),h("td",{class:"hide-sm"},r.ga),h("td",{},(r.gd>0?"+":"")+r.gd),h("td",{},`${r.pw}–${r.pl}`)))))));
+}
 function renderStandings(L){
   const st=$("standings");st.replaceChildren();
+  if(L.allTime){$("season-legend").textContent="";renderAllTime(st);return}
   $("season-legend").textContent=`Each player plays ${gamesPer(L)} regular season games, ${gamesPer(L)/2} at home and ${gamesPer(L)/2} away. The playoffs start automatically after the last one: top ${L.players.some(p=>p.div)?playoffSpots(L):(parseInt(L.playoffSpots,10)||2)} in each division, best-of-3 series.`;
   const table=computeTable(L);
   if(!table.length){st.append(h("div",{class:"empty"},h("b",{},"No players yet"),"The host adds players on the Players tab."));return}
@@ -913,6 +974,7 @@ function seriesCard(L,s,isFinal){
 }
 function renderPlayoffs(L,br){
   const p=$("playoffs");p.replaceChildren();
+  if(L.allTime){renderHistory(S.league,p,true);return}
   if(!br){
     p.append(h("div",{class:"empty"},h("b",{},"Not started"),L.phase==="season"?`The playoffs start automatically once every regular season game is played: top ${playoffSpots(L)} in each division, best-of-3 series.`:"Playoffs come after the regular season. Series are best of 3."));
     renderHistory(L,p);return;
@@ -929,8 +991,8 @@ function renderPlayoffs(L,br){
   wrap.append(h("div",{class:"bdiv"},h("div",{class:"div-block"},h("h3",{},"League final")),h("div",{class:"brounds"},h("div",{class:"bround"},seriesCard(L,br.final,true)))));
   p.append(wrap);renderHistory(L,p);
 }
-function renderHistory(L,p){
-  if(!L.history.length)return;
+function renderHistory(L,p,force){
+  if(!L.history.length){if(force)p.append(h("div",{class:"empty"},h("b",{},"No champions yet"),"Finished seasons show up here."));return}
   p.append(h("h3",{},"Past champions"),h("div",{class:"list"},[...L.history].reverse().map(x=>h("div",{class:"player"},h("div",{class:"who"},h("b",{},x.champion||"–"),h("small",{},(x.season||"")+(x.team?" · "+x.team:"")))))));
 }
 
@@ -943,10 +1005,11 @@ function renderResults(L){
   if(!gs.length){rs.append(h("div",{class:"empty"},h("b",{},"No games logged"),L.phase==="setup"||L.phase==="draft"?"Games start after the draft.":"Finish a game, sign in, and use Log a game to record the score."));return}
   const br=buildBracket(L);const smap=new Map((br?.all||[]).map(s=>[s.id,s]));
   for(const g of gs){
-    let canDel=signedIn()&&(isHost()||g.loggedBy===me());
+    let canDel=L===S.league&&signedIn()&&(isHost()||g.loggedBy===me());
     if(g.stage==="rs"&&L.phase!=="season")canDel=signedIn()&&isHost()&&L.phase==="setup";
     if(g.stage==="po"){const s=smap.get(g.series);canDel=canDel&&!!s&&s.games.at(-1)?.id===g.id}
-    const tag=g.stage==="po"?(smap.get(g.series)?seriesLabel(L,smap.get(g.series))+" · G"+g.gameNo:"Playoffs"):null;
+    let tag=g.stage==="po"?(smap.get(g.series)?seriesLabel(L,smap.get(g.series))+" · G"+g.gameNo:"Playoffs"):null;
+    if(L.allTime)tag=g._season+(g.stage==="po"?" · Playoffs":"");
     rs.append(gameCard(g,g.home,g.away,[h("span",{},fmtDate(g.playedAt)+(g.note?" · "+g.note:"")),canDel?h("button",{class:"sm",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>deleteGame(g.id))},"Delete"):null],tag));
   }
 }
@@ -963,12 +1026,12 @@ function deleteGame(id){
 function renderScorers(L){
   const box=$("scorers");box.replaceChildren();
   const m=new Map();
-  for(const g of L.games)for(const[side,u]of[["h",g.home],["a",g.away]])for(const n of g.goals?.[side]||[]){
-    if(!n)continue;const k=u+"|"+n.toLowerCase();const r=m.get(k)||{name:n,u,rs:0,po:0};r[g.stage==="po"?"po":"rs"]++;m.set(k,r)}
+  for(const g of L.games)for(const[side,u]of[["h",g.home],["a",g.away]]){const ab=(side==="h"?g.hab:g.aab)||abOf(u)||"";for(const n of g.goals?.[side]||[]){
+    if(!n)continue;const k=u+"|"+ab+"|"+n.toLowerCase();const r=m.get(k)||{name:n,u,ab,rs:0,po:0};r[g.stage==="po"?"po":"rs"]++;m.set(k,r)}}
   const rows=[...m.values()].sort((a,b)=>(b.rs+b.po)-(a.rs+a.po)||b.po-a.po||a.name.localeCompare(b.name));
   if(!rows.length){box.append(h("div",{class:"empty"},h("b",{},"No goals recorded"),"Add goal scorers when you log a game and the leaders show up here."));return}
   box.append(h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Scorer"),h("th",{class:"l"},"Player"),h("th",{},"Season"),h("th",{},"Playoffs"),h("th",{},"Total"))),
-    h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},h("b",{},r.name),h("small",{},teamOf(r.u))))),h("td",{class:"l"},r.u),h("td",{},r.rs),h("td",{},r.po),h("td",{class:"pts"},r.rs+r.po))))));
+    h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||teamOf(r.u))))),h("td",{class:"l"},r.u),h("td",{},r.rs),h("td",{},r.po),h("td",{class:"pts"},r.rs+r.po))))));
 }
 
 /* --- Log a game --- */
@@ -1066,10 +1129,10 @@ function renderSeasonCtl(L,br){
       h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to reshuffle",()=>mutate("Reshuffle divisions",X=>{if(rsGames(X).length)throw new Error("Games have been played; divisions are locked.");assignDivisions(X)}))},"Reshuffle divisions"),
       h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to redo the draft",()=>mutate("Redo draft",X=>{if(rsGames(X).length)throw new Error("Games have been played.");X.phase="setup";X.draft=null;for(const q of X.players){q.team="";delete q.div}}))},"Redo draft")));
   }else if(L.phase==="playoffs"){
-    if(br?.champion)c.append(h("p",{class:"hint"},`${br.champion} won ${L.season||"the season"}. Start a new season to run another draft. Players and passwords stay; games, teams and the bracket reset.`));
+    if(br?.champion)c.append(h("p",{class:"hint"},`${br.champion} won ${L.season||"the season"}. Starting ${nextSeasonName(L.season)} saves every game, the standings, draft and bracket to the archive, then opens a new draft. Players and passwords stay.`));
     else c.append(h("p",{class:"hint"},`Playoffs in progress: ${poN} game${poN===1?"":"s"} played.`));
     if(!poN)c.append(h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to cancel",()=>mutate("Cancel playoffs",X=>{if(poGames(X).length)throw new Error("Playoff games have been played.");X.playoffs=null;X.phase="season"}))},"Cancel playoffs"));
-    c.append(h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,br?.champion?"Tap again to start a new season":"Tap again: the playoffs aren't finished",()=>newSeason())},"Start new season"));
+    c.append(h("button",{class:br?.champion?"btn":"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,br?.champion?"Tap again: archive and start "+nextSeasonName(L.season):"Tap again: the playoffs aren't finished",()=>newSeason())},"Start "+nextSeasonName(L.season)));
   }
 }
 function resetLeague(){
@@ -1081,7 +1144,7 @@ function resetLeague(){
 function resetButton(L){
   const n=L.games.length;
   return h("div",{class:"ctl"},
-    h("p",{class:"hint"},"Reset the league to the start: clears every game, the draft, divisions and playoffs, then takes you back to setting the draft order. Players and passwords stay."),
+    h("p",{class:"hint"},"Reset the league to the start: clears every game, the draft, divisions and playoffs, then takes you back to setting the draft order. Players, passwords and archived seasons stay."),
     h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Are you sure? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and reset`:"Last chance: tap to reset"],resetLeague)},"Reset league"));
 }
 function startPlayoffs(n){
@@ -1091,12 +1154,22 @@ function startPlayoffs(n){
   });
 }
 function newSeason(){
-  return mutate("Start new season",X=>{
-    const b=buildBracket(X);
-    if(b?.champion)X.history.push({season:X.season||"",champion:b.champion,team:X.players.find(p=>p.u===b.champion)?.team||"",at:new Date().toISOString()});
+  return mutate("Archive "+(S.league?.season||"season")+" and start the next",X=>{
+    if(X.phase!=="playoffs"&&X.phase!=="season")throw new Error("There's no finished season to archive yet.");
+    const b=buildBracket(X),picks=X.draft?.picks||{};
+    const champ=b?.champion||null;
+    X.archive.push({
+      season:X.season||"Season "+(X.archive.length+1),finishedAt:new Date().toISOString(),champion:champ,
+      championTeam:champ?X.players.find(p=>p.u===champ)?.team||"":"",
+      gamesPer:gamesPer(X),divisions:structuredClone(X.divisions),
+      players:X.players.map(p=>({u:p.u,team:p.team||"",div:p.div||null})),
+      draft:X.draft?structuredClone(X.draft):null,playoffs:X.playoffs?structuredClone(X.playoffs):null,
+      games:X.games.map(g=>({...g,hab:g.hab||picks[g.home]||null,aab:g.aab||picks[g.away]||null}))
+    });
+    if(champ)X.history.push({season:X.season||"",champion:champ,team:X.players.find(p=>p.u===champ)?.team||"",at:new Date().toISOString()});
     X.games=[];X.playoffs=null;X.draft=null;X.phase="setup";for(const q of X.players){q.team="";delete q.div}
-    const m=/^(.*?)(\d+)\s*$/.exec(X.season||"");X.season=m?m[1]+(parseInt(m[2],10)+1):(X.season||"Season")+" 2";
-  });
+    X.season=nextSeasonName(X.season);
+  }).then(()=>{S.view="current";S.tab="draft";render()});
 }
 function inlinePass(row,p){
   row.querySelector(".inline")?.remove();
@@ -1119,6 +1192,7 @@ $("l-hs").addEventListener("input",renderGoalInputs);$("l-as").addEventListener(
 $("sch-filter").addEventListener("change",e=>{S.schFilter=e.target.value;renderSchedule(S.league)});
 $("res-filter").addEventListener("change",e=>{S.resFilter=e.target.value;renderResults(S.league)});
 $("l-date").value=today();
+$("view-sel").addEventListener("change",e=>{const v=e.target.value;S.view=v==="current"||v==="all"?v:parseInt(v,10);store.set("nhl27-view",S.view);render()});
 
 $("log-form").addEventListener("submit",async e=>{
   e.preventDefault();
@@ -1138,6 +1212,7 @@ $("log-form").addEventListener("submit",async e=>{
       if(!now)throw new Error(f.stage==="po"?"This playoff series changed. Pick the matchup again.":"Someone already logged this game.");
       const g={id:uid(),stage:f.stage,home:now.home,away:now.away,hs,as,result:S.result,playedAt:date,note,goals,loggedBy:me(),createdAt:new Date().toISOString()};
       if(f.stage==="po"){g.series=now.series;g.gameNo=now.gameNo}else g.fixture=now.fixture;
+      g.hab=X.draft?.picks?.[now.home]||null;g.aab=X.draft?.picks?.[now.away]||null;
       X.games.push(g);
       if(f.stage==="rs"&&!openFixtures(X).length)applyPlayoffs(X,playoffSpots(X));
     });
