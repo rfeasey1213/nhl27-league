@@ -20,6 +20,15 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 3. Fill in the league name, your username, password, and the key. You're now the host.
 4. On the **Players** tab, add each friend with a username and password, then send them their login.
 
+## How a season runs
+
+1. **Pre-draft:** the host adds players on the Players tab and sets the pick order on the Draft tab.
+2. **Live draft:** each player signs in and picks one NHL team on their turn. The page updates every few seconds. The host can pick for anyone who's away, undo the last pick, or cancel.
+3. **Divisions:** when the last pick is in, players are split randomly into two divisions. The host can reshuffle before any game is played and rename the divisions in League settings.
+4. **Regular season:** everyone plays everyone twice, once home and once away. Goal scorers can be added to each game.
+5. **Playoffs:** the host picks how many players make it from each division. Series are best of 3, played within each division, and the two division champions meet in the league final. Playoff games go to overtime, never a shootout.
+6. **New season:** after a champion is crowned, the host starts a new season. Players and passwords stay; games, teams and the bracket reset, and the champion is added to Past champions.
+
 ## Scoring
 
 - 2 points for a win, 1 for an overtime or shootout loss, 0 for a regulation loss.
