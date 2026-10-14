@@ -20,7 +20,7 @@
    "u": "jamie",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 3
   },
   {
    "u": "aj",
@@ -32,7 +32,7 @@
    "u": "graham",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 1
   },
   {
    "u": "freakas",
@@ -44,13 +44,13 @@
    "u": "mains",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 3
   },
   {
    "u": "gio",
    "team": "",
    "host": false,
-   "tier": 2
+   "tier": 1
   }
  ],
  "auth": {
