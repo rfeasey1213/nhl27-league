@@ -1793,13 +1793,32 @@ const LINES={
              ["Chirp: where was {L} tonight?","{L} was supposed to be one of the top dogs. {W} didn't get the memo, {S}{X}. Pylon behaviour."],
              ["Chirp: {L}'s {Lteam} look like a beer league squad","{W} handled {L}, {S}{X}. Somebody tell {L} the regular season counts."],
              ["Chirp: {L} skating like they've got weak ankles","Supposed top dog {L} went down to {W}, {S}{X}. Hope the hype comes with a refund."],
-             ["Chirp: {L} might be all flow and no show","Great hair, rough night. {W} beat {L} {S}{X}."]],
-  chirpShut:[["Chirp: {L} couldn't hit the ocean from a boat","Shut out by {W}, {S}. Top-tier talent, zero goals. Maybe tape the twig next time, bud."]],
+             ["Chirp: {L} might be all flow and no show","Great hair, rough night. {W} beat {L} {S}{X}."],
+             ["Chirp: {L} should be legally required to hand over the controller","{W} won {S}{X}. Witnesses say {L} spent the third period passing to the referee. The ref said thanks."],
+             ["Chirp: {L} has been reported missing","Last seen getting walked by {W}, {S}{X}. If found, do not return. The {Lteam} have asked for privacy."],
+             ["Chirp: {L} plays defence like a turnstile at a hockey rink in July","Open, unattended, and anyone can walk through. {W} did, {S}{X}."],
+             ["Chirp: {L}'s game plan was found written on a Timmies napkin","It just said 'shoot?' with a question mark. {W} wins {S}{X}. Investigation ongoing."],
+             ["Chirp: {L} just lost to {W} and is now speaking exclusively in excuses","Lag. Bad controller. Sun in the eyes. Indoors. {S}{X}."],
+             ["Chirp: scientists confirm {L} has never seen a puck before","After a {S} loss to {W}{X}, researchers believe {L} thought the game was curling. Sweep harder next time."],
+             ["Chirp: {L}'s {Lteam} have filed for bankruptcy of the soul","{W} took everything, {S}{X}. Even the Zamboni driver felt bad."],
+             ["Chirp: {L} played that game with their eyes closed and honestly it showed","{W} {S}{X}. {L} is now being studied as a cautionary tale in minor hockey."]],
+  chirpShut:[["Chirp: {L} couldn't hit the ocean from a boat","Shut out by {W}, {S}. Top-tier talent, zero goals. Maybe tape the twig next time, bud."],
+             ["Chirp: {L} scored as many goals as a fridge","Zero. Same as a fridge. At least the fridge keeps the beer cold. {W} wins {S}."],
+             ["Chirp: {L} has been shut out and the net has filed a restraining order","{L} hasn't touched it all game. {W} {S}. The twine is safe tonight."],
+             ["Chirp: {L}'s offence found on a milk carton","Missing: {L}'s goals. Last seen preseason. {W} blanks them {S}."]],
   chirpStreak:[["Chirp: {u} has lost {n} straight","{n} L's in a row for a so-called top player. {u}'s {team} are playing like they're on skates two sizes too big."],
                ["Chirp: somebody check on {u}","That's {n} straight losses. {u} came into the season with all the hype and has been a total duster since."],
-               ["Chirp: {u} is ice cold","{n} losses in a row. At this point {u} should be riding the pine with a Timmies."]],
-  chirpRecord:[["Chirp: {u} sitting at {rec}","{gp} games in and {u}, a preseason top dog, is under .500. The {team} were supposed to be a contender, not a cellar dweller."]],
-  chirpExit:[["Chirp: {u} bounced early","Top seed or not, {u} got sent packing by {w}. Tee times are booked, boys."]]
+               ["Chirp: {u} is ice cold","{n} losses in a row. At this point {u} should be riding the pine with a Timmies."],
+               ["Chirp: {u}'s losing streak is now old enough to drive","{n} straight. The streak has its own locker. It has a better plus-minus than {u}."],
+               ["Chirp: {u} is single-handedly keeping the rest of the league's confidence alive","{n} losses in a row. A true team player. For every other team."],
+               ["Chirp: the {team} have asked {u} to please stop touching the controller","{n} straight losses. Rumour is {u} has been benched by their own couch."],
+               ["Chirp: {u} hasn't won since the invention of the forward pass","{n} straight L's. Historians are getting involved."]],
+  chirpRecord:[["Chirp: {u} sitting at {rec}","{gp} games in and {u}, a preseason top dog, is under .500. The {team} were supposed to be a contender, not a cellar dweller."],
+               ["Chirp: {u} at {rec}, and the {team} are taking calls","{gp} games, a {rec} record. GMs across the league are hanging up on {u}'s trade requests out of pity."],
+               ["Chirp: {u} at {rec} after {gp}, is this a rebuild or a cry for help","Preseason top dog to basement dweller. The {team} fan base has switched to watching curling."]],
+  chirpExit:[["Chirp: {u} bounced early","Top seed or not, {u} got sent packing by {w}. Tee times are booked, boys."],
+             ["Chirp: {u}'s playoff run lasted shorter than a Zamboni lap","{w} sent them home. {u} has already been spotted at the driving range in full gear."],
+             ["Chirp: {u} choked harder than a guy eating dry Timbits","Out in the playoffs to {w}. Somebody get {u} a glass of water and a new hobby."]]
 };
 function buildNews(V){
   const items=[];if(!V||V.allTime)return items;
@@ -1854,7 +1873,7 @@ function buildNews(V){
   // draft + lottery
   if(run?.revealedAt){const w=run.order[0];items.push({k:"lottery",title:`${w} wins the draft lottery`,body:`Ping-pong balls bounced ${w}'s way: #1 overall with ${pct(run.firstOdds?.[w]||0)} odds as a Tier ${run.tiers?.[w]} guy. Lucky duck.`,at:run.revealedAt.replace("Z","")})}
   if(V.draft){const D=V.draft;for(const u of D.order){const ab=D.picks?.[u];if(!ab)continue;const at=(D.pickAt?.[u]||D.doneAt||"").replace("Z","");const i=D.order.indexOf(u);
-    if(D.auto?.[u])items.push({k:"chirp",title:`Chirp: ${u} fell asleep at the draft`,body:`The clock ran out, so the computer took the ${TEAM_NAME[ab]}${TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:""} for ${u}. Probably a better pick anyway.`,at});
+    if(D.auto?.[u]){const ap=pick([["Chirp: {u} fell asleep at the draft","The clock ran out, so the computer took the {t} for {u}. Probably a better pick anyway."],["Chirp: {u} was too busy to pick a team","Two whole minutes and nothing. The computer stepped in and took the {t}. The computer is now considered the smartest GM in the league."],["Chirp: {u} got outdrafted by a laptop","Clock hits zero, the site picks the {t} for {u}. Somewhere a toaster could have done better, but not by much."]],u+ab);items.push({k:"chirp",title:fill(ap[0],{u}),body:fill(ap[1],{u,t:TEAM_NAME[ab]+(TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:"")}),at})}
     else if(i===0)items.push({k:"draft",title:`${u} takes the ${TEAM_NAME[ab]} first overall`,body:TR(ab)?`Team rating ${TR(ab).ovr}, led by ${TR(ab).roster[0]?.name}. No pressure, bud.`:"",at})}}
   for(const n of V.news||[])items.push({k:"host",title:n.title,body:n.body,at:(n.at||"").replace("Z",""),id:n.id,by:n.by});
   // Chirps use each player's chirp nickname (set by the host)
