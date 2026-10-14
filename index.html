@@ -27,6 +27,15 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--ice);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 [hidden]{display:none!important}
+.logo{display:inline-grid;place-items:center;width:28px;height:28px;flex:none}
+.logo img{width:100%;height:100%;object-fit:contain;display:block}
+.logo.lg{width:40px;height:40px}
+.logo.xl{width:56px;height:56px}
+.logo-fb{display:inline-grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;border:1px solid var(--line);font:600 9.5px var(--data);letter-spacing:.02em;color:var(--muted)}
+.logo-fb.lg{width:40px;height:40px;font-size:12px}.logo-fb.xl{width:56px;height:56px;font-size:15px}
+.pl{display:flex;align-items:center;gap:8px;min-width:0}
+.pl.r{flex-direction:row-reverse;text-align:right}
+.danger{border-color:var(--goal)!important;color:var(--goal)!important;background:transparent!important}
 .wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:18px}
 header.board{background:var(--board-bg);color:var(--board-fg);border-radius:10px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;border-bottom:4px solid var(--goal)}
 .board h1{font-family:var(--display);font-weight:600;font-size:44px;line-height:.9;margin:0;letter-spacing:.02em;text-transform:uppercase;overflow-wrap:anywhere}
@@ -99,7 +108,7 @@ label,.lbl{font:600 12px var(--data);letter-spacing:.1em;text-transform:uppercas
 select,input{font:500 16px var(--body);color:var(--ink);background:var(--ice);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
 .matchup{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start}
 .matchup .team{font:600 17px var(--body);overflow-wrap:anywhere}
-.matchup .club{font-size:13px;color:var(--muted)}
+.matchup .club{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;min-height:28px}
 input.goals{font-family:var(--display);font-size:34px;line-height:1;text-align:center;padding:6px}
 .vs{font-family:var(--display);font-size:22px;color:var(--muted);padding-top:48px}
 .scorer-list{display:grid;gap:6px}
@@ -125,6 +134,8 @@ input.goals{font-family:var(--display);font-size:34px;line-height:1;text-align:c
 .player .inline{display:flex;gap:6px;flex-wrap:wrap;width:100%}
 .player .inline input{flex:1 1 160px;width:auto;padding:6px 8px;font-size:15px}
 .host{font:600 10.5px var(--data);letter-spacing:.12em;text-transform:uppercase;background:var(--goal);color:#fff;border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:2px}
+.host-tools,#host-tools,#me-tools{display:grid;gap:12px}
+#host-tools[hidden],#me-tools[hidden]{display:none!important}
 .ctl{display:grid;gap:10px;padding:12px;border:1px dashed var(--line);border-radius:8px}
 /* Draft */
 .clock{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--board-bg);color:var(--board-fg);border-radius:8px;padding:12px 16px}
@@ -135,17 +146,19 @@ input.goals{font-family:var(--display);font-size:34px;line-height:1;text-align:c
 .order li{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto auto;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--ice);font-family:var(--data);counter-increment:pick}
 .order li::before{content:counter(pick);font-family:var(--display);font-size:22px;line-height:1;color:var(--muted)}
 .order li.now{border-color:var(--goal);box-shadow:inset 3px 0 0 var(--goal)}
-.order li .t{color:var(--muted);font-size:14px;text-align:right}
+.order li .t{color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
 .order li .t b{color:var(--ink);font-weight:600}
 .order li .mv{display:flex;gap:4px}
 .nhl-div{display:grid;gap:6px}
 .nhl-div h3{margin:0}
 .teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
-.tm{display:grid;gap:1px;text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--ice);color:var(--ink);cursor:pointer;font-family:var(--data)}
+.tm{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;column-gap:10px;text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--ice);color:var(--ink);cursor:pointer;font-family:var(--data)}
+.tm .nm{display:grid;gap:1px;min-width:0}
 .tm b{font-family:var(--display);font-size:24px;line-height:.9;font-weight:500;letter-spacing:.03em}
 .tm span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tm:disabled{cursor:default}
-.tm.taken{opacity:.55;background:transparent}
+.tm.taken{opacity:.5;background:transparent}
+.tm.taken .logo{filter:grayscale(1)}
 .tm.taken span{color:var(--ink)}
 .tm.sel{border-color:var(--goal);box-shadow:0 0 0 2px var(--goal) inset}
 .confirm{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--boards);border:2px solid var(--goal);border-radius:10px;padding:10px 14px;box-shadow:0 6px 24px color-mix(in srgb,var(--ink) 18%,transparent)}
@@ -158,7 +171,7 @@ input.goals{font-family:var(--display);font-size:34px;line-height:1;text-align:c
 .bround>span{font:600 12px var(--data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .series{border:1px solid var(--line);border-radius:8px;background:var(--ice);padding:8px 10px;display:grid;gap:4px;font-family:var(--data)}
 .series.final{border-color:var(--gold)}
-.series .s{display:grid;grid-template-columns:1.6em 1fr auto;gap:6px;align-items:center}
+.series .s{display:grid;grid-template-columns:1.6em 24px minmax(0,1fr) auto;gap:6px;align-items:center}
 .series .s .seed{color:var(--muted);font-size:12.5px}
 .series .s b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .series .s.out b{color:var(--muted);font-weight:500;text-decoration:line-through}
@@ -313,6 +326,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <div id="host-tools" hidden>
       <h3>Season controls</h3>
       <div class="ctl" id="season-ctl"></div>
+
+      <div id="reset-ctl"></div>
 
       <div id="add-wrap">
         <h3>Add a player</h3>
@@ -595,6 +610,28 @@ function saveErr(e){
   return"Couldn't save. Check your connection and try again.";
 }
 
+/* ===== Team logos (served from the NHL's own image server) ===== */
+const LOGO_BASE="https://assets.nhle.com/logos/nhl/svg/";
+function logo(ab,size){
+  if(!ab)return null;
+  const cls=size?" "+size:"";
+  const fallback=()=>h("span",{class:"logo-fb"+cls,"aria-hidden":"true"},ab);
+  const img=h("img",{src:LOGO_BASE+ab+"_light.svg",alt:"",loading:"lazy",decoding:"async"});
+  const pic=h("picture",{class:"logo"+cls},h("source",{media:"(prefers-color-scheme: dark)",srcset:LOGO_BASE+ab+"_dark.svg"}),img);
+  img.addEventListener("error",()=>{if(pic.isConnected||pic.parentNode)pic.replaceWith(fallback())},{once:true});
+  return pic;
+}
+function abOf(u){return S.league?.draft?.picks?.[u]||null}
+function confirmTap(btn,prompts,fn){
+  const step=+(btn.dataset.step||0);
+  clearTimeout(btn._t);
+  if(step>=prompts.length){delete btn.dataset.step;btn.disabled=true;btn.textContent="Working…";
+    Promise.resolve().then(fn).catch(e=>{btn.disabled=false;btn.textContent=btn.dataset.orig;btn.classList.remove("armed");flash(saveErr(e))});return}
+  if(!step)btn.dataset.orig=btn.textContent;
+  btn.dataset.step=String(step+1);btn.textContent=prompts[step];btn.classList.add("armed");
+  btn._t=setTimeout(()=>{if(btn.isConnected&&btn.dataset.step){delete btn.dataset.step;btn.textContent=btn.dataset.orig;btn.classList.remove("armed")}},6000);
+}
+
 /* ===== Session helpers ===== */
 const L_=()=>S.league;
 function pmap(){return new Map((S.league?.players||[]).map(p=>[p.u,p]))}
@@ -627,7 +664,7 @@ function render(){
   const n=L.players.length,total=n*(n-1),rsN=rsGames(L).length;
   $("t-players").textContent=n;$("t-games").textContent=L.games.length;$("t-left").textContent=L.phase==="season"?Math.max(0,total-rsN):0;
   const champ=$("champ");
-  if(br?.champion){champ.hidden=false;champ.replaceChildren(h("div",{},h("span",{},(L.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):""))))}else champ.hidden=true;
+  if(br?.champion){champ.hidden=false;champ.replaceChildren(...[logo(abOf(br.champion),"xl"),h("div",{},h("span",{},(L.season||"Season")+" champion"),h("b",{},br.champion+(teamOf(br.champion)?" · "+teamOf(br.champion):"")))].filter(Boolean))}else champ.hidden=true;
 
   const tabBtn=t=>document.querySelector(`#tabs [data-tab="${t}"]`);
   tabBtn("log").hidden=!signedIn();
@@ -649,9 +686,9 @@ function playerFilter(sel,cur){
 function gameCard(g,home,away,extra,tag){
   const homeWon=g?g.hs>g.as:null;
   const kids=[
-    h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},h("b",{},home),h("small",{},teamOf(home)||"Home")),
+    h("div",{class:"pl"},logo(abOf(home)),h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},h("b",{},home),h("small",{},teamOf(home)||"Home"))),
     g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":"Final/"+g.result)):h("div",{class:"score pending"},"vs"),
-    h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},h("b",{},away),h("small",{},teamOf(away)||"Away")),
+    h("div",{class:"pl r"},logo(abOf(away)),h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},h("b",{},away),h("small",{},teamOf(away)||"Away"))),
     h("div",{class:"meta"},tag?h("span",{class:"tagpo"},tag):null,extra)];
   if(g&&((g.goals?.h||[]).some(Boolean)||(g.goals?.a||[]).some(Boolean)))
     kids.push(h("div",{class:"scorers"},h("div",{},scorerLine(g.goals.h)||"–"),h("div",{},scorerLine(g.goals.a)||"–")));
@@ -698,14 +735,14 @@ function renderDraft(L){
     else if(!mine&&!isHost())p.append(h("p",{class:"hint"},"Waiting for "+clock+". This page updates every few seconds."));
     else if(!mine&&isHost())p.append(h("p",{class:"hint"},"As host you can pick for "+clock+" if they're away."));
   }
-  p.append(h("ol",{class:"order"},D.order.map(u=>h("li",{class:u===clock?"now":null},h("span",{},u),h("span",{class:"t"},D.picks[u]?h("b",{},TEAM_NAME[D.picks[u]]||D.picks[u]):(u===clock?"Picking…":"–")),h("span",{})))));
+  p.append(h("ol",{class:"order"},D.order.map(u=>h("li",{class:u===clock?"now":null},h("span",{},u),h("span",{class:"t"},...(D.picks[u]?[h("b",{},TEAM_NAME[D.picks[u]]||D.picks[u]),logo(D.picks[u])]:[u===clock?"Picking…":"–"])),h("span",{})))));
   const canPick=L.phase==="draft"&&signedIn()&&(clock===me()||isHost());
   if(L.phase==="draft"){
     for(const d of NHL){
       p.append(h("div",{class:"nhl-div"},h("h3",{},d.div),h("div",{class:"teams"},d.teams.map(([ab,name])=>{
         const by=taken[ab];
         return h("button",{type:"button",class:"tm"+(by?" taken":"")+(S.draftSel===ab?" sel":""),disabled:!!by||!canPick,"aria-pressed":S.draftSel===ab?"true":"false",
-          onclick:()=>{S.draftSel=S.draftSel===ab?null:ab;renderDraft(L)}},h("b",{},ab),h("span",{},by?"Taken by "+by:name))}))));
+          onclick:()=>{S.draftSel=S.draftSel===ab?null:ab;renderDraft(L)}},logo(ab,"lg"),h("div",{class:"nm"},h("b",{},ab),h("span",{},by?"Taken by "+by:name)))}))));
     }
     if(canPick&&S.draftSel&&!taken[S.draftSel]){
       const msg=h("span",{class:"msg"});
@@ -720,7 +757,7 @@ function renderDraft(L){
           if(!draftOnClock(X)){assignDivisions(X);X.phase="season";X.draft.doneAt=new Date().toISOString()}
         });S.draftSel=null;renderDraft(S.league)}
         catch(e){msg.textContent=saveErr(e);msg.className="msg err";go.disabled=false}}},"Confirm pick");
-      p.append(h("div",{class:"confirm"},h("p",{},`Draft ${TEAM_NAME[ab]} for ${clock===me()?"yourself":clock}?`),h("div",{class:"row"},go,h("button",{class:"btn ghost",type:"button",onclick:()=>{S.draftSel=null;renderDraft(L)}},"Cancel")),msg));
+      p.append(h("div",{class:"confirm"},h("div",{class:"pl"},logo(ab,"lg"),h("p",{},`Draft ${TEAM_NAME[ab]} for ${clock===me()?"yourself":clock}?`)),h("div",{class:"row"},go,h("button",{class:"btn ghost",type:"button",onclick:()=>{S.draftSel=null;renderDraft(L)}},"Cancel")),msg));
     }
     if(signedIn()&&isHost()){
       const last=[...D.order].reverse().find(u=>D.picks[u]);
@@ -739,7 +776,7 @@ function standingsTable(L,rows,cutAfter){
     h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{},"GP"),h("th",{},"W"),h("th",{},"L"),h("th",{},"OTL"),h("th",{},"PTS"),h("th",{class:"hide-sm"},"GF"),h("th",{class:"hide-sm"},"GA"),h("th",{},"DIFF"),h("th",{class:"l hide-sm"},"Last 5"),h("th",{class:"hide-sm"},"STRK"),h("th",{class:"hide-sm"},"Left"))),
     h("tbody",{},rows.map((r,i)=>h("tr",{class:[r.u===me()?"me":"",cutAfter&&i===cutAfter-1&&i<rows.length-1?"cut":""].join(" ").trim()||null},
       h("td",{class:"l rank"},i+1),
-      h("td",{class:"l"},h("div",{class:"who"},h("b",{},r.u),r.p.team?h("small",{},r.p.team):null)),
+      h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},h("b",{},r.u),r.p.team?h("small",{},r.p.team):null))),
       h("td",{},r.gp),h("td",{},r.w),h("td",{},r.l),h("td",{},r.otl),h("td",{class:"pts"},r.pts),
       h("td",{class:"hide-sm"},r.gf),h("td",{class:"hide-sm"},r.ga),h("td",{},(r.gd>0?"+":"")+r.gd),
       h("td",{class:"l hide-sm"},h("span",{class:"form"},r.log.slice(-5).map(x=>h("span",{class:"chip "+x,title:x==="O"?"OT/SO loss":x==="W"?"Win":"Loss"},x==="O"?"OT":x)))),
@@ -785,7 +822,7 @@ function seriesCard(L,s,isFinal){
   const st=s.pending?null:s;
   const line=(u,seed,w,isA)=>{
     const out=st&&st.winner&&st.winner!==u;
-    return h("div",{class:"s"+(u?"":" tbd")+(out?" out":"")},h("span",{class:"seed"},seed?"#"+seed:""),h("b",{},u?(u+(teamOf(u)?" · "+teamOf(u).split(" ").slice(-1)[0]:"")):"TBD"),h("span",{class:"w"},st?w:""));
+    return h("div",{class:"s"+(u?"":" tbd")+(out?" out":"")},h("span",{class:"seed"},seed?"#"+seed:""),u&&abOf(u)?logo(abOf(u)):h("span",{}),h("b",{},u?(u+(teamOf(u)?" · "+teamOf(u).split(" ").slice(-1)[0]:"")):"TBD"),h("span",{class:"w"},st?w:""));
   };
   let status="";
   if(s.pending)status="Waiting on earlier rounds";
@@ -853,7 +890,7 @@ function renderScorers(L){
   const rows=[...m.values()].sort((a,b)=>(b.rs+b.po)-(a.rs+a.po)||b.po-a.po||a.name.localeCompare(b.name));
   if(!rows.length){box.append(h("div",{class:"empty"},h("b",{},"No goals recorded"),"Add goal scorers when you log a game and the leaders show up here."));return}
   box.append(h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Scorer"),h("th",{class:"l"},"Player"),h("th",{},"Season"),h("th",{},"Playoffs"),h("th",{},"Total"))),
-    h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"who"},h("b",{},r.name),h("small",{},teamOf(r.u)))),h("td",{class:"l"},r.u),h("td",{},r.rs),h("td",{},r.po),h("td",{class:"pts"},r.rs+r.po))))));
+    h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),h("td",{class:"l"},h("div",{class:"pl"},logo(abOf(r.u)),h("div",{class:"who"},h("b",{},r.name),h("small",{},teamOf(r.u))))),h("td",{class:"l"},r.u),h("td",{},r.rs),h("td",{},r.po),h("td",{class:"pts"},r.rs+r.po))))));
 }
 
 /* --- Log a game --- */
@@ -877,7 +914,7 @@ function currentFixture(){const v=$("l-fixture").value;return v?openFixtures(S.l
 function syncFixture(){
   const f=currentFixture();
   $("l-hname").textContent=f?.home||"–";$("l-aname").textContent=f?.away||"–";
-  $("l-hclub").textContent=f?teamOf(f.home):"";$("l-aclub").textContent=f?teamOf(f.away):"";
+  $("l-hclub").replaceChildren(...(f?[logo(abOf(f.home)),teamOf(f.home)]:[]).filter(Boolean));$("l-aclub").replaceChildren(...(f?[logo(abOf(f.away)),teamOf(f.away)]:[]).filter(Boolean));
   const so=$("l-result").querySelector('[data-v="SO"]');so.hidden=f?.stage==="po";
   if(f?.stage==="po"&&S.result==="SO")setResult("REG");
   renderGoalInputs();
@@ -906,7 +943,7 @@ function renderPlayers(L,br){
     const played=L.games.filter(g=>g.home===p.u||g.away===p.u).length;
     const acts=h("div",{class:"acts"});
     const sub=[p.team||"No team yet",p.div?divName(L,p.div):null,played+" played"].filter(Boolean).join(" · ");
-    const row=h("div",{class:"player"},h("div",{class:"who"},h("b",{},p.u,p.host?h("span",{class:"host"},"Host"):null),h("small",{},sub)),acts);
+    const row=h("div",{class:"player"},h("div",{class:"pl"},logo(abOf(p.u)),h("div",{class:"who"},h("b",{},p.u,p.host?h("span",{class:"host"},"Host"):null),h("small",{},sub))),acts);
     if(host){
       if(p.u!==me())acts.append(h("button",{class:"sm",type:"button",onclick:()=>inlinePass(row,p)},"Reset password"));
       if(!p.host&&L.phase==="setup")acts.append(h("button",{class:"sm",type:"button",onclick:ev=>{if(played){ev.currentTarget.textContent="Delete their games first";ev.currentTarget.disabled=true;return}
@@ -924,6 +961,7 @@ function renderPlayers(L,br){
 }
 function renderSeasonCtl(L,br){
   const c=$("season-ctl");c.replaceChildren();
+  $("reset-ctl").replaceChildren(...(L.phase==="setup"&&!L.games.length?[]:[resetButton(L)]));
   const rsN=rsGames(L).length,poN=poGames(L).length;
   if(L.phase==="setup"){
     c.append(h("p",{class:"hint"},`Pre-draft. Add everyone below, then set the pick order and start the draft on the Draft tab.`),h("button",{class:"btn ghost",type:"button",onclick:()=>show("draft")},"Go to draft"));
@@ -949,6 +987,18 @@ function renderSeasonCtl(L,br){
     if(!poN)c.append(h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to cancel",()=>mutate("Cancel playoffs",X=>{if(poGames(X).length)throw new Error("Playoff games have been played.");X.playoffs=null;X.phase="season"}))},"Cancel playoffs"));
     c.append(h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,br?.champion?"Tap again to start a new season":"Tap again: the playoffs aren't finished",()=>newSeason())},"Start new season"));
   }
+}
+function resetLeague(){
+  return mutate("Reset league",X=>{
+    X.games=[];X.playoffs=null;X.draft=null;X.phase="setup";
+    for(const q of X.players){q.team="";delete q.div}
+  }).then(()=>{S.orderDraft=null;show("draft")});
+}
+function resetButton(L){
+  const n=L.games.length;
+  return h("div",{class:"ctl"},
+    h("p",{class:"hint"},"Reset the league to the start: clears every game, the draft, divisions and playoffs, then takes you back to setting the draft order. Players and passwords stay."),
+    h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Are you sure? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and reset`:"Last chance: tap to reset"],resetLeague)},"Reset league"));
 }
 function startPlayoffs(n){
   return mutate("Start playoffs",X=>{
