@@ -140,6 +140,30 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story p{margin:0;color:var(--muted)}
 .story .game{background:rgba(3,14,30,.35)}
 
+/* Stats */
+.stats4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:560px){.stats4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat-table th.sortable{padding:0}
+.stat-table th.sortable button{all:unset;cursor:pointer;display:block;padding:7px 8px;width:100%;box-sizing:border-box;text-align:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit}
+.stat-table th.sortable button:focus-visible{outline:2px solid var(--glacier);outline-offset:-2px}
+.stat-table th.sorted{color:var(--glacier)}
+td.up{color:var(--win)}td.down{color:var(--hot)}
+.race-wrap{position:relative}
+svg.race{width:100%;height:auto;display:block;overflow:visible}
+svg.race .grid{stroke:var(--line);stroke-width:1}
+svg.race .ax{fill:var(--muted);font:600 11px var(--data)}
+svg.race .elbl{fill:var(--ink);font:600 11.5px var(--data)}
+svg.race .cross{stroke:var(--line-2);stroke-width:1}
+svg.race.focus .rl{opacity:.18}svg.race.focus .rl.on{opacity:1;stroke-width:3}
+.race-tip{position:absolute;top:8px;min-width:150px;background:rgba(4,16,32,.95);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:500 12.5px var(--data);pointer-events:none;display:grid;gap:3px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.race-tip b{font-weight:700;color:var(--ink);margin-bottom:2px}
+.race-tip .tr{display:grid;grid-template-columns:10px 1fr auto;gap:6px;align-items:center;color:var(--muted)}
+.race-tip .tr i,.legend-row i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.race-tip .tv{color:var(--ink);font-variant-numeric:tabular-nums}
+.legend-row{display:flex;flex-wrap:wrap;gap:6px 12px}
+.legend-row .lg{all:unset;cursor:default;display:inline-flex;align-items:center;gap:6px;font:600 12.5px var(--data);color:var(--ink)}
+.legend-row .lg:focus-visible{outline:2px solid var(--glacier);outline-offset:2px;border-radius:3px}
+
 /* Lottery */
 .lot{display:grid;gap:10px;padding:14px;border:1px solid var(--glacier);border-radius:12px;background:linear-gradient(160deg,rgba(42,168,255,.14),rgba(4,14,30,.5));box-shadow:0 0 26px rgba(95,227,255,.15)}
 .lot-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -418,6 +442,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <button role="tab" data-tab="awards" aria-selected="false">Awards</button>
     <button role="tab" data-tab="results" aria-selected="false">Results</button>
     <button role="tab" data-tab="scorers" aria-selected="false">Scorers</button>
+    <button role="tab" data-tab="stats" aria-selected="false">Stats</button>
     <button role="tab" data-tab="log" aria-selected="false">My games</button>
     <button role="tab" data-tab="players" aria-selected="false">Players</button>
   </nav>
@@ -465,6 +490,18 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
       <select id="res-filter" aria-label="Show results for"></select>
     </div>
     <div class="list" id="results"></div>
+  </section>
+
+  <section class="panel" id="p-stats" hidden>
+    <div class="filter">
+      <h2>Statistics</h2>
+      <select id="stat-stage" aria-label="Which games">
+        <option value="rs">Regular season</option>
+        <option value="po">Playoffs</option>
+        <option value="all">All games</option>
+      </select>
+    </div>
+    <div id="stats"></div>
   </section>
 
   <section class="panel" id="p-scorers" hidden>
@@ -1006,7 +1043,7 @@ function isHost(){return !!pmap().get(me())?.host}
 function teamOf(u){return ((VIEW||S.league)?.players||[]).find(p=>p.u===u)?.team||""}
 
 /* ===== Render ===== */
-const TABS=["draft","news","standings","schedule","playoffs","awards","results","scorers","log","players"];
+const TABS=["draft","news","standings","schedule","playoffs","awards","results","scorers","stats","log","players"];
 function show(t){if(!TABS.includes(t))t="standings";S.tab=t;store.set("nhl27-tab",t);
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   TABS.forEach(x=>$("p-"+x).hidden=!S.league||x!==t)}
@@ -1065,7 +1102,7 @@ function render(){
   tabBtn("draft").replaceChildren(...["Draft",L.phase==="draft"&&V===L?h("span",{class:"live","aria-label":"live"}):null].filter(Boolean));
   if((V!==L&&S.tab==="log")||(V.allTime&&(S.tab==="draft"||S.tab==="schedule")))S.tab="standings";
 
-  renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderAwards(V);renderNews(V);renderResults(V);renderScorers(V);
+  renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderAwards(V);renderNews(V);renderResults(V);renderScorers(V);renderStats(V);
   if(S.profile&&!$("profile").hidden)renderProfile(S.profile);
   show(S.tab);
 }
@@ -1842,6 +1879,142 @@ function renderCommish(L){
   }
   box.append(h("h3",{},"Results"),h("p",{class:"hint"},"You can log, edit or delete any game. Use My games → Everyone's games, or the Edit and Delete buttons on Results. Forfeits are an option when you log a game."));
 }
+
+/* ===== Statistics ===== */
+const SERIES=["#3987e5","#d95926","#199e70","#c98500","#d55181","#008300","#9085e9","#e66767"]; /* validated on the site's dark surface */
+function sideTier(V,u){const run=(V.lotteryRuns||[]).at(-1);return run?.tiers?.[u]||tierOf(V.players.find(p=>p.u===u))}
+function gamePowers(V,g){
+  if(g.hpow!=null&&g.apow!=null)return[g.hpow,g.apow];
+  const hab=g.hab||V.draft?.picks?.[g.home],aab=g.aab||V.draft?.picks?.[g.away];
+  return[gamePower(TR(hab)?.ovr??null,sideTier(V,g.home)),gamePower(TR(aab)?.ovr??null,sideTier(V,g.away))];
+}
+function expectWin(a,b){return 1/(1+Math.exp(-(a-b)/8))}
+function playerStats(V,games){
+  const m=new Map();const get=u=>{if(!m.has(u))m.set(u,{u,gp:0,w:0,l:0,otl:0,gf:0,ga:0,hw:0,hl:0,aw:0,al:0,ow:0,ol:0,xw:0,xl:0,sof:0,soa:0,cb:0,ups:0,hat:0,big:0,bigTxt:"",run:0,best:0,exp:0});return m.get(u)};
+  for(const p of V.players)get(p.u);
+  const sorted=[...games].sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||"")));
+  for(const g of sorted){
+    const[hp,ap]=gamePowers(V,g),pe=expectWin(hp,ap),bs=gameBadges(g);
+    for(const home of[true,false]){
+      const u=home?g.home:g.away,r=get(u),mine=home?g.hs:g.as,th=home?g.as:g.hs,won=mine>th,ex=isExtra(g);
+      r.gp++;r.gf+=mine;r.ga+=th;r.exp+=home?pe:1-pe;
+      if(won){r.w++;r.run++;r.best=Math.max(r.best,r.run);home?r.hw++:r.aw++;if(ex)r.ow++;if(mine-th===1)r.xw++;if(th===0)r.sof++;
+        if(mine-th>r.big){r.big=mine-th;r.bigTxt=`${mine}–${th} vs ${home?g.away:g.home}`}}
+      else{r.run=0;home?r.hl++:r.al++;if(ex){r.otl++;r.ol++}else r.l++;if(th-mine===1)r.xl++;if(mine===0)r.soa++}
+      for(const b of bs){if(b.who!==u)continue;if(b.k==="cb")r.cb++;if(b.k==="up")r.ups++;if(b.k==="hat")r.hat++}
+    }
+  }
+  return[...m.values()].map(r=>({...r,pts:r.w*2+r.otl,ppct:r.gp?(r.w*2+r.otl)/(r.gp*2):0,gfg:r.gp?r.gf/r.gp:0,gag:r.gp?r.ga/r.gp:0,diff:r.gf-r.ga,vsx:r.w-r.exp}));
+}
+const STAT_COLS=[
+  ["u","Player",r=>r.u,"l"],["gp","GP",r=>r.gp],["w","W",r=>r.w],["l","L",r=>r.l],["otl","OTL",r=>r.otl],["pts","PTS",r=>r.pts],
+  ["ppct","PTS%",r=>r.gp?r.ppct.toFixed(3).replace(/^0/,""):"–"],["gfg","GF/G",r=>r.gp?r.gfg.toFixed(2):"–"],["gag","GA/G",r=>r.gp?r.gag.toFixed(2):"–"],["diff","DIFF",r=>(r.diff>0?"+":"")+r.diff],
+  ["hw","Home",r=>`${r.hw}–${r.hl}`],["aw","Road",r=>`${r.aw}–${r.al}`],["xw","1-goal",r=>`${r.xw}–${r.xl}`],["ow","OT/SO",r=>`${r.ow}–${r.ol}`],
+  ["sof","SO",r=>r.sof],["best","Best run",r=>r.best],["hat","Hat tricks",r=>r.hat],["cb","Comebacks",r=>r.cb],["ups","Upsets",r=>r.ups],
+  ["vsx","vs Exp.",r=>r.gp?(r.vsx>=0?"+":"")+r.vsx.toFixed(1):"–"]
+];
+function statTile(label,value,sub){return h("div",{class:"stat"},h("span",{},label),h("b",{},value),sub?h("small",{},sub):null)}
+function leaderCard(title,desc,rows,fmt,minGp=1){
+  const pool=rows.filter(r=>r.gp>=minGp);if(!pool.length)return null;
+  const best=pool[0];
+  return h("div",{class:"award"},h("div",{class:"at"},title),h("div",{class:"ad"},desc),
+    h("div",{class:"aw"},logo(abOf(best.u)),P(best.u)),h("div",{class:"av"},fmt(best)),
+    pool.slice(1,3).length?h("div",{class:"ad"},"Next: "+pool.slice(1,3).map(r=>`${r.u} ${fmt(r)}`).join(" · ")):null);
+}
+function pointsRace(V,games,colors){
+  const us=V.players.map(p=>p.u);const series=us.map(u=>{let pts=0;const pts_=[0];
+    for(const g of[...games].sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||""))))if(g.home===u||g.away===u){const mine=g.home===u?g.hs:g.as,th=g.home===u?g.as:g.hs;pts+=mine>th?2:isExtra(g)?1:0;pts_.push(pts)}
+    return{u,pts:pts_}}).filter(x=>x.pts.length>1);
+  if(!series.length)return null;
+  const maxX=Math.max(...series.map(x=>x.pts.length-1)),maxY=Math.max(2,...series.map(x=>x.pts.at(-1)));
+  const narrow=innerWidth<600,yTop=Math.ceil(maxY/4)*4,W=narrow?400:720,H=narrow?280:300,ml=30,mr=narrow?70:86,mt=12,mb=30,iw=W-ml-mr,ih=H-mt-mb;
+  const X=i=>ml+(maxX?i/maxX*iw:0),Y=v=>mt+ih-(v/yTop)*ih;
+  /* nudge tied lines apart a little so every color stays visible */
+  const nudge=Object.fromEntries(series.map((sx,i)=>[sx.u,(i-(series.length-1)/2)*1.6]));
+  const NS="http://www.w3.org/2000/svg",el=(t,a,...k)=>{const e=document.createElementNS(NS,t);for(const[x,y]of Object.entries(a||{}))e.setAttribute(x,y);for(const c of k)e.append(c);return e};
+  const svg=el("svg",{viewBox:`0 0 ${W} ${H}`,class:"race",role:"img","aria-label":"Points after each game for every player"});
+  for(let v=0;v<=yTop;v+=yTop/4){svg.append(el("line",{x1:ml,x2:W-mr,y1:Y(v),y2:Y(v),class:"grid"}),el("text",{x:ml-8,y:Y(v)+4,class:"ax","text-anchor":"end"},String(v)))}
+  const step=maxX>12?Math.ceil(maxX/12):1;for(let i=0;i<=maxX;i+=step)svg.append(el("text",{x:X(i),y:H-8,class:"ax","text-anchor":"middle"},String(i)));
+  svg.append(el("text",{x:W-mr,y:H-8,class:"ax","text-anchor":"end",dx:"64"},"games"));
+  // end labels: leader + up to 3 more, nudged apart
+  const ends=series.map(sx=>({u:sx.u,y:Y(sx.pts.at(-1)),x:X(sx.pts.length-1),v:sx.pts.at(-1)})).sort((a,b)=>a.y-b.y);
+  for(let i=1;i<ends.length;i++)if(ends[i].y-ends[i-1].y<13)ends[i].y=ends[i-1].y+13;
+  for(const sx of series){const c=colors[sx.u];
+    svg.append(el("polyline",{points:sx.pts.map((v,i)=>`${X(i)},${Y(v)+nudge[sx.u]}`).join(" "),fill:"none",stroke:c,"stroke-width":"2","stroke-linejoin":"round","stroke-linecap":"round","data-u":sx.u,class:"rl"}));
+    svg.append(el("circle",{cx:X(sx.pts.length-1),cy:Y(sx.pts.at(-1))+nudge[sx.u],r:"4",fill:c,stroke:"#0b1a2c","stroke-width":"2","data-u":sx.u,class:"rl"}))}
+  for(const e of ends)svg.append(el("text",{x:W-mr+8,y:e.y+4,class:"elbl"},`${e.u} ${e.v}`));
+  // hover crosshair + tooltip
+  const cross=el("line",{y1:mt,y2:mt+ih,class:"cross",visibility:"hidden"});svg.append(cross);
+  const hit=el("rect",{x:ml,y:mt,width:iw,height:ih,fill:"transparent"});svg.append(hit);
+  const wrap=h("div",{class:"race-wrap"}),tip=h("div",{class:"race-tip",hidden:true});
+  const move=ev=>{const r=svg.getBoundingClientRect(),px=(ev.clientX-r.left)*(W/r.width);const i=Math.max(0,Math.min(maxX,Math.round((px-ml)/iw*maxX)));
+    cross.setAttribute("x1",X(i));cross.setAttribute("x2",X(i));cross.setAttribute("visibility","visible");
+    const rows=series.map(sx=>({u:sx.u,v:sx.pts[Math.min(i,sx.pts.length-1)]})).sort((a,b)=>b.v-a.v);
+    tip.replaceChildren(h("b",{},`After game ${i}`),...rows.map(x=>h("div",{class:"tr"},h("i",{style:`background:${colors[x.u]}`}),h("span",{},x.u),h("span",{class:"tv"},x.v+" pts"))));
+    tip.hidden=false;const left=(X(i)/W)*r.width;tip.style.left=Math.min(r.width-170,Math.max(0,left+12))+"px"};
+  hit.addEventListener("pointermove",move);hit.addEventListener("pointerdown",move);hit.addEventListener("pointerleave",()=>{tip.hidden=true;cross.setAttribute("visibility","hidden")});
+  const on=u=>{svg.classList.add("focus");svg.querySelectorAll(".rl").forEach(x=>x.classList.toggle("on",x.dataset.u===u))},off=()=>{svg.classList.remove("focus");svg.querySelectorAll(".rl.on").forEach(x=>x.classList.remove("on"))};
+  const legend=h("div",{class:"legend-row"},series.map(sx=>h("button",{type:"button",class:"lg",onmouseenter:()=>on(sx.u),onmouseleave:off,onfocus:()=>on(sx.u),onblur:off},h("i",{style:`background:${colors[sx.u]}`}),sx.u)));
+  wrap.append(svg,tip);
+  return h("div",{class:"div-block"},h("h3",{},"Points race"),legend,wrap);
+}
+function renderStats(V){
+  const box=$("stats");box.replaceChildren();
+  const stage=$("stat-stage").value||"rs";
+  const games=V.games.filter(g=>stage==="all"||g.stage===stage);
+  if(!games.length){box.append(h("div",{class:"empty"},h("b",{},"No games yet"),stage==="po"?"Playoff stats show up once the playoffs start.":"Stats fill in as games are logged."));return}
+  const rows=playerStats(V,games).filter(r=>r.gp>0);
+  // league snapshot
+  const goals=games.reduce((a,g)=>a+g.hs+g.as,0),homeW=games.filter(g=>g.hs>g.as).length,extra=games.filter(isExtra).length;
+  const allB=games.flatMap(g=>gameBadges(g));
+  box.append(h("div",{class:"stats stats4"},statTile("Games",games.length),statTile("Goals",goals,(goals/games.length).toFixed(2)+" per game"),
+    statTile("Home win %",Math.round(homeW/games.length*100)+"%",`${homeW} of ${games.length}`),statTile("Went to OT/SO",Math.round(extra/games.length*100)+"%",extra+" games"),
+    statTile("Shutouts",allB.filter(b=>b.k==="so").length),statTile("Hat tricks",allB.filter(b=>b.k==="hat").length),statTile("Comebacks",allB.filter(b=>b.k==="cb").length),statTile("Upsets",allB.filter(b=>b.k==="up").length)));
+  // points race
+  const colors=Object.fromEntries(V.players.map((p,i)=>[p.u,SERIES[i%SERIES.length]]));
+  if(stage!=="po"){const race=pointsRace(V,games,colors);if(race)box.append(race)}
+  // leaders
+  const by=(f,dir=-1)=>[...rows].sort((a,b)=>dir*(f(a)-f(b))||a.u.localeCompare(b.u));
+  const cards=[
+    leaderCard("Best offence","Goals for per game",by(r=>r.gfg),r=>r.gfg.toFixed(2)),
+    leaderCard("Best defence","Fewest goals against per game",by(r=>r.gag,1),r=>r.gag.toFixed(2)),
+    leaderCard("Home ice","Home wins",by(r=>r.hw*100-r.hl),r=>`${r.hw}–${r.hl}`),
+    leaderCard("Road warrior","Road wins",by(r=>r.aw*100-r.al),r=>`${r.aw}–${r.al}`),
+    leaderCard("Clutch","Wins in one-goal games",by(r=>r.xw*100-r.xl),r=>`${r.xw}–${r.xl}`),
+    leaderCard("Brick wall","Shutouts",by(r=>r.sof*100-r.gag),r=>`${r.sof}`),
+    leaderCard("Heater","Longest win streak",by(r=>r.best),r=>`${r.best} straight`),
+    leaderCard("Giant killer","Upset wins",by(r=>r.ups*100+r.w),r=>`${r.ups}`),
+    leaderCard("Overachiever","Wins above what ratings + tier predicted",by(r=>r.vsx),r=>(r.vsx>=0?"+":"")+r.vsx.toFixed(1)),
+    leaderCard("Underachiever","Wins below expectation",by(r=>r.vsx,1),r=>(r.vsx>=0?"+":"")+r.vsx.toFixed(1))
+  ].filter(Boolean);
+  box.append(h("div",{class:"div-block"},h("h3",{},"Leaders")),h("div",{class:"awards"},cards));
+  // sortable player table
+  const sk=S.statSort||{k:"pts",d:-1},col=STAT_COLS.find(c=>c[0]===sk.k)||STAT_COLS[5];
+  const val=(r,k)=>({hw:r.hw-r.hl/100,aw:r.aw-r.al/100,xw:r.xw-r.xl/100,ow:r.ow-r.ol/100}[k]??r[k]);
+  const sorted=[...rows].sort((a,b)=>{const x=val(a,col[0]),y=val(b,col[0]);return(typeof x==="string"?x.localeCompare(y):(x-y))*sk.d||b.pts-a.pts});
+  box.append(h("div",{class:"div-block"},h("h3",{},"Player stats"),h("p",{class:"hint"},"Tap a column to sort. vs Exp. = wins above or below what team rating plus preseason tier predicted.")),
+    h("div",{class:"scroll"},h("table",{class:"stat-table"},h("thead",{},h("tr",{},STAT_COLS.map(c=>h("th",{class:(c[3]||"")+" sortable"+(c[0]===col[0]?" sorted":""),"aria-sort":c[0]===col[0]?(sk.d<0?"descending":"ascending"):"none"},
+      h("button",{type:"button",onclick:()=>{S.statSort={k:c[0],d:c[0]===col[0]?-sk.d:(c[0]==="u"||c[0]==="gag"||c[0]==="l"||c[0]==="otl"?1:-1)};renderStats(V)}},c[1]+(c[0]===col[0]?(sk.d<0?" ▼":" ▲"):"")))))),
+      h("tbody",{},sorted.map(r=>h("tr",{class:r.u===me()?"me":null},STAT_COLS.map(c=>h("td",{class:c[3]||null},c[0]==="u"?h("div",{class:"pl"},logo(abOf(r.u)),P(r.u)):c[2](r)))))))));
+  // NHL team performance
+  if(!V.allTime&&V.draft?.picks){
+    const tr=rows.map(r=>({...r,ab:V.draft.picks[r.u]})).filter(r=>r.ab).sort((a,b)=>b.vsx-a.vsx);
+    box.append(h("div",{class:"div-block"},h("h3",{},"NHL teams vs their ratings"),h("p",{class:"hint"},"How each drafted team is doing compared with what its NHL 27 rating and its owner's tier predicted.")),
+      h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"Team"),h("th",{class:"l"},"Owner"),h("th",{},"OVR"),h("th",{},"Record"),h("th",{},"GF"),h("th",{},"GA"),h("th",{},"Exp. W"),h("th",{},"Actual W"),h("th",{},"+/-"))),
+        h("tbody",{},tr.map(r=>h("tr",{},h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab),T(r.ab))),h("td",{class:"l"},P(r.u)),h("td",{class:"pts"},TR(r.ab)?.ovr??"–"),h("td",{},`${r.w}–${r.l}–${r.otl}`),h("td",{},r.gf),h("td",{},r.ga),h("td",{},r.exp.toFixed(1)),h("td",{},r.w),
+          h("td",{class:r.vsx>=0.5?"up":r.vsx<=-0.5?"down":null},(r.vsx>=0?"+":"")+r.vsx.toFixed(1))))))));
+  }
+  // records
+  const big=[...games].sort((a,b)=>Math.abs(b.hs-b.as)-Math.abs(a.hs-a.as))[0],hi=[...games].sort((a,b)=>(b.hs+b.as)-(a.hs+a.as))[0];
+  let topGame=null;for(const g of games)for(const side of["h","a"]){const c=new Map();for(const n of g.goals?.[side]||[])if(n)c.set(n,(c.get(n)||0)+1);for(const[n,k]of c)if(!topGame||k>topGame.k)topGame={n,k,g,u:side==="h"?g.home:g.away}}
+  const streakBest=by(r=>r.best)[0];
+  box.append(h("div",{class:"div-block"},h("h3",{},"Records")),h("div",{class:"list"},
+    big?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Biggest win"),h("small",{},`${big.hs>big.as?big.home:big.away} ${Math.max(big.hs,big.as)}–${Math.min(big.hs,big.as)} over ${big.hs>big.as?big.away:big.home}${big._season?" · "+big._season:""}`))):null,
+    hi?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Highest-scoring game"),h("small",{},`${hi.home} ${hi.hs}–${hi.as} ${hi.away} · ${hi.hs+hi.as} goals${hi._season?" · "+hi._season:""}`))):null,
+    topGame?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Most goals by one scorer in a game"),h("small",{},`${topGame.n} (${topGame.u}) with ${topGame.k} vs ${topGame.u===topGame.g.home?topGame.g.away:topGame.g.home}`))):null,
+    streakBest?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Longest win streak"),h("small",{},`${streakBest.u}: ${streakBest.best} straight`))):null));
+}
+$("stat-stage").addEventListener("change",()=>renderStats(VIEW||S.league));
 
 /* ===== Player links ===== */
 function P(u,text){return h("b",{class:"plink","data-profile":u,role:"button",tabindex:"0",title:"View "+u+"'s profile"},text??u)}

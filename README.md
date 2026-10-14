@@ -49,6 +49,10 @@ Signed-in players see only their own schedule and can log any of their games in 
 - **Back to draft day:** clears games, playoffs, divisions and picks, then restarts the draft with the same order.
 - **Reset league:** also clears the draft and lottery and goes back to setting tiers and the order.
 
+## Stats
+
+The **Stats** tab (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
+
 ## Draft clock
 
 Each pick has a timer (default 2 minutes; the host can change it in League settings or turn it off). When it runs out, the best-rated team left is picked automatically and marked **Auto**. Auto-picks happen when anyone signed in has the site open. The host can pause, resume, or auto-pick early.
