@@ -18,6 +18,11 @@
    "u": "jamie",
    "team": "",
    "host": false
+  },
+  {
+   "u": "aj",
+   "team": "",
+   "host": false
   }
  ],
  "auth": {
@@ -35,6 +40,11 @@
    "salt": "14PIezwMbxbXgatZdJ3gng==",
    "iv": "S1ulFFMdFkQlXf8g",
    "ct": "VkXSUxo2hCJI0X+7AyfGy2+/Losu5JQrGtJkzl3C6y1OEw90g/neNDjwvLbKDpYE"
+  },
+  "aj": {
+   "salt": "mJ4oGOf2tZkDYP76ra0/hQ==",
+   "iv": "vSHkY6fhDiwVtcw1",
+   "ct": "QQa+sAPIDvxhqoRDWqZmsFRpwXoochfkWbl9nSMn/3iHP99OrxDkFKiV1Lrfo7FO"
   }
  },
  "tokenBox": {
@@ -55,7 +65,8 @@
  "draftOrder": [
   "ryan",
   "jarvis",
-  "jamie"
+  "jamie",
+  "aj"
  ],
  "playoffs": null,
  "draft": null,
