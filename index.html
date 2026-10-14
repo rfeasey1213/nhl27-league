@@ -131,7 +131,8 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story{display:grid;gap:8px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--glass-2)}
 .story-top{display:flex;justify-content:space-between;gap:10px;font:700 11px var(--data);letter-spacing:.14em;text-transform:uppercase}
 .story .kind{color:var(--glacier)}.story .when{color:var(--muted)}
-.story.s-up .kind,.story.s-snap .kind{color:var(--hot)}
+.story.s-up .kind,.story.s-snap .kind,.story.s-chirp .kind{color:var(--hot)}
+.story.s-chirp{border-left:3px solid var(--hot)}
 .story.s-hat .kind,.story.s-champ .kind,.story.s-lottery .kind{color:var(--gold)}
 .story.s-champ{border-color:rgba(255,214,107,.6);box-shadow:0 0 22px rgba(255,214,107,.15)}
 .story.s-host{border-color:var(--glacier)}
@@ -1680,48 +1681,104 @@ setInterval(()=>{
 },1000);
 
 /* ===== News: written from the league's own results ===== */
-const NEWS_KIND={up:"Upset",hat:"Big performance",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Streak",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs"};
+const NEWS_KIND={up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Chirp",ot:"Free hockey"};
 function teamShort(ab){return ab?(TEAM_NAME[ab]||ab).split(" ").slice(-1)[0]:""}
+/* Stable pick from a list so a story reads the same on every refresh. */
+function hashStr(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function pick(list,seed){return list[hashStr(seed+"|"+list.length+"|"+list[0][0])%list.length]}
+function fill(t,v){return t.replace(/\{(\w+)\}/g,(_,k)=>v[k]??"")}
+const LINES={
+  up:[["Stunner: {W} takes down {L} {S}{X}","Nobody had {W} in this one. {Wt} came in as the underdog on paper and walked out of the barn with two points. Give'r."],
+      ["Upset city: {W} shocks {L} {S}{X}","{Wt} played with house money and cashed in. {L} might want to check the tape on that one, eh."],
+      ["{W} pulls off the heist against {L} {S}{X}","The underdog came to play. {Wt} outworked {L}'s {Lteam} and the pundits are eating crow."]],
+  hat:[["Hats on the ice! {N} pots three for {who}","{N} found twine {n} times as {Wt} {res} {opp} {S}{X}. Silky mitts."],
+       ["{N} goes off for {n} in {who}'s {res2}","Bar down, top cheese, the whole menu. {N} lit the lamp {n} times. {who} {res} {opp} {S}{X}."],
+       ["{N} filling the net for {who}","{n} goals for {N}, and they weren't all garbage-time pigeon goals either. Final: {who} {res} {opp} {S}{X}."],
+       ["Snipe show: {N} lights the lamp {n} times","{N} was dangling all night for {who}. Toss your lids. {who} {res} {opp} {S}{X}."]],
+  cb:[["{W} storms back from {d} down to beat {L} {S}{X}","Down {d}, nobody panicked on {W}'s bench. They clawed back and stole it. Huge character win."],
+      ["Never say die: {W} erases a {d}-goal hole against {L}","{L} had this one in the bag and then didn't. {W} wins it {S}{X}. That's a gut-punch."]],
+  so:[["{W} blanks {L} {S}","Brick wall in the blue paint for {Wt}. {L} couldn't buy one, couldn't find the twine with a map."],
+      ["Goose egg for {L}: {W} pitches a shutout {S}","The {Wteam} tendy stood on his head. {L} went home with nothing but a sore twig."],
+      ["{W}'s tendy slams the door on {L}, {S}","Clean sheet for {Wt}. {L} rang a couple off the post and that was about it."],
+      ["Lights out: {L} gets zip against {W}","{S} final and {L} never solved the {Wteam} goalie. Couldn't put the biscuit in the basket all night."],
+      ["{W} shuts the door, blanks {L} {S}","Nothing got through. {Wt} played a full 60 and {L} is still looking for the five-hole."]],
+  bo:[["{W} runs {L} out of the barn, {S}","That was a pylon parade. {W} skated circles around {L} and filled the net {ws} times."],
+      ["{W} hangs {ws} on {L} in a laugher","Somebody check on {L}. A {m}-goal beatdown from {Wt}. Ugly one."],
+      ["Mercy rule: {W} pumps {L} {S}","{Wt} turned it into a shooting gallery. {L} might want to pull the goalie for a sixth skater next time, and the time after that."],
+      ["{L} gets tuned up by {W}, {S}","A {m}-goal clinic from {Wt}. That's a long bus ride home for {L}."]],
+  gf:[["Defence optional: {W} outlasts {L} {S}{X}","{T} goals in this one. The tendies would like a word with their D-men."],
+      ["Shootout at the old barn: {W} edges {L} {S}{X}","{T} goals combined. Nobody in this game has heard of backchecking."]],
+  ot:[["Free hockey! {W} beats {L} {S}{X}","Needed extra time but {W} found a way. {L} gets the loser point and a long drive home."]],
+  streak:[["{W} is on a heater: {n} straight wins","{W} can't miss right now. Latest victim: {L}, {S}{X}. Somebody slow 'em down."],
+          ["Can anyone stop {W}? That's {n} in a row","{n} straight W's for {W}. {L} was the latest to get pumped, {S}."]],
+  snap:[["{W} snaps {L}'s {n}-game win streak","All good things, eh. {W} cools off {L}, {S}{X}."]],
+  chirpLoss:[["Chirp: {L} getting pumped by {W}?","Preseason favourite {L} just dropped one to {W}, {S}{X}. Big contract energy, bender results."],
+             ["Chirp: where was {L} tonight?","{L} was supposed to be one of the top dogs. {W} didn't get the memo, {S}{X}. Pylon behaviour."],
+             ["Chirp: {L}'s {Lteam} look like a beer league squad","{W} handled {L}, {S}{X}. Somebody tell {L} the regular season counts."],
+             ["Chirp: {L} skating like they've got weak ankles","Supposed top dog {L} went down to {W}, {S}{X}. Hope the hype comes with a refund."],
+             ["Chirp: {L} might be all flow and no show","Great hair, rough night. {W} beat {L} {S}{X}."]],
+  chirpShut:[["Chirp: {L} couldn't hit the ocean from a boat","Shut out by {W}, {S}. Top-tier talent, zero goals. Maybe tape the twig next time, bud."]],
+  chirpStreak:[["Chirp: {u} has lost {n} straight","{n} L's in a row for a so-called top player. {u}'s {team} are playing like they're on skates two sizes too big."],
+               ["Chirp: somebody check on {u}","That's {n} straight losses. {u} came into the season with all the hype and has been a total duster since."],
+               ["Chirp: {u} is ice cold","{n} losses in a row. At this point {u} should be riding the pine with a Timmies."]],
+  chirpRecord:[["Chirp: {u} sitting at {rec}","{gp} games in and {u}, a preseason top dog, is under .500. The {team} were supposed to be a contender, not a cellar dweller."]],
+  chirpExit:[["Chirp: {u} bounced early","Top seed or not, {u} got sent packing by {w}. Tee times are booked, boys."]]
+};
 function buildNews(V){
   const items=[];if(!V||V.allTime)return items;
   const tn=(u,ab)=>`${u}${ab?"'s "+teamShort(ab):""}`;
+  const add=(k,lines,seed,vars,at,extra={})=>{const[t,bd]=pick(lines,seed);items.push({k,title:fill(t,vars),body:fill(bd,vars),at,...extra})};
+  // Who counts as a "top player": top third on preseason strength (team rating + tier bonus).
+  const run=(V.lotteryRuns||[]).at(-1);
+  const tierFor=u=>run?.tiers?.[u]||tierOf(V.players.find(p=>p.u===u));
+  const strength=V.players.map(p=>({u:p.u,v:gamePower(TR(V.draft?.picks?.[p.u])?.ovr??null,tierFor(p.u))})).sort((a,b)=>b.v-a.v);
+  const topN=Math.max(1,Math.ceil(strength.length/3)),TOP=new Set(strength.slice(0,topN).map(x=>x.u));
+  for(const p of V.players)if(tierFor(p.u)===1)TOP.add(p.u);
   const games=[...V.games].sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||"")));
-  const streak=new Map();
+  const streak=new Map(),lstreak=new Map(),rec=new Map();
   for(const g of games){
     const hw=g.hs>g.as,W=hw?g.home:g.away,Lz=hw?g.away:g.home,wab=hw?g.hab:g.aab,lab=hw?g.aab:g.hab,ws=Math.max(g.hs,g.as),ls=Math.min(g.hs,g.as);
-    const score=`${ws}–${ls}`,when=(g.playedAt||"")+"T"+((g.createdAt||"").slice(11)||"12:00");
-    const bs=gameBadges(g),has=k=>bs.find(b=>b.k===k);
-    const extra=g.result==="OT"?" in overtime":g.result==="SO"?" in a shootout":"";
-    let item=null;
+    const when=(g.playedAt||"")+"T"+((g.createdAt||"").slice(11)||"12:00");
+    const X=g.result==="OT"?" in OT":g.result==="SO"?" in the shootout":g.result==="FF"?" by forfeit":"";
+    const v={W,L:Lz,S:`${ws}–${ls}`,X,Wt:tn(W,wab),Lt:tn(Lz,lab),Wteam:teamShort(wab)||W,Lteam:teamShort(lab)||Lz,ws,m:ws-ls,T:g.hs+g.as,d:g.comeback>=3?"3+":g.comeback};
+    const bs=gameBadges(g),has=k=>bs.find(b=>b.k===k),seed=g.id||when;
     const hat=bs.filter(b=>b.k==="hat").sort((a,b)=>b.n-a.n)[0];
-    if(has("up")){const u=has("up");item={k:"up",title:`${u.t==="Big upset"?"Stunner":"Upset"}: ${W} takes down ${Lz} ${score}${extra}`,body:`${tn(W,wab)} came in as the underdog against ${tn(Lz,lab)} on team rating and preseason tier, and won anyway.${hat?` ${hat.name} led the way with ${hat.n} goals.`:""}`}}
-    else if(hat){item={k:"hat",title:`${hat.name} ${hat.n>=4?`scores ${hat.n}`:"nets a hat trick"} for ${hat.who}`,body:`${tn(hat.who,hat.who===g.home?g.hab:g.aab)} ${hat.who===W?"beat":"fell to"} ${hat.who===W?Lz:W} ${score}${extra}. ${hat.who===W?"":"Not even "+hat.n+" goals from "+hat.name+" was enough."}`.trim()}}
-    else if(has("cb")){item={k:"cb",title:`${W} storms back from ${g.comeback>=3?"3+":g.comeback} down to beat ${Lz}`,body:`Final: ${tn(W,wab)} ${score} over ${tn(Lz,lab)}${extra}.`}}
-    else if(has("so")){item={k:"so",title:`${W} blanks ${Lz} ${score}`,body:`A shutout for ${tn(W,wab)}. ${Lz} couldn't find the net.`}}
-    else if(has("bo")){item={k:"bo",title:`${W} routs ${Lz} ${score}`,body:`A ${ws-ls}-goal win for ${tn(W,wab)}.`}}
-    else if(has("gf")){item={k:"gf",title:`${g.hs+g.as}-goal shootout: ${W} outlasts ${Lz} ${score}`,body:`Defense optional in this one${extra}.`}}
-    if(item)items.push({...item,at:when,game:g});
+    if(g.result!=="FF"){
+      if(has("up"))add("up",LINES.up,seed,v,when,{game:g});
+      else if(hat){const won=hat.who===W;add("hat",LINES.hat,seed,{...v,N:hat.name,n:hat.n,who:hat.who,Wt:tn(hat.who,hat.who===g.home?g.hab:g.aab),res:won?"beat":"fell to",res2:won?"win":"loss",opp:won?Lz:W},when,{game:g})}
+      else if(has("cb"))add("cb",LINES.cb,seed,v,when,{game:g});
+      else if(has("so"))add("so",LINES.so,seed,v,when,{game:g});
+      else if(has("bo"))add("bo",LINES.bo,seed,v,when,{game:g});
+      else if(has("gf"))add("gf",LINES.gf,seed,v,when,{game:g});
+      else if(g.stage==="po"&&isExtra(g))add("ot",LINES.ot,seed,v,when,{game:g});
+      // chirp a top player who loses to someone outside the top group
+      if(TOP.has(Lz)&&!TOP.has(W)&&!has("up"))add("chirp",has("so")?LINES.chirpShut:LINES.chirpLoss,seed+"c",v,when+"0");
+      else if(TOP.has(Lz)&&has("so")&&!has("up"))add("chirp",LINES.chirpShut,seed+"c",v,when+"0");
+    }
     // streaks
-    const sw=streak.get(W)||0,sl=streak.get(Lz)||0;
-    if(sl>=3)items.push({k:"snap",title:`${W} snaps ${Lz}'s ${sl}-game win streak`,body:`${score}${extra}.`,at:when+"1"});
-    streak.set(W,sw+1);streak.set(Lz,0);
-    if([3,5,7,10].includes(sw+1))items.push({k:"streak",title:`${W} is on fire: ${sw+1} straight wins`,body:`The latest: ${score} over ${Lz}${extra}.`,at:when+"2"});
+    const sw=streak.get(W)||0,sl=streak.get(Lz)||0,ll=(lstreak.get(Lz)||0)+1;
+    if(sl>=3)add("snap",LINES.snap,seed+"s",{...v,n:sl},when+"1");
+    streak.set(W,sw+1);streak.set(Lz,0);lstreak.set(W,0);lstreak.set(Lz,ll);
+    if([3,5,7,10].includes(sw+1))add("streak",LINES.streak,seed+"h",{...v,n:sw+1},when+"2");
+    if(TOP.has(Lz)&&[3,5,7].includes(ll))add("chirp",LINES.chirpStreak,seed+"l",{u:Lz,n:ll,team:teamShort(lab)||"squad"},when+"3");
+    // record checkpoints for top players (regular season)
+    if(g.stage==="rs")for(const u of[W,Lz]){const r=rec.get(u)||{w:0,l:0};if(u===W)r.w++;else r.l++;rec.set(u,r);const gp=r.w+r.l;
+      if(TOP.has(u)&&gp>=4&&gp%4===0&&r.w<gp/2){const ab=u===g.home?g.hab:g.aab;add("chirp",LINES.chirpRecord,seed+u+gp,{u,rec:`${r.w}–${r.l}`,gp,team:teamShort(ab)||"squad"},when+"4")}}
   }
   // playoffs
-  if(V.playoffs){items.push({k:"start",title:"The playoff field is set",body:Object.entries(V.playoffs.seeds).map(([d,l])=>(d==="L"?"League":divName(V,d))+": "+l.map((u,i)=>`#${i+1} ${u}`).join(", ")).join(" · "),at:(V.playoffs.startedAt||"").replace("Z","")});
+  if(V.playoffs){items.push({k:"start",title:"Playoff picture is set, boys",body:Object.entries(V.playoffs.seeds).map(([d,l])=>(d==="L"?"League":divName(V,d))+": "+l.map((u,i)=>`#${i+1} ${u}`).join(", ")).join(" · ")+". Second season starts now.",at:(V.playoffs.startedAt||"").replace("Z","")});
     const br=buildBracket(V);
     for(const sx of br?.all||[])if(sx.winner){const last=sx.games.at(-1),lo=sx.winner===sx.a?sx.b:sx.a,ww=Math.max(sx.wa,sx.wb),ll=Math.min(sx.wa,sx.wb);
       const at=(last?.playedAt||"")+"T"+((last?.createdAt||"").slice(11)||"12:00")+"3";
-      if(sx.final||sx.id==="F")items.push({k:"champ",title:`${sx.winner} wins the championship!`,body:`${sx.winner} beat ${lo} ${ww}–${ll} in the league final${teamOf(sx.winner)?" with the "+teamOf(sx.winner):""}.`,at:at+"9"});
-      else items.push({k:"series",title:`${sx.winner} ${ll===0&&ww>1?"sweeps":"eliminates"} ${lo} ${ww}–${ll}`,body:`${seriesLabel(V,sx)} done. ${sx.winner} moves on.`,at})}
+      if(sx.final||sx.id==="F")items.push({k:"champ",title:`${sx.winner} lifts the trophy!`,body:`${sx.winner} beat ${lo} ${ww}–${ll} in the final${teamOf(sx.winner)?" with the "+teamOf(sx.winner):""}. Champions. Somebody grab the cooler, it's a parade.`,at:at+"9"});
+      else{items.push({k:"series",title:`${sx.winner} ${ll===0&&ww>1?"sweeps":"sends home"} ${lo}, ${ww}–${ll}`,body:`${seriesLabel(V,sx)} is in the books. ${lo} is booking tee times, ${sx.winner} moves on.`,at});
+        if(TOP.has(lo)&&(lo===sx.a))add("chirp",LINES.chirpExit,sx.id+"x",{u:lo,w:sx.winner},at+"5")}}
   }
   // draft + lottery
-  const run=(V.lotteryRuns||[]).at(-1);
-  if(run?.revealedAt){const w=run.order[0];items.push({k:"lottery",title:`${w} wins the draft lottery`,body:`${w} jumped to #1 with ${pct(run.firstOdds?.[w]||0)} odds as a Tier ${run.tiers?.[w]} player.`,at:run.revealedAt.replace("Z","")})}
+  if(run?.revealedAt){const w=run.order[0];items.push({k:"lottery",title:`${w} wins the draft lottery`,body:`Ping-pong balls bounced ${w}'s way: #1 overall with ${pct(run.firstOdds?.[w]||0)} odds as a Tier ${run.tiers?.[w]} guy. Lucky duck.`,at:run.revealedAt.replace("Z","")})}
   if(V.draft){const D=V.draft;for(const u of D.order){const ab=D.picks?.[u];if(!ab)continue;const at=(D.pickAt?.[u]||D.doneAt||"").replace("Z","");const i=D.order.indexOf(u);
-    if(D.auto?.[u])items.push({k:"draft",title:`The clock ran out on ${u}`,body:`${u} was auto-drafted the ${TEAM_NAME[ab]}${TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:""}.`,at});
-    else if(i===0)items.push({k:"draft",title:`${u} takes the ${TEAM_NAME[ab]} first overall`,body:TR(ab)?`Team rating ${TR(ab).ovr}, led by ${TR(ab).roster[0]?.name}.`:"",at})}}
-  // commissioner posts
+    if(D.auto?.[u])items.push({k:"chirp",title:`Chirp: ${u} fell asleep at the draft`,body:`The clock ran out, so the computer took the ${TEAM_NAME[ab]}${TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:""} for ${u}. Probably a better pick anyway.`,at});
+    else if(i===0)items.push({k:"draft",title:`${u} takes the ${TEAM_NAME[ab]} first overall`,body:TR(ab)?`Team rating ${TR(ab).ovr}, led by ${TR(ab).roster[0]?.name}. No pressure, bud.`:"",at})}}
   for(const n of V.news||[])items.push({k:"host",title:n.title,body:n.body,at:(n.at||"").replace("Z",""),id:n.id,by:n.by});
   return items.sort((a,b)=>(b.at||"").localeCompare(a.at||""));
 }
@@ -1736,12 +1793,12 @@ function renderNews(V){
     box.append(h("div",{class:"ctl"},h("h3",{style:"margin:0"},"Post an announcement"),h("div",{class:"row"},h("div",{class:"field"},t),h("div",{class:"field"},b),h("div",{class:"end"},post)),msg));
   }
   const items=buildNews(V);
-  if(!items.length){box.append(h("div",{class:"empty"},h("b",{},"No news yet"),"Hat tricks, upsets, shutouts, comebacks, streaks and playoff results show up here automatically."));return}
+  if(!items.length){box.append(h("div",{class:"empty"},h("b",{},"No news yet"),"Hat tricks, upsets, shutouts, comebacks, heaters, chirps and playoff results show up here once the puck drops."));return}
   box.append(h("div",{class:"news"},items.slice(0,80).map(n=>h("article",{class:"story s-"+n.k},
     h("div",{class:"story-top"},h("span",{class:"kind"},NEWS_KIND[n.k]||"News"),h("span",{class:"when"},n.at?fmtDate(n.at.slice(0,10)):"")),
     h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null,
     n.game?gameCard(n.game,n.game.home,n.game.away,[],null):null,
-    n.k==="host"&&host?h("button",{class:"sm",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
+    n.k==="host"&&host?h("button",{class:"sm",type:"button",style:"justify-self:start",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
 }
 
 /* ===== Commissioner: host can change anything ===== */
