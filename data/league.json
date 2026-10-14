@@ -13,6 +13,11 @@
    "u": "jarvis",
    "team": "",
    "host": false
+  },
+  {
+   "u": "jamie",
+   "team": "",
+   "host": false
   }
  ],
  "auth": {
@@ -25,6 +30,11 @@
    "salt": "xw4nME+MTUND0gQLuXSeDQ==",
    "iv": "NWKyDT2qAXPFz10X",
    "ct": "Phq3c9nn4rQIgHLsxB1XgLWCivGPnvzfZ8rHoCHQIqVWl0DsQ/suqCrnQKl1E0aQ"
+  },
+  "jamie": {
+   "salt": "14PIezwMbxbXgatZdJ3gng==",
+   "iv": "S1ulFFMdFkQlXf8g",
+   "ct": "VkXSUxo2hCJI0X+7AyfGy2+/Losu5JQrGtJkzl3C6y1OEw90g/neNDjwvLbKDpYE"
   }
  },
  "tokenBox": {
@@ -44,8 +54,13 @@
  },
  "draftOrder": [
   "ryan",
-  "jarvis"
+  "jarvis",
+  "jamie"
  ],
  "playoffs": null,
- "draft": null
+ "draft": null,
+ "archive": [],
+ "mvpVotes": {},
+ "gamesPer": 12,
+ "playoffSpots": 2
 }
