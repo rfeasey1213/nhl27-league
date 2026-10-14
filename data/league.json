@@ -7,42 +7,50 @@
   {
    "u": "ryan",
    "team": "",
-   "host": true
+   "host": true,
+   "tier": 4
   },
   {
    "u": "jarvis",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 4
   },
   {
    "u": "jamie",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   },
   {
    "u": "aj",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   },
   {
    "u": "graham",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   },
   {
    "u": "freakas",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   },
   {
    "u": "mains",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   },
   {
    "u": "gio",
    "team": "",
-   "host": false
+   "host": false,
+   "tier": 2
   }
  ],
  "auth": {
@@ -117,5 +125,15 @@
  "archive": [],
  "mvpVotes": {},
  "gamesPer": 12,
- "playoffSpots": 2
+ "playoffSpots": 2,
+ "lotteryRuns": [],
+ "lottery": {
+  "balls": {
+   "1": 8,
+   "2": 15,
+   "3": 25,
+   "4": 40
+  },
+  "draws": 3
+ }
 }
