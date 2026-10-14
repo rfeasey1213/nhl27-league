@@ -30,6 +30,12 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 6. **Next season:** after a champion is crowned, the host taps **Start Season 2** (or 3, 4…). The finished season is archived in full: every game, score and goal scorer, the draft, divisions and playoff bracket. Then a new draft opens. Players and passwords stay.
 7. **Archive:** the **Viewing** picker under the tabs switches between the current season, any past season, and **All-time** (career standings with titles and playoff records, plus all-time scorers).
 
+## Profiles, rivalries and awards
+
+- **Profiles:** tap any player's name to see their all-time record, points, goals, playoff record, longest and current win streak, head-to-head against every friend, best scorers, awards, season-by-season finishes and every game they've played.
+- **Rivalries:** every game card shows the all-time series between the two players. The All-time view has a full rivalry grid.
+- **Awards:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero. The Awards tab shows the race during the season. MVP voting opens when the regular season ends. Everything becomes final, and votes are revealed, when the host starts the next season.
+
 ## Scoring
 
 - 2 points for a win, 1 for an overtime or shootout loss, 0 for a regulation loss.
