@@ -7,12 +7,14 @@
   {
    "u": "ryan",
    "team": "San Jose Sharks",
-   "host": true
+   "host": true,
+   "div": "B"
   },
   {
    "u": "jarvis",
-   "team": "",
-   "host": false
+   "team": "Columbus Blue Jackets",
+   "host": false,
+   "div": "A"
   }
  ],
  "auth": {
@@ -32,7 +34,7 @@
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
  "games": [],
- "phase": "draft",
+ "phase": "season",
  "history": [],
  "divisions": {
   "A": {
@@ -53,8 +55,10 @@
    "jarvis"
   ],
   "picks": {
-   "ryan": "SJS"
+   "ryan": "SJS",
+   "jarvis": "CBJ"
   },
-  "startedAt": "2026-10-14T14:15:27.672Z"
+  "startedAt": "2026-10-14T14:15:27.672Z",
+  "doneAt": "2026-10-14T14:15:38.118Z"
  }
 }
