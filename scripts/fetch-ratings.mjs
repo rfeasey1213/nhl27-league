@@ -57,28 +57,34 @@ function tableRows(html) {
   }
   return rows;
 }
+function totalIn(nd){let t=null;(function walk(o,d){if(!o||typeof o!=="object"||d>14||t!=null)return;for(const[k,v]of Object.entries(o)){if(/^total(Items|Count|Results)?$/i.test(k)&&typeof v==="number"){t=v;return}walk(v,d+1)}})(nd,0);return t}
+const LISTS = [
+  ...DIVS.map(([slug, id]) => `conferences-ratings/${slug}/${id}`),
+  "positions-ratings/center/Center", "positions-ratings/left-wing/Left%20Wing", "positions-ratings/right-wing/Right%20Wing",
+  "positions-ratings/left-defense/Left%20Defense", "positions-ratings/right-defense/Right%20Defense",
+  "positions-ratings/defense/Defense", "positions-ratings/goalie/Goalie", "positions-ratings/goaltender/Goaltender"
+];
 async function fromHtml() {
-  const items = [];
-  for (const [slug, id] of DIVS) {
-    for (let page = 1; page <= 12; page++) {
-      const { ok, text } = await get(`https://www.ea.com/en/games/nhl/ratings/conferences-ratings/${slug}/${id}${page > 1 ? "?page=" + page : ""}`, "text/html");
+  const items = []; debug.lists = [];
+  for (const list of LISTS) {
+    let listCount = 0, total = null, prevFirst = null;
+    for (let page = 1; page <= 40; page++) {
+      const { ok, text } = await get(`https://www.ea.com/en/games/nhl/ratings/${list}${page > 1 ? "?page=" + page : ""}`, "text/html");
       if (!ok) break;
       const nd = nextData(text);
+      if (page === 1 && nd) total = totalIn(nd);
       let got = [];
       if (nd) { const arrs = findPlayerArrays(nd).sort((a, b) => b.length - a.length); if (arrs[0]) got = arrs[0].map(x => ({ _json: x })); }
       if (!got.length) got = tableRows(text).map(c => ({ _cells: c }));
-      if (page === 1 && !debug.htmlSample) {
-        const i = text.indexOf("<table");
-        debug.htmlSample = { slug, hasNextData: !!nd, tableHtml: i >= 0 ? text.slice(i, i + 4000) : text.slice(0, 2000), firstParsed: got.slice(0, 2) };
-      }
+      if (page === 1 && !debug.htmlSample) debug.htmlSample = { list, hasNextData: !!nd, total, firstParsed: got.slice(0, 1) };
       if (!got.length) break;
-      const before = items.length;
-      for (const g of got) items.push(g);
-      // stop when a page repeats the previous one
-      if (page > 1 && JSON.stringify(got[0]) === JSON.stringify(items[before - got.length]?.[0])) break;
-      if (got.length < 50) break;
-      await sleep(500);
+      const first = JSON.stringify(got[0]);
+      if (first === prevFirst) break;
+      prevFirst = first; items.push(...got); listCount += got.length;
+      if (total && listCount >= total) break;
+      await sleep(400);
     }
+    debug.lists.push({ list, total, got: listCount });
   }
   debug.source = "html";
   return items.length ? items : null;
@@ -124,7 +130,7 @@ function teamRatings(players) {
   const by = p => [...players].filter(p).sort((a, b) => b.ovr - a.ovr);
   const fw = by(p => ["C", "LW", "RW"].includes(p.pos)), d = by(p => ["LD", "RD", "D"].includes(p.pos)), g = by(p => p.pos === "G");
   const avg = a => a.length ? Math.round(a.reduce((s, p) => s + p.ovr, 0) / a.length) : null;
-  const off = avg(fw.slice(0, 12)), def = avg(d.slice(0, 6)), goal = g[0]?.ovr ?? null;
+  const off = avg(fw.slice(0, Math.min(12, Math.max(3, fw.length)))), def = avg(d.slice(0, Math.min(6, Math.max(2, d.length)))), goal = g[0]?.ovr ?? null;
   const ovr = off != null && def != null && goal != null ? Math.round(off * 0.45 + def * 0.3 + goal * 0.25) : avg(by(() => true).slice(0, 20));
   return { ovr, off, def, goal };
 }
@@ -136,14 +142,14 @@ async function main() {
   players = (players || []).filter(p => p.name && p.team && Number.isFinite(p.ovr));
   // de-duplicate (same player can appear on several pages)
   const seen = new Set(); players = players.filter(p => { const k = p.name + "|" + p.team; if (seen.has(k)) return false; seen.add(k); return true; });
-  debug.parsedCount = players.length; debug.parsedSample = players.slice(0, 5);
+  debug.parsedCount = players.length; debug.parsedSample = players.slice(0, 2);
   const teams = {};
   for (const p of players) (teams[p.team] ||= { roster: [] }).roster.push({ name: p.name, pos: p.pos, ovr: p.ovr, stats: p.stats, ability: p.ability || undefined });
   for (const [ab, t] of Object.entries(teams)) { t.roster.sort((a, b) => b.ovr - a.ovr); Object.assign(t, teamRatings(t.roster)); }
   debug.teamCount = Object.keys(teams).length;
   await fs.mkdir("data", { recursive: true });
   await fs.writeFile(DEBUG, JSON.stringify(debug, null, 1));
-  if (Object.keys(teams).length < 28 || players.length < 400) {
+  if (Object.keys(teams).length < 28 || players.length < 250) {
     console.error(`Only parsed ${players.length} players across ${Object.keys(teams).length} teams; keeping the previous ratings file.`);
     process.exitCode = 0; return;
   }

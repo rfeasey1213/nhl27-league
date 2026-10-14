@@ -469,12 +469,40 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
           <div class="field"><label for="g-divB">Division 2 name</label><input id="g-divB" maxlength="24"></div>
         </div>
         <div class="row">
-          <div class="field"><label for="g-games">Games per player</label><select id="g-games"></select></div>
-          <div class="field"><label for="g-spots">Playoff spots per division</label><select id="g-spots"></select></div>
+          <div class="field"><label for="g-games">Regular season games per player</label><select id="g-games"></select></div>
           <div class="end"><button class="btn ghost" type="submit">Save</button></div>
         </div>
         <p class="hint" id="g-hint"></p>
         <p class="msg" id="league-msg"></p>
+      </form>
+
+      <h3>Playoff settings</h3>
+      <form id="po-form">
+        <div class="row">
+          <div class="field"><label for="po-format">Format</label><select id="po-format">
+            <option value="div">Division brackets, winners meet in the final</option>
+            <option value="league">One league-wide bracket</option></select></div>
+          <div class="field"><label for="po-spots">Who makes it</label><select id="po-spots"></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="po-bo1">First round</label><select id="po-bo1"></select></div>
+          <div class="field"><label for="po-bo2">Later rounds</label><select id="po-bo2"></select></div>
+          <div class="field"><label for="po-bo3">League final</label><select id="po-bo3"></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="po-pattern">Home ice</label><select id="po-pattern">
+            <option value="alt">Alternate every game</option>
+            <option value="nhl">NHL style 2-2-1-1-1</option></select></div>
+          <div class="field"><label for="po-so">Tied after OT</label><select id="po-so">
+            <option value="0">Keep playing OT (no shootouts)</option>
+            <option value="1">Shootouts allowed</option></select></div>
+          <div class="field"><label for="po-auto">Start</label><select id="po-auto">
+            <option value="1">Automatically after the last regular season game</option>
+            <option value="0">Host starts them manually</option></select></div>
+        </div>
+        <div class="row"><div class="end"><button class="btn" type="submit" id="po-save">Save playoff settings</button></div></div>
+        <p class="hint" id="po-hint"></p>
+        <p class="msg" id="po-msg"></p>
       </form>
       <h3>GitHub access key</h3>
       <form id="token-form">
@@ -608,11 +636,33 @@ function buildRounds(L){
   return rounds;
 }
 function rsGame(L,fid){return L.games.find(g=>g.stage==="rs"&&g.fixture===fid)}
-function playoffSpots(L){const sizes=["A","B"].map(d=>L.players.filter(p=>p.div===d).length);const maxN=Math.min(8,...sizes);return Math.max(1,Math.min(maxN,parseInt(L.playoffSpots,10)||2))}
-function applyPlayoffs(X,n){
-  const t=computeTable(X),seeds={};
-  for(const d of["A","B"]){const rows=t.filter(r=>r.p.div===d);if(rows.length<n)throw new Error("A division doesn't have enough players.");seeds[d]=rows.slice(0,n).map(r=>r.u)}
-  X.playoffs={perDiv:n,bestOf:BEST_OF,seeds,startedAt:new Date().toISOString()};X.phase="playoffs";
+/* Host playoff settings. Stored on the league; copied into the bracket when the playoffs start. */
+const BO_CHOICES=[1,3,5,7];
+function poSettings(L){
+  const s=L.poSettings||{},bo=s.bo||{};
+  const pick=(v,d)=>BO_CHOICES.includes(+v)?+v:d;
+  return{format:s.format==="league"?"league":"div",spots:parseInt(s.spots??L.playoffSpots,10)||(s.format==="league"?4:2),
+    bo:{first:pick(bo.first,3),later:pick(bo.later,3),final:pick(bo.final,3)},
+    pattern:s.pattern==="nhl"?"nhl":"alt",allowSO:!!s.allowSO,auto:s.auto!==false};
+}
+/* Settings in force for a bracket (older seasons stored a single bestOf). */
+function poCfg(PL){if(!PL)return null;if(PL.settings)return PL.settings;const b=PL.bestOf||3;return{format:"div",spots:PL.perDiv||2,bo:{first:b,later:b,final:b},pattern:"alt",allowSO:false,auto:true}}
+function spotLimits(L,format){
+  if(format==="league"){const n=L.players.length;return{min:2,max:Math.max(2,Math.min(16,n))}}
+  const sizes=["A","B"].map(d=>L.players.filter(p=>p.div===d).length);
+  const has=sizes.some(Boolean);return{min:1,max:Math.max(1,Math.min(8,has?Math.min(...sizes):Math.floor(L.players.length/2)||1))};
+}
+function playoffSpots(L){const c=poSettings(L),lim=spotLimits(L,c.format);return Math.max(lim.min,Math.min(lim.max,c.spots))}
+function poSummary(c,spots){
+  const who=c.format==="league"?`top ${spots} overall in one bracket`:`top ${spots} in each division, division winners meet in the final`;
+  const bo=c.bo.first===c.bo.later&&c.bo.later===c.bo.final?`best-of-${c.bo.first} series`:`best of ${c.bo.first} first round, ${c.bo.later} after, ${c.bo.final} in the final`;
+  return`${who}; ${bo}`;
+}
+function applyPlayoffs(X){
+  const c=poSettings(X),n=playoffSpots(X),t=computeTable(X),seeds={};
+  if(c.format==="league"){if(t.length<2)throw new Error("Need at least two players.");seeds.L=t.slice(0,n).map(r=>r.u)}
+  else for(const d of["A","B"]){const rows=t.filter(r=>r.p.div===d);if(!rows.length)throw new Error("A division has no players.");seeds[d]=rows.slice(0,Math.min(n,rows.length)).map(r=>r.u)}
+  X.playoffs={perDiv:c.format==="div"?n:null,settings:{...c,spots:n},bestOf:c.bo.first,seeds,startedAt:new Date().toISOString()};X.phase="playoffs";
 }
 function computeTable(L){
   const rows=new Map(L.players.map(p=>[p.u,{u:p.u,p,gp:0,w:0,l:0,otl:0,gf:0,ga:0,log:[]}]));
@@ -638,21 +688,32 @@ function assignDivisions(L){const s=shuffle(L.players.map(p=>p.u));s.forEach((u,
 /* Playoffs: per-division single-elimination bracket, division champions meet in the final. */
 function nextPow2(n){let p=1;while(p<n)p*=2;return p}
 function seedOrder(P){let o=[1];while(o.length<P){const n=o.length*2;o=o.flatMap(s=>[s,n+1-s])}return o}
+function seriesBestOf(L,s){const c=poCfg(L.playoffs)||poSettings(L);return s.final?c.bo.final:s.round===0?c.bo.first:c.bo.later}
+/* Higher seed at home: alternate every game, or NHL style 2-2-1-1-1 (best of 5 and 7). */
+function topSeedHome(gameNo,bo,pattern){
+  if(pattern==="nhl"&&bo===7)return[1,1,0,0,1,0,1][gameNo-1]===1;
+  if(pattern==="nhl"&&bo===5)return[1,1,0,0,1][gameNo-1]===1;
+  return gameNo%2===1;
+}
 function seriesState(L,s){
   const gs=poGames(L).filter(g=>g.series===s.id).sort((a,b)=>a.gameNo-b.gameNo);
   let wa=0,wb=0;for(const g of gs){const w=g.hs>g.as?g.home:g.away;if(w===s.a)wa++;else if(w===s.b)wb++}
-  const need=Math.ceil((L.playoffs?.bestOf||BEST_OF)/2);
+  const bo=seriesBestOf(L,s),need=Math.ceil(bo/2);
   const winner=wa>=need?s.a:wb>=need?s.b:null;
-  const nextNo=gs.length+1;
-  return{games:gs,wa,wb,winner,nextNo,nextHome:nextNo%2===1?s.a:s.b,nextAway:nextNo%2===1?s.b:s.a};
+  const nextNo=gs.length+1,c=poCfg(L.playoffs)||poSettings(L);
+  const top=topSeedHome(nextNo,bo,c.pattern);
+  return{games:gs,wa,wb,bo,winner,nextNo,nextHome:top?s.a:s.b,nextAway:top?s.b:s.a};
 }
-function roundName(r,total){const fromEnd=total-1-r;return fromEnd===0?"Division final":fromEnd===1?"Division semifinal":fromEnd===2?"Quarterfinal":"Round "+(r+1)}
+function roundName(r,total,league){const fromEnd=total-1-r;
+  if(league)return fromEnd===0?"League final":fromEnd===1?"Semifinal":fromEnd===2?"Quarterfinal":"Round of "+2**(fromEnd+1);
+  return fromEnd===0?"Division final":fromEnd===1?"Division semifinal":fromEnd===2?"Quarterfinal":"Round "+(r+1)}
 function buildBracket(L){
   if(!L.playoffs)return null;
-  const P=L.playoffs,out={divs:{},final:null,champion:null,all:[]};
-  for(const d of["A","B"]){
+  const P=L.playoffs,out={divs:{},final:null,champion:null,all:[]},league=(poCfg(P).format==="league");
+  for(const d of(league?["L"]:["A","B"])){
     const seeds=P.seeds[d]||[],N=seeds.length;
     let slots=seedOrder(nextPow2(Math.max(1,N))).map(s=>s<=N?{u:seeds[s-1],seed:s}:{bye:true});
+    const R=Math.log2(slots.length);
     const rounds=[];let r=0;
     while(slots.length>1){
       const next=[],row=[];
@@ -662,9 +723,10 @@ function buildBracket(L){
         if(x.bye){next.push(y);continue}
         if(y.bye){next.push(x);continue}
         const id=`${d}${r+1}-${i/2}`;
-        if(!x.u||!y.u){row.push({id,div:d,round:r,a:x.u||null,b:y.u||null,aSeed:x.seed||null,bSeed:y.seed||null,pending:true});next.push({u:null,seed:null});continue}
+        const fin=league&&r===R-1;
+        if(!x.u||!y.u){row.push({id,div:d,round:r,final:fin,a:x.u||null,b:y.u||null,aSeed:x.seed||null,bSeed:y.seed||null,pending:true,bo:seriesBestOf(L,{round:r,final:fin})});next.push({u:null,seed:null});continue}
         const [top,bot]=x.seed<y.seed?[x,y]:[y,x];
-        const s={id,div:d,round:r,a:top.u,b:bot.u,aSeed:top.seed,bSeed:bot.seed};
+        const s={id,div:d,round:r,final:fin,a:top.u,b:bot.u,aSeed:top.seed,bSeed:bot.seed};
         Object.assign(s,seriesState(L,s));row.push(s);out.all.push(s);
         next.push(s.winner?{u:s.winner,seed:s.winner===s.a?s.aSeed:s.bSeed}:{u:null,seed:null});
       }
@@ -672,13 +734,14 @@ function buildBracket(L){
     }
     out.divs[d]={rounds,champ:slots[0]?.u||null,champSeed:slots[0]?.seed||null};
   }
+  if(league){const dv=out.divs.L;out.final=dv.rounds.at(-1)?.[0]||null;out.champion=dv.rounds.length?dv.champ:null;return out}
   const cA=out.divs.A.champ,cB=out.divs.B.champ;
   if(cA&&cB){
     const rank=new Map(computeTable(L).map((r,i)=>[r.u,i]));
     const [a,b]=rank.get(cA)<=rank.get(cB)?[cA,cB]:[cB,cA];
-    const f={id:"F",div:"F",round:0,a,b,aSeed:out.divs[a===cA?"A":"B"].champSeed,bSeed:out.divs[b===cA?"A":"B"].champSeed};
+    const f={id:"F",div:"F",round:1,final:true,a,b,aSeed:out.divs[a===cA?"A":"B"].champSeed,bSeed:out.divs[b===cA?"A":"B"].champSeed};
     Object.assign(f,seriesState(L,f));out.final=f;out.all.push(f);out.champion=f.winner||null;
-  }else out.final={id:"F",div:"F",round:0,a:cA,b:cB,pending:true};
+  }else out.final={id:"F",div:"F",round:1,final:true,a:cA,b:cB,pending:true,bo:seriesBestOf(L,{final:true})};
   return out;
 }
 function validatePlayoffs(L){
@@ -699,7 +762,7 @@ function openFixtures(L){
   }
   return out;
 }
-function seriesLabel(L,s){if(s.id==="F")return"League final";const br=buildBracket(L);const total=br.divs[s.div].rounds.length;return divName(L,s.div)+" "+roundName(s.round,total).toLowerCase()}
+function seriesLabel(L,s){if(s.id==="F")return"League final";const br=buildBracket(L);const total=br.divs[s.div].rounds.length;if(s.div==="L")return roundName(s.round,total,true);return divName(L,s.div)+" "+roundName(s.round,total).toLowerCase()}
 function divName(L,d){return L.divisions?.[d]?.name||(d==="A"?"Division A":"Division B")}
 function scorerLine(names){const c=new Map();for(const n of names){if(!n)continue;c.set(n,(c.get(n)||0)+1)}return[...c].map(([n,k])=>k>1?`${n} ${k}`:n).join(", ")}
 
@@ -979,7 +1042,8 @@ function renderAllTime(st){
 function renderStandings(L){
   const st=$("standings");st.replaceChildren();
   if(L.allTime){$("season-legend").textContent="";renderAllTime(st);return}
-  $("season-legend").textContent=`Each player plays ${gamesPer(L)} regular season games, ${gamesPer(L)/2} at home and ${gamesPer(L)/2} away. The playoffs start automatically after the last one: top ${L.players.some(p=>p.div)?playoffSpots(L):(parseInt(L.playoffSpots,10)||2)} in each division, best-of-3 series.`;
+  {const c=L.playoffs?poCfg(L.playoffs):poSettings(L),n=L.playoffs?(poCfg(L.playoffs).spots):playoffSpots(L);
+  $("season-legend").textContent=`Each player plays ${gamesPer(L)} regular season games, ${gamesPer(L)/2} at home and ${gamesPer(L)/2} away. Playoffs: ${poSummary(c,n)}${L.playoffs||L.archived?"":c.auto?". They start automatically after the last regular season game":". The host starts them"}.`}
   const table=computeTable(L);
   if(!table.length){st.append(h("div",{class:"empty"},h("b",{},"No players yet"),"The host adds players on the Players tab."));return}
   const hasDivs=L.players.some(p=>p.div);
@@ -987,9 +1051,11 @@ function renderStandings(L){
     if(L.phase==="setup"||L.phase==="draft")st.append(h("p",{class:"hint"},"Divisions are set randomly when the draft finishes."));
     st.append(standingsTable(L,table));return;
   }
-  const cut=L.playoffs?.perDiv||null;
+  const lg=L.playoffs&&poCfg(L.playoffs).format==="league";
+  const cut=lg?null:(L.playoffs?.perDiv||null);
   for(const d of["A","B"])st.append(h("div",{class:"div-block"},h("h3",{},divName(L,d)),standingsTable(L,table.filter(r=>r.p.div===d),cut)));
   if(cut)st.append(h("p",{class:"legend"},`The dashed line marks the playoff cut: top ${cut} in each division.`));
+  if(lg){const q=L.playoffs.seeds.L||[];st.append(h("p",{class:"legend"},`Made the playoffs (top ${q.length} overall): ${q.map((u,i)=>`#${i+1} ${u}`).join(", ")}.`))}
 }
 
 /* --- Schedule --- */
@@ -1021,9 +1087,9 @@ function seriesCard(L,s,isFinal){
     return h("div",{class:"s"+(u?"":" tbd")+(out?" out":"")},h("span",{class:"seed"},seed?"#"+seed:""),u&&abOf(u)?logo(abOf(u)):h("span",{}),u?P(u,u+(teamOf(u)?" · "+teamOf(u).split(" ").slice(-1)[0]:"")):h("b",{},"TBD"),h("span",{class:"w"},st?w:""));
   };
   let status="";
-  if(s.pending)status="Waiting on earlier rounds";
+  if(s.pending)status="Waiting on earlier rounds"+(s.bo?` · best of ${s.bo}`:"");
   else if(s.winner)status=`${s.winner} wins ${Math.max(s.wa,s.wb)}–${Math.min(s.wa,s.wb)}`;
-  else if(s.wa===s.wb)status=s.wa===0?`Best of ${L.playoffs.bestOf} · Game 1 at ${s.a}`:`Tied ${s.wa}–${s.wb} · Game ${s.nextNo} at ${s.nextHome}`;
+  else if(s.wa===s.wb)status=s.wa===0?`Best of ${s.bo} · Game 1 at ${s.nextHome}`:`Tied ${s.wa}–${s.wb} · Game ${s.nextNo} at ${s.nextHome}`;
   else status=`${s.wa>s.wb?s.a:s.b} leads ${Math.max(s.wa,s.wb)}–${Math.min(s.wa,s.wb)} · Game ${s.nextNo} at ${s.nextHome}`;
   const kids=[line(s.a,s.aSeed,s.wa,true),line(s.b,s.bSeed,s.wb,false),h("div",{class:"st"},status)];
   if(!s.pending&&!s.winner&&signedIn()&&L.phase==="playoffs")kids.push(h("button",{class:"sm go",type:"button",style:"justify-self:start",onclick:()=>{S.fixtureKey="po:"+s.id+":"+s.nextNo;show("log");renderLog(L)}},"Log game "+s.nextNo));
@@ -1033,11 +1099,18 @@ function renderPlayoffs(L,br){
   const p=$("playoffs");p.replaceChildren();
   if(L.allTime){renderHistory(S.league,p,true);return}
   if(!br){
-    p.append(h("div",{class:"empty"},h("b",{},"Not started"),L.phase==="season"?`The playoffs start automatically once every regular season game is played: top ${playoffSpots(L)} in each division, best-of-3 series.`:"Playoffs come after the regular season. Series are best of 3."));
+    const c=poSettings(L);
+    p.append(h("div",{class:"empty"},h("b",{},"Not started"),`Format: ${poSummary(c,playoffSpots(L))}. ${c.auto?"They start automatically once every regular season game is played.":"The host starts them from the Players tab."}`));
     renderHistory(L,p);return;
   }
   const wrap=h("div",{class:"bracket"});
-  wrap.append(h("p",{class:"hint"},`Top ${L.playoffs.perDiv} from each division. Best-of-${L.playoffs.bestOf} series, higher seed at home in games 1 and 3. Overtime only, no shootouts.`));
+  const c=poCfg(L.playoffs);
+  wrap.append(h("p",{class:"hint"},`Format: ${poSummary(c,c.spots)}. Higher seed at home ${c.pattern==="nhl"?"in games 1, 2, 5 and 7 (NHL style)":"in odd-numbered games"}. ${c.allowSO?"Shootouts allowed.":"Overtime only, no shootouts."}`));
+  if(c.format==="league"){
+    const dv=br.divs.L;
+    if(dv.rounds.length)wrap.append(h("div",{class:"bdiv"},h("div",{class:"brounds"},dv.rounds.map((row,r)=>h("div",{class:"bround"},h("span",{},roundName(r,dv.rounds.length,true)),row.map(s=>seriesCard(L,s,s.final)))))));
+    p.append(wrap);renderHistory(L,p);return;
+  }
   for(const d of["A","B"]){
     const dv=br.divs[d];
     const blk=h("div",{class:"bdiv"},h("div",{class:"div-block"},h("h3",{},divName(L,d))));
@@ -1113,8 +1186,9 @@ function syncFixture(){
   const f=currentFixture();
   $("l-hname").textContent=f?.home||"–";$("l-aname").textContent=f?.away||"–";
   $("l-hclub").replaceChildren(...(f?[logo(abOf(f.home)),teamOf(f.home)]:[]).filter(Boolean));$("l-aclub").replaceChildren(...(f?[logo(abOf(f.away)),teamOf(f.away)]:[]).filter(Boolean));
-  const so=$("l-result").querySelector('[data-v="SO"]');so.hidden=f?.stage==="po";
-  if(f?.stage==="po"&&S.result==="SO")setResult("REG");
+  const noSO=f?.stage==="po"&&!(poCfg(S.league.playoffs)?.allowSO);
+  const so=$("l-result").querySelector('[data-v="SO"]');so.hidden=noSO;
+  if(noSO&&S.result==="SO")setResult("REG");
   renderGoalInputs();
 }
 function setResult(v){S.result=v;[...$("l-result").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===v))}
@@ -1154,14 +1228,29 @@ function renderPlayers(L,br){
   $("add-wrap").hidden=L.phase!=="setup";
   if(host){
     for(const[id,val]of[["g-name",L.name||""],["g-season",L.season||""],["g-divA",divName(L,"A")],["g-divB",divName(L,"B")]])if(document.activeElement!==$(id))$(id).value=val;
-    const gs=$("g-games"),sp=$("g-spots");
-    if(document.activeElement!==gs){gs.replaceChildren(...Array.from({length:15},(_,i)=>(i+1)*2).map(v=>h("option",{value:v},v+" games")));gs.value=String(gamesPer(L))}
+    const gs=$("g-games");
+    if(document.activeElement!==gs){gs.replaceChildren(...Array.from({length:20},(_,i)=>(i+1)*2).map(v=>h("option",{value:v},v+" games ("+v/2+" home, "+v/2+" away)")));gs.value=String(gamesPer(L))}
     gs.disabled=!(L.phase==="setup"||L.phase==="draft");
-    if(document.activeElement!==sp){sp.replaceChildren(...Array.from({length:8},(_,i)=>i+1).map(v=>h("option",{value:v},"Top "+v)));sp.value=String(parseInt(L.playoffSpots,10)||2)}
-    sp.disabled=L.phase==="playoffs";
-    $("g-hint").textContent=gs.disabled?"Games per player is locked once the season starts.":"Each player plays this many regular season games, half at home. If a division ends up smaller than the playoff spots, everyone in it qualifies.";
+    $("g-hint").textContent=gs.disabled?"Games per player is locked once the regular season starts.":"Each player plays this many regular season games, half at home.";
+    renderPoForm(L);
     renderSeasonCtl(L,br);
   }
+}
+function fillSpots(L,format,keep){
+  const sel=$("po-spots"),lim=spotLimits(L,format),cur=keep??parseInt(sel.value,10);
+  const max=format==="league"?16:8,opts=[];
+  for(let v=format==="league"?2:1;v<=max;v++)opts.push(h("option",{value:v},format==="league"?`Top ${v} overall`+(v>lim.max?" (more than players)":""):`Top ${v} per division (${v*2} total)`+(v>lim.max&&L.players.some(p=>p.div)?" (bigger than a division)":"")));
+  sel.replaceChildren(...opts);sel.value=String(Math.min(max,Math.max(format==="league"?2:1,cur||(format==="league"?4:2))));
+}
+function renderPoForm(L){
+  const c=poSettings(L),f=$("po-form");if(f.contains(document.activeElement))return;
+  const boOpts=()=>BO_CHOICES.map(v=>h("option",{value:v},v===1?"Single game":"Best of "+v));
+  $("po-format").value=c.format;fillSpots(L,c.format,c.spots);
+  for(const[id,v]of[["po-bo1",c.bo.first],["po-bo2",c.bo.later],["po-bo3",c.bo.final]]){$(id).replaceChildren(...boOpts());$(id).value=String(v)}
+  $("po-pattern").value=c.pattern;$("po-so").value=c.allowSO?"1":"0";$("po-auto").value=c.auto?"1":"0";
+  const locked=L.phase==="playoffs";
+  for(const el of f.querySelectorAll("select,button"))el.disabled=locked;
+  $("po-hint").textContent=locked?"These are locked while the playoffs are running. Changes apply from next season's playoffs.":`Current format: ${poSummary(c,playoffSpots(L))}. If a division has fewer players than the spots, everyone in it qualifies.`;
 }
 function renderSeasonCtl(L,br){
   const c=$("season-ctl");c.replaceChildren();
@@ -1172,16 +1261,9 @@ function renderSeasonCtl(L,br){
   }else if(L.phase==="draft"){
     c.append(h("p",{class:"hint"},"The draft is live. Manage it from the Draft tab."),h("button",{class:"btn ghost",type:"button",onclick:()=>show("draft")},"Go to draft"));
   }else if(L.phase==="season"){
-    const sizes=["A","B"].map(d=>L.players.filter(p=>p.div===d).length);
-    const maxN=Math.min(8,...sizes);
-    const total=L.players.length*gamesPer(L)/2,left=total-rsN;
-    c.append(h("p",{class:"hint"},`Regular season: ${rsN} of ${total} games played. The playoffs start automatically after the last one, top ${playoffSpots(L)} per division. You can also start them early here.`));
-    if(maxN>=1){
-      const sel=h("select",{id:"po-n","aria-label":"Players per division"},Array.from({length:maxN},(_,i)=>h("option",{value:i+1},`Top ${i+1} per division (${(i+1)*2} total)`)));
-      sel.value=String(playoffSpots(L));
-      c.append(h("div",{class:"row"},h("div",{class:"field"},h("label",{for:"po-n"},"Who makes the playoffs"),sel),
-        h("div",{class:"end"},h("button",{class:"btn",type:"button",onclick:ev=>twoTap(ev.currentTarget,left?`Tap again: ${left} game${left>1?"s":""} still unplayed`:"Tap again to start",()=>startPlayoffs(parseInt(sel.value,10)))},"Start playoffs now"))));
-    }
+    const total=L.players.length*gamesPer(L)/2,left=total-rsN,pc=poSettings(L);
+    c.append(h("p",{class:"hint"},`Regular season: ${rsN} of ${total} games played. Playoffs: ${poSummary(pc,playoffSpots(L))}. ${pc.auto?"They start automatically after the last game.":"Start them here when you're ready."} Change the format under Playoff settings.`));
+    c.append(h("button",{class:"btn",type:"button",onclick:ev=>twoTap(ev.currentTarget,left?`Tap again: ${left} game${left>1?"s":""} still unplayed`:"Tap again to start",()=>startPlayoffs())},"Start playoffs now"));
     if(!rsN)c.append(h("div",{class:"row"},
       h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to reshuffle",()=>mutate("Reshuffle divisions",X=>{if(rsGames(X).length)throw new Error("Games have been played; divisions are locked.");assignDivisions(X)}))},"Reshuffle divisions"),
       h("button",{class:"btn ghost",type:"button",onclick:ev=>twoTap(ev.currentTarget,"Tap again to redo the draft",()=>mutate("Redo draft",X=>{if(rsGames(X).length)throw new Error("Games have been played.");X.phase="setup";X.draft=null;for(const q of X.players){q.team="";delete q.div}}))},"Redo draft")));
@@ -1204,10 +1286,10 @@ function resetButton(L){
     h("p",{class:"hint"},"Reset the league to the start: clears every game, the draft, divisions and playoffs, then takes you back to setting the draft order. Players, passwords and archived seasons stay."),
     h("button",{class:"btn ghost danger",type:"button",onclick:ev=>confirmTap(ev.currentTarget,["Are you sure? Tap again",n?`Last chance: delete ${n} game${n>1?"s":""} and reset`:"Last chance: tap to reset"],resetLeague)},"Reset league"));
 }
-function startPlayoffs(n){
+function startPlayoffs(){
   return mutate("Start playoffs",X=>{
     if(X.phase!=="season")throw new Error("The playoffs can only start during the regular season.");
-    applyPlayoffs(X,n);
+    applyPlayoffs(X);
   });
 }
 function newSeason(){
@@ -1380,7 +1462,7 @@ function playoffFinish(V,u){
   const seeded=Object.values(V.playoffs?.seeds||{}).some(l=>l.includes(u));
   if(!seeded)return"Missed playoffs";
   const lost=br.all.find(s=>(s.a===u||s.b===u)&&s.winner&&s.winner!==u);
-  if(lost){const lab=seriesLabel(V,lost);return"Lost in the "+(lost.id==="F"?"league final":lab.slice(divName(V,lost.div).length+1))}
+  if(lost){const lab=seriesLabel(V,lost);return"Lost in the "+(lost.id==="F"||lost.final?"league final":lost.div==="L"?lab.toLowerCase():lab.slice(divName(V,lost.div).length+1))}
   return V.archived?"Playoffs":"Still alive";
 }
 function openProfile(u){
@@ -1474,7 +1556,7 @@ $("log-form").addEventListener("submit",async e=>{
   if(!Number.isInteger(hs)||!Number.isInteger(as)||hs<0||as<0)return setMsg("log-msg","Enter both scores.","err");
   if(hs===as)return setMsg("log-msg","NHL games can't end tied. Enter the final score including the OT or shootout winner.","err");
   if(S.result!=="REG"&&Math.abs(hs-as)!==1)return setMsg("log-msg","Overtime and shootout games are decided by one goal.","err");
-  if(f.stage==="po"&&S.result==="SO")return setMsg("log-msg","Playoff games go to overtime, not a shootout.","err");
+  if(f.stage==="po"&&S.result==="SO"&&!poCfg(S.league.playoffs)?.allowSO)return setMsg("log-msg","Playoff games go to overtime, not a shootout.","err");
   if(!date)return setMsg("log-msg","Pick the date you played.","err");
   const goals={h:S.goalDraft.h.slice(0,hs).map(x=>(x||"").trim().slice(0,30)),a:S.goalDraft.a.slice(0,as).map(x=>(x||"").trim().slice(0,30))};
   while(goals.h.length<hs)goals.h.push("");while(goals.a.length<as)goals.a.push("");
@@ -1487,7 +1569,7 @@ $("log-form").addEventListener("submit",async e=>{
       if(f.stage==="po"){g.series=now.series;g.gameNo=now.gameNo}else g.fixture=now.fixture;
       g.hab=X.draft?.picks?.[now.home]||null;g.aab=X.draft?.picks?.[now.away]||null;
       X.games.push(g);
-      if(f.stage==="rs"&&!openFixtures(X).length)applyPlayoffs(X,playoffSpots(X));
+      if(f.stage==="rs"&&!openFixtures(X).length&&poSettings(X).auto)applyPlayoffs(X);
     });
     setMsg("log-msg",`Saved: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");
     $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-fixture").value="";S.goalDraft={h:[],a:[]};setResult("REG");syncFixture();
@@ -1512,10 +1594,20 @@ $("add-form").addEventListener("submit",async e=>{
 $("league-form").addEventListener("submit",async e=>{
   e.preventDefault();const name=$("g-name").value.trim().slice(0,40),season=$("g-season").value.trim().slice(0,30),dA=$("g-divA").value.trim().slice(0,24)||"Division A",dB=$("g-divB").value.trim().slice(0,24)||"Division B";
   if(!name)return;
-  const gp=parseInt($("g-games").value,10),spots=parseInt($("g-spots").value,10);
+  const gp=parseInt($("g-games").value,10);
   try{await mutate("Update league settings",X=>{X.name=name;X.season=season;X.divisions={A:{name:dA},B:{name:dB}};
-    if((X.phase==="setup"||X.phase==="draft")&&gp>=2&&gp<=30&&gp%2===0)X.gamesPer=gp;
-    if(X.phase!=="playoffs"&&spots>=1&&spots<=8)X.playoffSpots=spots});setMsg("league-msg","Saved.","ok")}catch(err){setMsg("league-msg",saveErr(err),"err")}
+    if((X.phase==="setup"||X.phase==="draft")&&gp>=2&&gp<=40&&gp%2===0)X.gamesPer=gp});setMsg("league-msg","Saved.","ok")}catch(err){setMsg("league-msg",saveErr(err),"err")}
+});
+$("po-format").addEventListener("change",e=>fillSpots(S.league,e.target.value));
+$("po-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const v=id=>$(id).value,num=id=>parseInt(v(id),10);
+  const ps={format:v("po-format")==="league"?"league":"div",spots:num("po-spots"),bo:{first:num("po-bo1"),later:num("po-bo2"),final:num("po-bo3")},pattern:v("po-pattern")==="nhl"?"nhl":"alt",allowSO:v("po-so")==="1",auto:v("po-auto")==="1"};
+  if(![ps.bo.first,ps.bo.later,ps.bo.final].every(x=>BO_CHOICES.includes(x)))return setMsg("po-msg","Pick a series length for every round.","err");
+  setMsg("po-msg","Saving…");
+  try{await mutate("Update playoff settings",X=>{if(X.phase==="playoffs")throw new Error("Playoff settings are locked while the playoffs are running.");X.poSettings=ps;X.playoffSpots=ps.spots});
+    setMsg("po-msg","Saved: "+poSummary(ps,playoffSpots(S.league))+".","ok")}
+  catch(err){setMsg("po-msg",saveErr(err),"err")}
 });
 $("token-form").addEventListener("submit",async e=>{
   e.preventDefault();const token=$("k-token").value.trim();if(!token)return;
