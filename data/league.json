@@ -167,7 +167,8 @@
     "freakas": 0.08522727272727272,
     "mains": 0.14204545454545456,
     "gio": 0.045454545454545456
-   }
+   },
+   "revealedAt": "2026-10-14T18:57:39.823Z"
   }
  ],
  "lottery": {
@@ -179,8 +180,5 @@
   },
   "draws": 3
  },
- "lotteryLive": {
-  "run": 0,
-  "revealed": 1
- }
+ "lotteryLive": null
 }
