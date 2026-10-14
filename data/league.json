@@ -6,12 +6,12 @@
  "players": [
   {
    "u": "ryan",
-   "team": "Sharks",
+   "team": "",
    "host": true
   },
   {
    "u": "jarvis",
-   "team": "Colorado Avalanche",
+   "team": "",
    "host": false
   }
  ],
@@ -32,7 +32,7 @@
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
  "games": [],
- "phase": "setup",
+ "phase": "draft",
  "history": [],
  "divisions": {
   "A": {
@@ -45,5 +45,14 @@
  "draftOrder": [
   "ryan",
   "jarvis"
- ]
+ ],
+ "playoffs": null,
+ "draft": {
+  "order": [
+   "ryan",
+   "jarvis"
+  ],
+  "picks": {},
+  "startedAt": "2026-10-14T14:15:27.672Z"
+ }
 }
