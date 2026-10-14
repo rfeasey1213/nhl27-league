@@ -137,6 +137,7 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story.s-champ{border-color:rgba(255,214,107,.6);box-shadow:0 0 22px rgba(255,214,107,.15)}
 .story.s-host{border-color:var(--glacier)}
 .story.s-preseason .kind{color:var(--gold)}
+.byline{font:700 11px var(--data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .story .byline{font:700 11px var(--data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.85;margin-top:-4px}
 .story.s-tyf{border-color:var(--line-2);background:linear-gradient(120deg,rgba(150,215,255,.08),rgba(4,14,30,.5))}
 .story.s-tyf .kind{color:var(--muted)}
@@ -146,6 +147,46 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story .headline{margin:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;line-height:1;text-transform:none;letter-spacing:0;color:var(--ink)}
 .story p{margin:0;color:var(--muted)}
 .story .game{background:rgba(3,14,30,.35)}
+
+/* Tale of the tape */
+.tape-btn{all:unset;cursor:pointer;display:grid;justify-items:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;line-height:.9;color:var(--muted)}
+.tape-btn small{font:700 10px var(--data);letter-spacing:.14em;text-transform:uppercase;color:var(--glacier);font-style:normal;margin-top:3px}
+.tape-btn:hover,.tape-btn:focus-visible{color:var(--frost)}
+.tape-btn:focus-visible{outline:2px solid var(--glacier);outline-offset:4px;border-radius:6px}
+.tape-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding-right:60px}
+.tape-side{display:grid;justify-items:center;gap:4px;text-align:center}
+.tape-side .plink{font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;line-height:1;text-transform:uppercase}
+.tape-side small{color:var(--muted)}
+.tape-tag{font:700 10px var(--data);letter-spacing:.14em;text-transform:uppercase;color:var(--glacier)}
+.tape-vs{display:grid;justify-items:center;gap:4px}
+.tape-vs b{font:700 11px var(--data);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.tape-vs span{font-family:var(--display);font-style:italic;font-weight:800;font-size:40px;color:var(--glacier)}
+.tape-odds{display:grid;gap:6px}
+.tape-bar{height:8px;border-radius:4px;background:rgba(255,61,122,.45);overflow:hidden}
+.tape-bar i{display:block;height:100%;background:var(--glacier)}
+.tape-odds p{margin:0;color:var(--muted);text-align:center}
+.tape-odds b{color:var(--ink)}
+.tape{display:grid;gap:2px}
+.tape-row{display:grid;grid-template-columns:1fr minmax(120px,auto) 1fr;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-family:var(--data)}
+.tape-row .tl{font:700 11px var(--data);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.tape-row .tv{font-size:17px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.tape-row .tv:first-child{text-align:right;justify-self:end}
+.tape-row .tv:last-child{text-align:left;justify-self:start}
+.tape-row .tv.win{color:var(--glacier);font-weight:700}
+.tape-sc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tape-sc ol{margin:4px 0 0;padding-left:18px;color:var(--muted)}
+/* Power rankings */
+ol.pr{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
+ol.pr li{display:grid;grid-template-columns:1.6em 2.6em minmax(0,1fr);gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}
+.pr-n{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;line-height:1;color:var(--frost)}
+.pr-mv{font:700 12px var(--data);color:var(--muted);padding-top:6px}
+.pr-mv.up{color:var(--win)}.pr-mv.down{color:var(--hot)}
+.pr-main{display:grid;gap:3px;min-width:0}
+.pr-main .pl{flex-wrap:wrap}
+.pr-main p{margin:0;color:var(--muted);font-size:14px}
+label.check{display:flex;align-items:center;gap:8px;font:500 15px var(--body);color:var(--ink);text-transform:none;letter-spacing:0}
+label.check input{width:auto}
+@media (max-width:560px){.tape-head{padding-right:0;padding-top:30px}.tape-side .plink{font-size:22px}.tape-row{grid-template-columns:1fr minmax(96px,auto) 1fr}.tape-row .tv{font-size:15px}}
 
 /* Home + sub navigation */
 .subnav{display:inline-flex;justify-self:start;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;background:rgba(3,14,30,.4)}
@@ -584,6 +625,8 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
     <p class="msg" id="log-msg"></p>
     <div id="log-list"></div>
     <div id="me-tools" hidden>
+      <h3>Look</h3>
+      <label class="check"><input type="checkbox" id="team-colours"> Use my NHL team's colours</label>
       <h3>Change my password</h3>
       <form id="pw-form">
         <div class="row">
@@ -680,6 +723,13 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
       </form>
     </div>
 
+  </section>
+</div>
+
+<div class="dialog profile" id="tapedlg" hidden>
+  <section class="panel pro" role="dialog" aria-modal="true" aria-labelledby="tape-title">
+    <button class="sm pro-close" type="button" id="tape-close" aria-label="Close preview">Close</button>
+    <div id="tape-body"></div>
   </section>
 </div>
 
@@ -1158,7 +1208,7 @@ function render(){
   if((V!==L&&S.tab==="log")||(V.allTime&&S.tab==="draft"))S.tab="home";
   if(V.allTime)S.sub.games="results";
 
-  renderHome(V,br);renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderNews(V);if(!$("reviewdlg").hidden)renderReview(V);renderResults(V);renderStats(V);
+  applyTeamColours();renderHome(V,br);renderDraft(V);renderStandings(V,br);renderSchedule(V);renderPlayoffs(V,br);renderNews(V);if(!$("reviewdlg").hidden)renderReview(V);renderResults(V);renderStats(V);
   if(S.profile&&!$("profile").hidden)renderProfile(S.profile);
   show(S.tab);
 }
@@ -1178,7 +1228,7 @@ function gameCard(g,home,away,extra,tag){
   const hab=g?.hab||abOf(home),aab=g?.aab||abOf(away);
   const kids=[
     h("div",{class:"pl"},logo(hab),h("div",{class:"side"+(g?(homeWon?" won":" lost"):"")},P(home),h("small",{},(hab&&TEAM_NAME[hab])||teamOf(home)||"Home"))),
-    g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":g.result==="FF"?"Forfeit":"Final/"+g.result)):h("div",{class:"score pending"},"vs"),
+    g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":g.result==="FF"?"Forfeit":"Final/"+g.result)):h("button",{type:"button",class:"score pending tape-btn",title:"Tale of the tape",onclick:()=>openTape(home,away)},"vs",h("small",{},"Preview")),
     h("div",{class:"pl r"},logo(aab),h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},P(away),h("small",{},(aab&&TEAM_NAME[aab])||teamOf(away)||"Away"))),
     h("div",{class:"meta"},tag?h("span",{class:"tagpo"},tag):null,extra)];
   if(g&&((g.goals?.h||[]).some(Boolean)||(g.goals?.a||[]).some(Boolean)))
@@ -2119,6 +2169,96 @@ function scorersTable(V,games,stage){
 }
 $("stat-stage").addEventListener("change",()=>renderStats(VIEW||S.league));
 
+/* ===== Team colours (accent follows the signed-in player's drafted NHL team) ===== */
+const TEAM_ACCENT={ANA:"#F47A38",BOS:"#FFB81C",BUF:"#FCB514",CGY:"#E8324B",CAR:"#E2263F",CHI:"#E33A4E",COL:"#4B9CD3",CBJ:"#E2263F",DAL:"#1FB37A",DET:"#E2263F",EDM:"#FF6A2A",FLA:"#E3394E",LAK:"#B9C0C3",MIN:"#3FA16C",MTL:"#E0404F",NSH:"#FFB81C",NJD:"#E2263F",NYI:"#F68A45",NYR:"#4C7DF0",OTT:"#E0404F",PHI:"#F8692A",PIT:"#FCB514",SJS:"#1FB5BE",SEA:"#99D9D9",STL:"#5B8DEB",TBL:"#4D7CD6",TOR:"#4D7CD6",UTA:"#6CACE4",VAN:"#2DB46E",VGK:"#C9AE73",WSH:"#E3394E",WPG:"#4F8FDE"};
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=v=>Math.max(0,Math.min(255,Math.round(amt<0?v*(1+amt):v+(255-v)*amt)));return"#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join("")}
+function applyTeamColours(){
+  const root=document.documentElement.style;let on=true;try{on=localStorage.getItem("nhl27-teamcol")!=="0"}catch(e){}
+  const ab=on&&signedIn()?S.league?.draft?.picks?.[me()]:null,c=ab&&TEAM_ACCENT[ab];
+  const box=$("team-colours");if(box){box.checked=on;box.disabled=!S.league?.draft?.picks?.[me()]}
+  if(!c){["--glacier","--glacier-2","--frost"].forEach(v=>root.removeProperty(v));return}
+  root.setProperty("--glacier",c);root.setProperty("--glacier-2",shade(c,-0.35));root.setProperty("--frost",shade(c,0.7));
+}
+$("team-colours").addEventListener("change",e=>{try{localStorage.setItem("nhl27-teamcol",e.target.checked?"1":"0")}catch(_){}applyTeamColours()});
+
+/* ===== Power rankings: current form ===== */
+const PR_LINES={
+  hot:["{u} is cooking right now. {rec} over the last five and nobody wants to see them in the schedule.","Heater mode: {u} has won {n} straight. Somebody unplug the controller.","{u} is skating like the ice tilts their way. {rec} in the last five."],
+  up:["{u} is climbing. {rec} in the last five and the vibes are immaculate.","Stock up on {u}. Quietly stacking wins while everyone argues in the group chat."],
+  steady:["{u} is doing {u} things. {rec} lately, nothing flashy, nothing embarrassing.","Middle of the pack for {u}. Not hot, not cold, extremely lukewarm."],
+  down:["{u} is sliding. {rec} over the last five and the excuses are getting longer.","Somebody check on {u}. The form has fallen off a cliff and kept going."],
+  cold:["{u} has lost {n} straight. The {team} are being studied by scientists.","Rock bottom has a basement, and {u} found it. {n} losses in a row.","{u} is ice cold. At this point the controller should file a complaint."],
+  new:["{u} hasn't played enough to judge. Suspicious.","{u} is still warming up. Or hiding."]
+};
+function formSnapshot(V,games){
+  const sorted=[...games].filter(g=>g.stage==="rs").sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||"")));
+  const out=new Map(V.players.map(p=>[p.u,{u:p.u,res:[],gd:[],pts:0,gp:0}]));
+  for(const g of sorted)for(const home of[true,false]){const u=home?g.home:g.away,r=out.get(u);if(!r)continue;const mine=home?g.hs:g.as,th=home?g.as:g.hs;
+    const res=mine>th?"W":isExtra(g)?"O":"L";r.res.push(res);r.gd.push(mine-th);r.gp++;r.pts+=res==="W"?2:res==="O"?1:0}
+  const rows=[...out.values()].map(r=>{const l5=r.res.slice(-5),g5=r.gd.slice(-5);
+    const recent=l5.length?l5.reduce((a,x)=>a+(x==="W"?1:x==="O"?.5:0),0)/l5.length:.5,season=r.gp?r.pts/(r.gp*2):.5,gd=g5.length?Math.max(-3,Math.min(3,g5.reduce((a,b)=>a+b,0)/g5.length)):0;
+    let streak=0,sk="";for(let i=r.res.length-1;i>=0;i--){const x=r.res[i]==="W"?"W":"L";if(!sk)sk=x;if(x!==sk)break;streak++}
+    return{...r,l5,score:0.55*recent+0.25*season+0.2*((gd+3)/6),streak,sk,rec5:`${l5.filter(x=>x==="W").length}–${l5.filter(x=>x!=="W").length}`}});
+  return rows.sort((a,b)=>b.score-a.score||b.pts-a.pts||a.u.localeCompare(b.u));
+}
+function powerRankingsCard(V){
+  if(V.allTime||!V.games.some(g=>g.stage==="rs"))return null;
+  const games=V.games.filter(g=>g.stage==="rs").sort((a,b)=>((a.playedAt||"")+(a.createdAt||"")).localeCompare((b.playedAt||"")+(b.createdAt||"")));
+  const now=formSnapshot(V,games),cut=Math.ceil(V.players.length/2),prevGames=games.slice(0,Math.max(0,games.length-cut));
+  const prev=prevGames.length?new Map(formSnapshot(V,prevGames).map((r,i)=>[r.u,i])):null;
+  const nickOf=u=>V.players.find(p=>p.u===u)?.nick||u;
+  const list=h("ol",{class:"pr"},now.map((r,i)=>{
+    const was=prev?.get(r.u),mv=was==null?0:was-i;
+    const mood=r.gp<2?"new":r.sk==="W"&&r.streak>=3?"hot":r.sk==="L"&&r.streak>=3?"cold":r.score>=.62?"up":r.score<=.38?"down":"steady";
+    const ab=V.draft?.picks?.[r.u];
+    const blurb=fill(pick(PR_LINES[mood].map(t=>[t]),r.u+mood+games.length)[0],{u:nickOf(r.u),rec:r.rec5,n:r.streak,team:ab?teamShort(ab):"squad"});
+    return h("li",{},h("span",{class:"pr-n"},i+1),h("span",{class:"pr-mv "+(mv>0?"up":mv<0?"down":"")},mv>0?"▲"+mv:mv<0?"▼"+(-mv):"–"),
+      h("div",{class:"pr-main"},h("div",{class:"pl"},logo(ab),P(r.u),h("span",{class:"form"},r.l5.map(x=>h("span",{class:"chip "+x},x==="O"?"OT":x)))),h("p",{},blurb)));
+  }));
+  return homeCard("Power rankings",h("div",{},h("span",{class:"byline"},"The Pathetic · based on current form"),list),["Full standings",()=>{S.sub.standings="standings";show("standings")}]);
+}
+
+/* ===== Tale of the tape ===== */
+function openTape(a,b){$("tapedlg").hidden=false;renderTape(a,b);$("tape-close").focus()}
+function closeTape(){$("tapedlg").hidden=true}
+function renderTape(home,away){
+  const V=VIEW||S.league,body=$("tape-body");body.replaceChildren();
+  const rs=V.games.filter(g=>g.stage==="rs"),st=new Map(playerStats(V,rs).map(r=>[r.u,r])),form=new Map(formSnapshot(V,rs).map(r=>[r.u,r]));
+  const side=u=>{const ab=V.draft?.picks?.[u],t=TR(ab),r=st.get(u)||{},f=form.get(u)||{l5:[]},tier=sideTier(V,u);
+    const sc=new Map();for(const g of V.games)for(const[sd,x]of[["h",g.home],["a",g.away]])if(x===u)for(const n of g.goals?.[sd]||[])if(n)sc.set(n,(sc.get(n)||0)+1);
+    return{u,ab,t,r,f,tier,pow:gamePower(t?.ovr??null,tier),top:[...sc].sort((a,b)=>b[1]-a[1]).slice(0,3)}};
+  const A=side(home),B=side(away);
+  const pRate=expectWin(A.pow,B.pow);
+  const fA=A.f.score??.5,fB=B.f.score??.5,pForm=fA+fB?fA/(fA+fB):.5,pHome=0.65*pRate+0.35*pForm;
+  const fav=pHome>=.5?A:B,favP=Math.round(Math.max(pHome,1-pHome)*100);
+  const hh=h2h(home,away),last=allGamesOf(S.league).filter(g=>(g.home===home&&g.away===away)||(g.home===away&&g.away===home)).at(-1);
+  const head=h("div",{class:"tape-head"},
+    h("div",{class:"tape-side"},logo(A.ab,"xl"),P(A.u),h("small",{},A.ab?TEAM_NAME[A.ab]:"No team"),h("span",{class:"tape-tag"},"Home")),
+    h("div",{class:"tape-vs"},h("b",{id:"tape-title"},"Tale of the tape"),h("span",{},"vs")),
+    h("div",{class:"tape-side"},logo(B.ab,"xl"),P(B.u),h("small",{},B.ab?TEAM_NAME[B.ab]:"No team"),h("span",{class:"tape-tag"},"Away")));
+  const num=v=>typeof v==="number"&&Number.isFinite(v);
+  const row=(label,va,vb,better="high",fmt=x=>x)=>{let wa="",wb="";if(num(va)&&num(vb)&&va!==vb){const aBetter=better==="high"?va>vb:va<vb;wa=aBetter?"win":"";wb=aBetter?"":"win"}
+    return h("div",{class:"tape-row"},h("span",{class:"tv "+wa},num(va)||typeof va==="string"?fmt(va):"–"),h("span",{class:"tl"},label),h("span",{class:"tv "+wb},num(vb)||typeof vb==="string"?fmt(vb):"–"))};
+  const f2=x=>x.toFixed(2),rec=r=>r.gp?`${r.w}–${r.l}–${r.otl}`:"0–0–0";
+  const formChips=f=>h("span",{class:"form"},(f.l5||[]).map(x=>h("span",{class:"chip "+x},x==="O"?"OT":x)));
+  body.append(head,
+    h("div",{class:"tape-odds"},h("div",{class:"tape-bar"},h("i",{style:`width:${Math.round(pHome*100)}%`})),h("p",{},`The pick: `,h("b",{},fav.u),` (${favP}%). `,rivalryText(home,away)+".")),
+    h("div",{class:"tape"},
+      row("Team overall",A.t?.ovr,B.t?.ovr),row("Offence",A.t?.off,B.t?.off),row("Defence",A.t?.def,B.t?.def),row("Goalie",A.t?.goal,B.t?.goal),
+      row("Preseason tier",A.tier,B.tier,"low",x=>"Tier "+x),
+      row("Record",rec(A.r),rec(B.r)),row("Points",A.r.pts??0,B.r.pts??0),
+      h("div",{class:"tape-row"},h("span",{class:"tv"},formChips(A.f)),h("span",{class:"tl"},"Last 5"),h("span",{class:"tv"},formChips(B.f))),
+      row("Goals for / game",A.r.gp?A.r.gfg:NaN,B.r.gp?B.r.gfg:NaN,"high",f2),row("Goals against / game",A.r.gp?A.r.gag:NaN,B.r.gp?B.r.gag:NaN,"low",f2),
+      row("Home record",A.r.gp!=null?`${A.r.hw||0}–${A.r.hl||0}`:"–",""),row("Road record","",B.r.gp!=null?`${B.r.aw||0}–${B.r.al||0}`:"–"),
+      row("Head-to-head wins",hh.wa,hh.wb),row("Head-to-head goals",hh.gfa,hh.gfb)),
+    last?h("div",{class:"tape-last"},h("h3",{},"Last meeting"),gameCard(last,last.home,last.away,[h("span",{},fmtDate(last.playedAt))],last._season)):h("p",{class:"hint"},"First time these two have met."),
+    h("h3",{},"Hot sticks"),h("div",{class:"tape-sc"},[A,B].map(x=>h("div",{},h("b",{},x.u),x.top.length?h("ol",{},x.top.map(([n,k])=>h("li",{},`${n} · ${k} G`))):h("p",{class:"hint"},"No goals logged yet.")))),
+    h("p",{class:"src"},"The pick blends team rating and preseason tier (65%) with current form (35%)."));
+}
+$("tape-close").addEventListener("click",closeTape);
+$("tapedlg").addEventListener("click",e=>{if(e.target.id==="tapedlg")closeTape()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("tapedlg").hidden)closeTape()});
+
 /* ===== Home dashboard ===== */
 function homeCard(title,body,link){return h("div",{class:"hcard"},h("div",{class:"hcard-head"},h("h3",{},title),link?h("button",{class:"sm",type:"button",onclick:link[1]},link[0]):null),body)}
 function renderHome(V,br){
@@ -2136,7 +2276,7 @@ function renderHome(V,br){
     const total=L.players.length*gamesPer(L)/2,rsN=rsGames(L).length;
     if(br?.champion){hero.append(h("span",{class:"eyebrow"},L.season+" · final"),h("b",{},`${br.champion} are your champions`),h("p",{},"The season's over. Relive it in the review."),h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:()=>openReview()},"Season review")))}
     else if(mine.length){const o=mine[0];hero.append(h("span",{class:"eyebrow"},`Your next game · ${o.label}`),h("b",{},`${o.home} vs ${o.away}`),h("p",{},`${rivalryText(o.home,o.away)}${ratingNote(null,o.home,o.away)?" · "+ratingNote(null,o.home,o.away):""}`),
-      h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:()=>{show("log");openLog(o.key)}},"Log result"),h("button",{class:"btn ghost",type:"button",onclick:go("log")},`All my games (${mine.length} to play)`)))}
+      h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:()=>{show("log");openLog(o.key)}},"Log result"),h("button",{class:"btn ghost",type:"button",onclick:()=>openTape(o.home,o.away)},"Tale of the tape"),h("button",{class:"btn ghost",type:"button",onclick:go("log")},`All my games (${mine.length})`)))}
     else if(L.phase==="playoffs"){hero.append(h("span",{class:"eyebrow"},"Playoffs"),h("b",{},"Second season is on"),h("p",{},signedIn()?"You've got no playoff game to play right now.":"Follow the bracket."),h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:go("standings","playoffs")},"View the bracket")))}
     else{hero.append(h("span",{class:"eyebrow"},L.season+" · regular season"),h("b",{},`${rsN} of ${total} games played`),h("div",{class:"bar"},h("i",{style:`width:${total?Math.round(rsN/total*100):0}%`})),h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:go("games","schedule")},"Schedule")))}
   }
@@ -2160,6 +2300,7 @@ function renderHome(V,br){
   const lead=(lab,who,val)=>h("div",{class:"lead-row"},h("span",{},lab),who?P(who):h("span",{},"–"),h("b",{},val));
   const bestO=[...rows].sort((a,b)=>b.gfg-a.gfg)[0],bestD=[...rows].sort((a,b)=>a.gag-b.gag)[0],heat=[...rows].sort((a,b)=>b.best-a.best)[0];
   const leaders=h("div",{class:"leads"},topS?lead("Top scorer",topS.u,`${topS.name} · ${topS.n}`):null,bestO?lead("Best offence",bestO.u,bestO.gfg.toFixed(2)+" GF/G"):null,bestD?lead("Best defence",bestD.u,bestD.gag.toFixed(2)+" GA/G"):null,heat?lead("Longest streak",heat.u,heat.best+" W"):null);
+  {const pr=powerRankingsCard(V);if(pr)box.append(pr)}
   box.append(h("div",{class:"home-grid"},
     h("div",{class:"home-col"},homeCard("Latest results",res,["All results",go("games","results")])),
     h("div",{class:"home-col"},homeCard(V.allTime?"All-time leaders":"Standings",snap,["Full standings",go("standings","standings")]),homeCard("Leaders",leaders,["All stats",go("stats")]),

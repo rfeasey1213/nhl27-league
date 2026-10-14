@@ -51,6 +51,12 @@ Signed-in players see only their own schedule and can log any of their games in 
 - **Back to draft day:** clears games, playoffs, divisions and picks, then restarts the draft with the same order.
 - **Reset league:** also clears the draft and lottery and goes back to setting tiers and the order.
 
+## Pregame, rankings and colours
+
+- **Tale of the tape:** tap "vs · Preview" on any unplayed game (or the button on Home) for a side-by-side: team ratings, preseason tier, record, last 5, goals for/against, home/road, head-to-head, last meeting, hot sticks and a pick (65% ratings + tier, 35% current form).
+- **Power rankings** on Home, by current form (last 5 results, season points %, recent goal difference), with movement since about one round ago.
+- **Team colours:** signed-in players see the site in their drafted NHL team's colours (toggle under My games).
+
 ## Stats
 
 The **Stats** tab, which also holds the goal scorers leaderboard, (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
