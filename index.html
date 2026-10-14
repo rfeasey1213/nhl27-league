@@ -137,6 +137,7 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story.s-champ{border-color:rgba(255,214,107,.6);box-shadow:0 0 22px rgba(255,214,107,.15)}
 .story.s-host{border-color:var(--glacier)}
 .story.s-preseason .kind{color:var(--gold)}
+.story .byline{font:700 11px var(--data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);opacity:.85;margin-top:-4px}
 .story.s-tyf{border-color:var(--line-2);background:linear-gradient(120deg,rgba(150,215,255,.08),rgba(4,14,30,.5))}
 .story.s-tyf .kind{color:var(--muted)}
 .tyf{display:flex;align-items:center;gap:14px}
@@ -1764,7 +1765,10 @@ setInterval(()=>{
 },1000);
 
 /* ===== News: written from the league's own results ===== */
-const NEWS_KIND={tyf:"Season over",preseason:"Preseason",up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Around the league",ot:"Free hockey"};
+const NEWS_KIND={tyf:"Season over",preseason:"Preseason",up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"Breaking",start:"Playoffs",chirp:"Around the league",ot:"Free hockey"};
+/* Every story gets a byline from one of the league's (made-up) sports outlets. */
+const OUTLETS=["The Pathetic","FHSN · Five-Hole Sports Network","Top Shelf Tonight","Rink Rat Radio","The Barn Burner","Hockey Night in Mom's Basement"];
+function outletFor(n){return OUTLETS[hashStr((n.title||"")+(n.at||""))%OUTLETS.length]}
 function teamShort(ab){return ab?(TEAM_NAME[ab]||ab).split(" ").slice(-1)[0]:""}
 /* Stable pick from a list so a story reads the same on every refresh. */
 function hashStr(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
@@ -1904,12 +1908,13 @@ function renderNews(V){
     const t=h("input",{id:"news-title",maxlength:"90",placeholder:"Headline"}),b=h("input",{id:"news-body",maxlength:"400",placeholder:"Details (optional)"}),msg=h("span",{class:"msg"});
     const post=h("button",{class:"btn",type:"button",onclick:async()=>{const title=t.value.trim();if(!title){msg.textContent="Add a headline.";msg.className="msg err";return}post.disabled=true;
       try{await mutate("Post news",X=>{X.news=X.news||[];X.news.push({id:uid(),at:new Date().toISOString(),by:me(),title:title.slice(0,90),body:b.value.trim().slice(0,400)})});t.value="";b.value="";msg.textContent="Posted.";msg.className="msg ok"}catch(e){msg.textContent=saveErr(e);msg.className="msg err"}finally{post.disabled=false}}},"Post");
-    box.append(h("div",{class:"ctl"},h("h3",{style:"margin:0"},"Post an announcement"),h("div",{class:"row"},h("div",{class:"field"},t),h("div",{class:"field"},b),h("div",{class:"end"},post)),msg));
+    box.append(h("div",{class:"ctl"},h("h3",{style:"margin:0"},"Post a story"),h("div",{class:"row"},h("div",{class:"field"},t),h("div",{class:"field"},b),h("div",{class:"end"},post)),msg));
   }
   const items=buildNews(V);
   if(!items.length){box.append(h("div",{class:"empty"},h("b",{},"No news yet"),"Hat tricks, upsets, shutouts, comebacks, heaters, roasts and playoff results show up here once the puck drops."));return}
   box.append(h("div",{class:"news"},items.slice(0,80).map(n=>h("article",{class:"story s-"+n.k},
     h("div",{class:"story-top"},h("span",{class:"kind"},NEWS_KIND[n.k]||"News"),h("span",{class:"when"},n.at?fmtDate(n.at.slice(0,10)):"")),
+    h("span",{class:"byline"},outletFor(n)),
     n.k==="tyf"?h("div",{class:"tyf"},logo(n.ab,"xl"),h("div",{},h("h3",{class:"headline"},n.title),h("span",{class:"tyf-who"},P(n.who),n.ab?" · "+TEAM_NAME[n.ab]:""))):h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null,
     n.game?gameCard(n.game,n.game.home,n.game.away,[],null):null,
     n.posted&&host?h("button",{class:"sm",type:"button",style:"justify-self:start",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
