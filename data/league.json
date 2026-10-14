@@ -6,7 +6,7 @@
  "players": [
   {
    "u": "ryan",
-   "team": "",
+   "team": "Colorado Avalanche",
    "host": true,
    "tier": 4
   },
@@ -133,7 +133,8 @@
    "graham"
   ],
   "picks": {
-   "jarvis": "NYI"
+   "jarvis": "NYI",
+   "ryan": "COL"
   },
   "startedAt": "2026-10-14T18:58:04.499Z"
  },
