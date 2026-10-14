@@ -136,6 +136,7 @@ table.cm select,table.cm input{font-size:14px;padding:6px 8px;min-width:90px}
 .story.s-hat .kind,.story.s-champ .kind,.story.s-lottery .kind{color:var(--gold)}
 .story.s-champ{border-color:rgba(255,214,107,.6);box-shadow:0 0 22px rgba(255,214,107,.15)}
 .story.s-host{border-color:var(--glacier)}
+.story.s-preseason .kind{color:var(--gold)}
 .story.s-tyf{border-color:var(--line-2);background:linear-gradient(120deg,rgba(150,215,255,.08),rgba(4,14,30,.5))}
 .story.s-tyf .kind{color:var(--muted)}
 .tyf{display:flex;align-items:center;gap:14px}
@@ -1763,7 +1764,7 @@ setInterval(()=>{
 },1000);
 
 /* ===== News: written from the league's own results ===== */
-const NEWS_KIND={tyf:"Season over",up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Chirp",ot:"Free hockey"};
+const NEWS_KIND={tyf:"Season over",preseason:"Preseason",up:"Upset",hat:"Lit the lamp",cb:"Comeback",so:"Shutout",bo:"Blowout",gf:"Goal fest",streak:"Heater",snap:"Streak snapped",series:"Playoffs",champ:"Champion",draft:"Draft",lottery:"Lottery",host:"From the commissioner",start:"Playoffs",chirp:"Chirp",ot:"Free hockey"};
 function teamShort(ab){return ab?(TEAM_NAME[ab]||ab).split(" ").slice(-1)[0]:""}
 /* Stable pick from a list so a story reads the same on every refresh. */
 function hashStr(x){let h=2166136261;for(const c of String(x)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
@@ -1889,7 +1890,7 @@ function buildNews(V){
   if(V.draft){const D=V.draft;for(const u of D.order){const ab=D.picks?.[u];if(!ab)continue;const at=(D.pickAt?.[u]||D.doneAt||"").replace("Z","");const i=D.order.indexOf(u);
     if(D.auto?.[u]){const ap=pick([["Chirp: {u} fell asleep at the draft","The clock ran out, so the computer took the {t} for {u}. Probably a better pick anyway."],["Chirp: {u} was too busy to pick a team","Two whole minutes and nothing. The computer stepped in and took the {t}. The computer is now considered the smartest GM in the league."],["Chirp: {u} got outdrafted by a laptop","Clock hits zero, the site picks the {t} for {u}. Somewhere a toaster could have done better, but not by much."]],u+ab);items.push({k:"chirp",title:fill(ap[0],{u}),body:fill(ap[1],{u,t:TEAM_NAME[ab]+(TR(ab)?.ovr?` (OVR ${TR(ab).ovr})`:"")}),at})}
     else if(i===0)items.push({k:"draft",title:`${u} takes the ${TEAM_NAME[ab]} first overall`,body:TR(ab)?`Team rating ${TR(ab).ovr}, led by ${TR(ab).roster[0]?.name}. No pressure, bud.`:"",at})}}
-  for(const n of V.news||[])items.push({k:"host",title:n.title,body:n.body,at:(n.at||"").replace("Z",""),id:n.id,by:n.by});
+  for(const n of V.news||[])items.push({k:["chirp","preseason"].includes(n.kind)?n.kind:"host",title:n.title,body:n.body,at:(n.at||"").replace("Z",""),id:n.id,by:n.by,posted:true});
   // Chirps use each player's chirp nickname (set by the host)
   const nick=V.players.filter(p=>p.nick).map(p=>[new RegExp("(^|[^A-Za-z0-9_.-])"+p.u.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?![A-Za-z0-9_-])","g"),p.nick]);
   if(nick.length)for(const it of items)if(it.k==="chirp")for(const[re,nk]of nick){it.title=it.title.replace(re,"$1"+nk);it.body=it.body.replace(re,"$1"+nk)}
@@ -1911,7 +1912,7 @@ function renderNews(V){
     h("div",{class:"story-top"},h("span",{class:"kind"},NEWS_KIND[n.k]||"News"),h("span",{class:"when"},n.at?fmtDate(n.at.slice(0,10)):"")),
     n.k==="tyf"?h("div",{class:"tyf"},logo(n.ab,"xl"),h("div",{},h("h3",{class:"headline"},n.title),h("span",{class:"tyf-who"},P(n.who),n.ab?" · "+TEAM_NAME[n.ab]:""))):h("h3",{class:"headline"},n.title),n.body?h("p",{},n.body):null,
     n.game?gameCard(n.game,n.game.home,n.game.away,[],null):null,
-    n.k==="host"&&host?h("button",{class:"sm",type:"button",style:"justify-self:start",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
+    n.posted&&host?h("button",{class:"sm",type:"button",style:"justify-self:start",onclick:ev=>twoTap(ev.currentTarget,"Tap again to delete",()=>mutate("Delete news",X=>{X.news=(X.news||[]).filter(x=>x.id!==n.id)}))},"Delete"):null))));
 }
 
 /* ===== Commissioner: host can change anything ===== */

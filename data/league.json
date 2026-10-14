@@ -181,5 +181,39 @@
   },
   "draws": 3
  },
- "lotteryLive": null
+ "lotteryLive": null,
+ "news": [
+  {
+   "id": "ncvd4fyqexz",
+   "at": "2026-10-14T21:58:36.000Z",
+   "by": "ryan",
+   "kind": "preseason",
+   "title": "Gio is the sneaky pick to win it all",
+   "body": "Nobody's talking about gio, and that's exactly how gio likes it. Quiet camp, no hype, just reps. Every year there's a team that sneaks up on the league and walks out with the hardware. Put a loonie on gio now while the odds are long. You'll thank us in the spring."
+  },
+  {
+   "id": "nu19cq4izi3",
+   "at": "2026-10-14T21:58:37.000Z",
+   "by": "ryan",
+   "kind": "preseason",
+   "title": "AJ feels overlooked, and that's dangerous",
+   "body": "Word from camp is aj has been reading every preview, every power ranking and every group chat, and his name isn't in any of them. He's taking it personally. Nothing scarier than a guy with the #1 pick and a chip on his shoulder the size of a Zamboni."
+  },
+  {
+   "id": "nu3u4fppklz",
+   "at": "2026-10-14T21:58:38.000Z",
+   "by": "ryan",
+   "kind": "preseason",
+   "title": "Freakas has been in the lab all summer",
+   "body": "Sources say freakas hasn't seen daylight since the end of last season. Blinds down, controller in hand, running the same breakout until the muscle memory is permanent. Rumour is he's got a dangle nobody's seen yet. The rest of the league has been warned."
+  },
+  {
+   "id": "nfjk834uwno",
+   "at": "2026-10-14T21:58:39.000Z",
+   "by": "ryan",
+   "kind": "chirp",
+   "title": "Chirp: sertl has been brutal in preseason",
+   "body": "We've seen a lot of preseason hockey, but sertl looks like he's playing with oven mitts on. Missed open nets, passes to nobody, and a defensive game best described as optional. Training camp is supposed to shake the rust off, not add more. Somebody check if he's holding the controller upside down."
+  }
+ ]
 }
