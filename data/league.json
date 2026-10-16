@@ -49,7 +49,7 @@
   },
   {
    "u": "gio",
-   "team": "",
+   "team": "Washington Capitals",
    "host": false,
    "tier": 2
   }
@@ -138,18 +138,20 @@
    "freakas": "TBL",
    "ryan": "EDM",
    "mains": "DAL",
-   "graham": "FLA"
+   "graham": "FLA",
+   "gio": "WSH"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
    "freakas": "2026-10-16T18:40:13.546Z",
    "ryan": "2026-10-16T18:40:32.880Z",
    "mains": "2026-10-16T18:40:49.344Z",
-   "graham": "2026-10-16T18:41:13.502Z"
+   "graham": "2026-10-16T18:41:13.502Z",
+   "gio": "2026-10-16T18:41:23.035Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:41:13.502Z",
+  "clockAt": "2026-10-16T18:41:23.035Z",
   "paused": null
  },
  "archive": [],
