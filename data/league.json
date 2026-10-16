@@ -42,7 +42,7 @@
   },
   {
    "u": "mains",
-   "team": "",
+   "team": "Dallas Stars",
    "host": false,
    "tier": 4,
    "nick": "Make a Wish Mains"
@@ -136,16 +136,18 @@
   "picks": {
    "aj": "COL",
    "freakas": "TBL",
-   "ryan": "EDM"
+   "ryan": "EDM",
+   "mains": "DAL"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
    "freakas": "2026-10-16T18:40:13.546Z",
-   "ryan": "2026-10-16T18:40:32.880Z"
+   "ryan": "2026-10-16T18:40:32.880Z",
+   "mains": "2026-10-16T18:40:49.344Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:40:32.880Z",
+  "clockAt": "2026-10-16T18:40:49.344Z",
   "paused": null
  },
  "archive": [],
