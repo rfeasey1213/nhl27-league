@@ -8,50 +8,58 @@
    "u": "ryan",
    "team": "Edmonton Oilers",
    "host": true,
-   "tier": 2
+   "tier": 2,
+   "div": "A"
   },
   {
    "u": "jarvis",
    "team": "Pittsburgh Penguins",
    "host": false,
-   "tier": 1
+   "tier": 1,
+   "div": "B"
   },
   {
    "u": "jamie",
-   "team": "",
+   "team": "New York Islanders",
    "host": false,
-   "tier": 1
+   "tier": 1,
+   "div": "B"
   },
   {
    "u": "aj",
    "team": "Colorado Avalanche",
    "host": false,
-   "tier": 4
+   "tier": 4,
+   "div": "A"
   },
   {
    "u": "graham",
    "team": "Florida Panthers",
    "host": false,
-   "tier": 3
+   "tier": 3,
+   "div": "A"
   },
   {
    "u": "freakas",
    "team": "Tampa Bay Lightning",
    "host": false,
-   "tier": 3
+   "tier": 3,
+   "div": "B"
   },
   {
    "u": "mains",
    "team": "Dallas Stars",
    "host": false,
    "tier": 4,
-   "nick": "Make a Wish Mains"
+   "nick": "Make a Wish Mains",
+   "div": "A"
   },
   {
    "u": "gio",
    "team": "Washington Capitals",
    "host": false,
-   "tier": 2
+   "tier": 2,
+   "div": "B"
   }
  ],
  "auth": {
@@ -101,7 +109,7 @@
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
  "games": [],
- "phase": "draft",
+ "phase": "season",
  "history": [],
  "divisions": {
   "A": {
@@ -140,7 +148,8 @@
    "mains": "DAL",
    "graham": "FLA",
    "gio": "WSH",
-   "jarvis": "PIT"
+   "jarvis": "PIT",
+   "jamie": "NYI"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
@@ -149,12 +158,14 @@
    "mains": "2026-10-16T18:40:49.344Z",
    "graham": "2026-10-16T18:41:13.502Z",
    "gio": "2026-10-16T18:41:23.035Z",
-   "jarvis": "2026-10-16T18:41:32.067Z"
+   "jarvis": "2026-10-16T18:41:32.067Z",
+   "jamie": "2026-10-16T18:41:35.958Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:41:32.067Z",
-  "paused": null
+  "clockAt": "2026-10-16T18:41:35.958Z",
+  "paused": null,
+  "doneAt": "2026-10-16T18:41:35.958Z"
  },
  "archive": [],
  "mvpVotes": {},
