@@ -6,7 +6,7 @@
  "players": [
   {
    "u": "ryan",
-   "team": "",
+   "team": "Edmonton Oilers",
    "host": true,
    "tier": 2
   },
@@ -135,15 +135,17 @@
   ],
   "picks": {
    "aj": "COL",
-   "freakas": "TBL"
+   "freakas": "TBL",
+   "ryan": "EDM"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
-   "freakas": "2026-10-16T18:40:13.546Z"
+   "freakas": "2026-10-16T18:40:13.546Z",
+   "ryan": "2026-10-16T18:40:32.880Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:40:13.546Z",
+  "clockAt": "2026-10-16T18:40:32.880Z",
   "paused": null
  },
  "archive": [],
