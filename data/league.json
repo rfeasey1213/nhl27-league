@@ -36,7 +36,7 @@
   },
   {
    "u": "freakas",
-   "team": "",
+   "team": "Tampa Bay Lightning",
    "host": false,
    "tier": 3
   },
@@ -134,14 +134,16 @@
    "jamie"
   ],
   "picks": {
-   "aj": "COL"
+   "aj": "COL",
+   "freakas": "TBL"
   },
   "pickAt": {
-   "aj": "2026-10-16T18:39:59.136Z"
+   "aj": "2026-10-16T18:39:59.136Z",
+   "freakas": "2026-10-16T18:40:13.546Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:39:59.136Z",
+  "clockAt": "2026-10-16T18:40:13.546Z",
   "paused": null
  },
  "archive": [],
