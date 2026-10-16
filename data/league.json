@@ -12,7 +12,7 @@
   },
   {
    "u": "jarvis",
-   "team": "",
+   "team": "Pittsburgh Penguins",
    "host": false,
    "tier": 1
   },
@@ -139,7 +139,8 @@
    "ryan": "EDM",
    "mains": "DAL",
    "graham": "FLA",
-   "gio": "WSH"
+   "gio": "WSH",
+   "jarvis": "PIT"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
@@ -147,11 +148,12 @@
    "ryan": "2026-10-16T18:40:32.880Z",
    "mains": "2026-10-16T18:40:49.344Z",
    "graham": "2026-10-16T18:41:13.502Z",
-   "gio": "2026-10-16T18:41:23.035Z"
+   "gio": "2026-10-16T18:41:23.035Z",
+   "jarvis": "2026-10-16T18:41:32.067Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:41:23.035Z",
+  "clockAt": "2026-10-16T18:41:32.067Z",
   "paused": null
  },
  "archive": [],
