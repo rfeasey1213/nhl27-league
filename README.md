@@ -27,7 +27,7 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 1. **Pre-draft:** the host adds players on the Players tab and sets the pick order on the Draft tab.
 2. **Live draft:** each player signs in and picks one NHL team on their turn. The page updates every few seconds. The host can pick for anyone who's away, undo the last pick, or cancel.
 3. **Divisions:** when the last pick is in, players are split randomly into two divisions. The host can reshuffle before any game is played and rename the divisions in League settings.
-4. **Regular season:** each player plays 12 games, 6 at home and 6 away (the host can change the number before the season starts). Goal scorers can be added to each game.
+4. **Regular season:** each player plays 12 games, 6 at home and 6 away (the host can change the number before the season starts). Each game can record goal scorers, up to two assists per goal, and each goalie's name and end-of-game saves.
 5. **Playoffs:** they start automatically after the last regular season game, using the host's playoff spots per division (default top 2). The host can also start them early. Series are best of 3, played within each division, and the two division champions meet in the league final. Playoff games go to overtime, never a shootout.
 6. **Next season:** after a champion is crowned, the host taps **Start Season 2** (or 3, 4…). The finished season is archived in full: every game, score and goal scorer, the draft, divisions and playoff bracket. Then a new draft opens. Players and passwords stay.
 7. **Archive:** the **Viewing** picker under the tabs switches between the current season, any past season, and **All-time** (career standings with titles and playoff records, plus all-time scorers).
@@ -36,7 +36,7 @@ Live site: https://rfeasey1213.github.io/nhl27-league/
 
 - **Profiles:** tap any player's name to see their all-time record, points, goals, playoff record, longest and current win streak, head-to-head against every friend, best scorers, awards, season-by-season finishes and every game they've played.
 - **Rivalries:** every game card shows the all-time series between the two players. The All-time view has a full rivalry grid.
-- **Awards and Season review:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Firepower, Brick Wall and OT Hero appear in the **Season review** (button on the champion banner, or next to the season picker for past seasons), along with final standings, top scorers, biggest moments and season totals. MVP voting sits on the Playoffs tab during the playoffs; awards lock in and votes are revealed when the host starts the next season. All-time → **Trophy cabinet** lists every award.
+- **Awards and Season review:** Champion, MVP (players' vote), Presidents' Trophy, Goal Machine, Playmaker (most assists), Golden Glove (best save percentage among goalies who played at least half the max games), Firepower, Brick Wall and OT Hero appear in the **Season review** (button on the champion banner, or next to the season picker for past seasons), along with final standings, top scorers, biggest moments and season totals. MVP voting sits on the Playoffs tab during the playoffs; awards lock in and votes are revealed when the host starts the next season. All-time → **Trophy cabinet** lists every award.
 
 ## Draft lottery
 
@@ -59,7 +59,7 @@ Signed-in players see only their own schedule and can log any of their games in 
 
 ## Stats
 
-The **Stats** tab, which also holds the goal scorers leaderboard, (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
+The **Stats** tab, which also holds the skater points leaderboard (G, A, PTS) and the goalie table (saves, GA, save %, shutouts), (regular season, playoffs or all games; any season or all-time) shows league totals, a points race chart, stat leaders (offence, defence, home, road, clutch, shutouts, streaks, upsets, over/underachievers), a sortable player stats table, NHL teams vs their ratings, and league records. "vs Exp." compares wins with what team rating plus preseason tier predicted.
 
 ## Draft clock
 

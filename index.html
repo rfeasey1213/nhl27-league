@@ -120,7 +120,7 @@ header.board::after{content:"";position:absolute;top:-60%;right:-8%;width:46%;he
 .badge{font:700 10.5px var(--data);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--line-2);color:var(--frost);background:rgba(95,227,255,.06)}
 .badge.b-hat{border-color:rgba(255,214,107,.7);color:var(--gold)}
 .badge.b-up{border-color:var(--hot);color:var(--hot)}
-.badge.b-so{border-color:var(--glacier);color:var(--glacier)}
+.badge.b-so,.badge.b-wall{border-color:var(--glacier);color:var(--glacier)}
 .badge.b-cb{border-color:var(--win);color:var(--win)}
 .badge.b-bo{border-color:var(--otl);color:var(--otl)}
 .badge.b-ff{border-color:var(--muted);color:var(--muted)}
@@ -367,6 +367,17 @@ input.goals{font-family:var(--display);font-style:italic;font-weight:800;font-si
 .vs{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:var(--glacier);padding-top:56px;text-shadow:0 0 12px rgba(95,227,255,.5)}
 .scorer-list{display:grid;gap:6px}
 .scorer-list input{font-size:14.5px;padding:7px 9px}
+.box-score{display:grid;gap:14px;margin-top:4px}
+@media(min-width:720px){.box-score{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.bs-side{display:grid;gap:6px;align-content:start;border:1px solid var(--line);border-radius:12px;padding:10px}
+.bs-h{font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.bs-h b{color:var(--frost)}
+.goal-row{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:5px}
+.scorer-list .goal-row .ast{color:var(--muted)}
+.scorer-list .goal-row input.ast{font-size:13.5px}
+.gk-row{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:6px;margin-top:4px;padding-top:8px;border-top:1px dashed var(--line)}
+.gk-row input{font-size:14.5px;padding:7px 9px;min-width:0}
+.game .scorers small{display:block;font-size:12px;opacity:.85;margin-top:2px}
 .row{display:flex;flex-wrap:wrap;gap:12px}
 .row>.field{flex:1 1 160px}
 .row>.end{flex:0 0 auto;align-self:end}
@@ -594,14 +605,18 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;back
       <div class="log-title"><b id="log-title">Log a result</b><button class="sm" type="button" id="log-cancel">Cancel</button></div>
       <div class="matchup">
         <div class="field"><span class="lbl">Home</span><span class="team" id="l-hname">–</span><span class="club" id="l-hclub"></span>
-          <input id="l-hs" class="goals" type="number" min="0" max="20" inputmode="numeric" required aria-label="Home goals" value="0">
-          <div class="scorer-list" id="l-hgoals"></div></div>
+          <input id="l-hs" class="goals" type="number" min="0" max="20" inputmode="numeric" required aria-label="Home goals" value="0"></div>
         <div class="vs">VS</div>
         <div class="field"><span class="lbl">Away</span><span class="team" id="l-aname">–</span><span class="club" id="l-aclub"></span>
-          <input id="l-as" class="goals" type="number" min="0" max="20" inputmode="numeric" required aria-label="Away goals" value="0">
-          <div class="scorer-list" id="l-agoals"></div></div>
+          <input id="l-as" class="goals" type="number" min="0" max="20" inputmode="numeric" required aria-label="Away goals" value="0"></div>
       </div>
-      <p class="hint">Type who scored each goal. Leave a box empty if you don't remember.</p>
+      <div class="box-score">
+        <div class="bs-side"><div class="bs-h" id="l-hbs">Home</div><div class="scorer-list" id="l-hgoals"></div>
+          <div class="gk-row"><input id="l-hgk" list="dl-gk-h" maxlength="30" placeholder="Goalie" aria-label="Home goalie"><input id="l-hsv" type="number" min="0" max="99" inputmode="numeric" placeholder="Saves" aria-label="Home goalie saves"></div></div>
+        <div class="bs-side"><div class="bs-h" id="l-abs">Away</div><div class="scorer-list" id="l-agoals"></div>
+          <div class="gk-row"><input id="l-agk" list="dl-gk-a" maxlength="30" placeholder="Goalie" aria-label="Away goalie"><input id="l-asv" type="number" min="0" max="99" inputmode="numeric" placeholder="Saves" aria-label="Away goalie saves"></div></div>
+      </div>
+      <p class="hint">Type who scored each goal and up to two assists, then each goalie's saves from the end-of-game stats. Leave anything blank you don't remember.</p>
       <div class="row">
         <div class="field" style="flex:0 0 auto">
           <span class="lbl">Ended in</span>
@@ -943,6 +958,7 @@ function gameBadges(g){
   for(const side of["h","a"]){const c=new Map();for(const n of g.goals?.[side]||[]){if(!n)continue;c.set(n,(c.get(n)||0)+1)}
     for(const[n,k]of c)if(k>=3)out.push({k:"hat",t:(k>=4?k+"-goal game: ":"Hat trick: ")+n,who:side==="h"?g.home:g.away,name:n,n:k})}
   if(loserGoals===0)out.push({k:"so",t:"Shutout",who:hw?g.home:g.away});
+  for(const sd of["h","a"]){const sv=savesOf(g,sd);if(sv!=null&&sv>=35)out.push({k:"wall",t:`${sv}-save night`+(g.goalies?.[sd]?": "+g.goalies[sd]:""),who:sd==="h"?g.home:g.away,name:g.goalies?.[sd]||"",n:sv})}
   if((g.comeback||0)>=1)out.push({k:"cb",t:g.comeback>=3?"Epic comeback":"Comeback",who:hw?g.home:g.away,n:g.comeback});
   if(margin>=4)out.push({k:"bo",t:"Blowout",who:hw?g.home:g.away,n:margin});
   if(g.hpow!=null&&g.apow!=null){const wp=hw?g.hpow:g.apow,lp=hw?g.apow:g.hpow,d=lp-wp;
@@ -1069,10 +1085,37 @@ function openFixtures(L){
 }
 function seriesLabel(L,s){if(s.id==="F")return"League final";const br=buildBracket(L);const total=br.divs[s.div].rounds.length;if(s.div==="L")return roundName(s.round,total,true);return divName(L,s.div)+" "+roundName(s.round,total).toLowerCase()}
 function divName(L,d){return L.divisions?.[d]?.name||(d==="A"?"Division A":"Division B")}
+function savesOf(g,sd){const v=g?.saves?.[sd];return Number.isInteger(v)?v:null}
+/* Goals the goalie on side sd let in (the shootout winner isn't a real goal against). */
+function gaOf(g,sd){const opp=sd==="h"?g.as:g.hs,lost=sd==="h"?g.hs<g.as:g.as<g.hs;return opp-(g.result==="SO"&&lost?1:0)}
+/* Per NHL skater: goals, assists, points. Keyed by owner + team + name. */
+function skaterStats(V,games,onlyU){
+  const m=new Map(),gp=new Map();
+  for(const g of games)for(const[sd,u]of[["h",g.home],["a",g.away]]){
+    if(onlyU&&u!==onlyU)continue;
+    const ab=(sd==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"",po=g.stage==="po";gp.set(u+"|"+ab,(gp.get(u+"|"+ab)||0)+1);
+    const get=n=>{const k=u+"|"+ab+"|"+n.toLowerCase();let r=m.get(k);if(!r){r={name:n,u,ab,g:0,a:0,grs:0,gpo:0,ars:0,apo:0,hat:0};m.set(k,r)}return r};
+    const c=new Map();for(const n of g.goals?.[sd]||[])if(n){const r=get(n);r.g++;r[po?"gpo":"grs"]++;c.set(r,(c.get(r)||0)+1)}
+    for(const[r,k]of c)if(k>=3)r.hat++;
+    for(const a of g.assists?.[sd]||[])for(const n of a||[])if(n){const r=get(n);r.a++;r[po?"apo":"ars"]++}
+  }
+  return[...m.values()].map(r=>({...r,pts:r.g+r.a,rs:r.grs+r.ars,po:r.gpo+r.apo,ppg:(r.g+r.a)/(gp.get(r.u+"|"+r.ab)||1)})).sort((a,b)=>b.pts-a.pts||b.g-a.g||a.name.localeCompare(b.name));
+}
+/* Per goalie: only games where saves were logged count. */
+function goalieStats(V,games,onlyU){
+  const m=new Map();
+  for(const g of games)for(const[sd,u]of[["h",g.home],["a",g.away]]){
+    if(onlyU&&u!==onlyU)continue;const sv=savesOf(g,sd);if(sv==null||g.result==="FF")continue;
+    const ab=(sd==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"",name=g.goalies?.[sd]||"",k=u+"|"+ab+"|"+name.toLowerCase();
+    const r=m.get(k)||{name,u,ab,gp:0,w:0,sv:0,ga:0,so:0,best:0};const ga=gaOf(g,sd),won=sd==="h"?g.hs>g.as:g.as>g.hs;
+    r.gp++;r.sv+=sv;r.ga+=ga;if(won)r.w++;if(won&&ga===0)r.so++;r.best=Math.max(r.best,sv);m.set(k,r)}
+  return[...m.values()].map(r=>({...r,pct:r.sv+r.ga?r.sv/(r.sv+r.ga):0,gaa:r.ga/r.gp})).sort((a,b)=>b.pct-a.pct||b.sv-a.sv);
+}
+function pctTxt(x){return x>=1?"1.000":x.toFixed(3).replace(/^0/,"")}
 function scorerLine(names){const c=new Map();for(const n of names){if(!n)continue;c.set(n,(c.get(n)||0)+1)}return[...c].map(([n,k])=>k>1?`${n} ${k}`:n).join(", ")}
 
 /* ===== GitHub storage ===== */
-const S={league:null,sha:null,etag:null,session:store.get("nhl27-session"),tab:store.get("nhl27-tab")||"home",sub:store.get("nhl27-sub")||{},result:"REG",schFilter:"all",resFilter:"all",loaded:false,missing:false,draftSel:null,orderDraft:null,goalDraft:{h:[],a:[]},lastPhase:null,view:store.get("nhl27-view")??"current"};
+const S={league:null,sha:null,etag:null,session:store.get("nhl27-session"),tab:store.get("nhl27-tab")||"home",sub:store.get("nhl27-sub")||{},result:"REG",schFilter:"all",resFilter:"all",loaded:false,missing:false,draftSel:null,orderDraft:null,goalDraft:{h:[],a:[]},astDraft:{h:[],a:[]},lastPhase:null,view:store.get("nhl27-view")??"current"};
 function authHeaders(token){const hd={"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"};if(token)hd.Authorization="Bearer "+token;return hd}
 async function fetchLeague({token,useEtag}={}){
   const hd=authHeaders(token);if(useEtag&&S.etag)hd["If-None-Match"]=S.etag;
@@ -1250,8 +1293,10 @@ function gameCard(g,home,away,extra,tag){
     g?h("div",{class:"score"},`${g.hs} – ${g.as}`,h("small",{},g.result==="REG"?"Final":g.result==="FF"?"Forfeit":"Final/"+g.result)):h("button",{type:"button",class:"score pending tape-btn",title:"Tale of the tape",onclick:()=>openTape(home,away)},"vs",h("small",{},"Preview")),
     h("div",{class:"pl r"},logo(aab),h("div",{class:"side r"+(g?(homeWon?" lost":" won"):"")},P(away),h("small",{},(aab&&TEAM_NAME[aab])||teamOf(away)||"Away"))),
     h("div",{class:"meta"},tag?h("span",{class:"tagpo"},tag):null,extra)];
-  if(g&&((g.goals?.h||[]).some(Boolean)||(g.goals?.a||[]).some(Boolean)))
-    kids.push(h("div",{class:"scorers"},h("div",{},scorerLine(g.goals.h)||"–"),h("div",{},scorerLine(g.goals.a)||"–")));
+  if(g){const sideBox=sd=>{const goals=scorerLine(g.goals?.[sd]||[]),ast=scorerLine((g.assists?.[sd]||[]).flat()),sv=savesOf(g,sd);
+      if(!goals&&!ast&&sv==null&&!g.goalies?.[sd])return null;
+      return h("div",{},goals||"–",ast?h("small",{},"Assists: "+ast):null,sv!=null||g.goalies?.[sd]?h("small",{},[g.goalies?.[sd]||"Goalie",sv!=null?` · ${sv} saves`:""].join("")):null)};
+    const H=sideBox("h"),A=sideBox("a");if(H||A)kids.push(h("div",{class:"scorers"},H||h("div",{},"–"),A||h("div",{},"–")))}
   const bs=gameBadges(g);if(bs.length)kids.push(h("div",{class:"badges"},bs.map(b=>h("span",{class:"badge b-"+b.k},b.t))));
   const rv=rivalryText(home,away),rn=ratingNote(g,home,away);if(rv||rn)kids.push(h("div",{class:"rival"},[rv,rn].filter(Boolean).join(" · ")));
   return h("div",{class:"game"},kids);
@@ -1567,11 +1612,16 @@ function canEditGame(X,g,u){
   if(g.stage==="po")return X.phase==="playoffs";
   return X.phase==="season"||(X.phase==="playoffs"&&!!pl.host);
 }
-function openLog(key){$("l-cb").value="0";S.editId=null;S.logKey=key;S.goalDraft={h:[],a:[]};$("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-date").value=today();setResult("REG");setMsg("log-msg","");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
-function openEdit(g){$("l-cb").value=String(g.comeback||0);S.logKey=null;S.editId=g.id;S.goalDraft={h:[...(g.goals?.h||[])],a:[...(g.goals?.a||[])]};$("l-hs").value=g.hs;$("l-as").value=g.as;$("l-note").value=g.note||"";$("l-date").value=g.playedAt||today();setResult(g.result||"REG");setMsg("log-msg","");show("log");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
+function setDraft(g){
+  S.goalDraft={h:[...(g?.goals?.h||[])],a:[...(g?.goals?.a||[])]};
+  S.astDraft={h:(g?.assists?.h||[]).map(x=>[...(x||[])]),a:(g?.assists?.a||[]).map(x=>[...(x||[])])};
+  for(const sd of["h","a"]){$("l-"+sd+"gk").value=g?.goalies?.[sd]||"";const sv=g?.saves?.[sd];$("l-"+sd+"sv").value=Number.isInteger(sv)?sv:""}
+}
+function openLog(key){$("l-cb").value="0";S.editId=null;S.logKey=key;setDraft(null);$("l-hs").value=0;$("l-as").value=0;$("l-note").value="";$("l-date").value=today();setResult("REG");setMsg("log-msg","");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
+function openEdit(g){$("l-cb").value=String(g.comeback||0);S.logKey=null;S.editId=g.id;setDraft(g);$("l-hs").value=g.hs;$("l-as").value=g.as;$("l-note").value=g.note||"";$("l-date").value=g.playedAt||today();setResult(g.result||"REG");setMsg("log-msg","");show("log");renderLog(S.league);$("log-form").scrollIntoView({block:"start",behavior:"smooth"})}
 function closeLog(){S.logKey=null;S.editId=null;renderLog(S.league)}
 function renderLog(L){
-  if(S.fixtureKey){S.logKey=S.fixtureKey;S.editId=null;S.fixtureKey=null;S.goalDraft={h:[],a:[]}}
+  if(S.fixtureKey){S.logKey=S.fixtureKey;S.editId=null;S.fixtureKey=null;setDraft(null)}
   const host=signedIn()&&isHost(),scopeSel=$("log-scope");
   scopeSel.hidden=!host;if(!host)S.logAll=false;scopeSel.value=S.logAll?"all":"mine";
   const mine=g=>S.logAll||g.home===me()||g.away===me();
@@ -1611,7 +1661,8 @@ function syncFixture(){
   renderGoalInputs();
 }
 function setResult(v){S.result=v;[...$("l-result").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.v===v))}
-function knownScorers(u){const s=new Set();for(const p of TR(abOf(u))?.roster||[])if(p.pos!=="G")s.add(p.name.split(" ").slice(-1)[0]);for(const g of S.league?.games||[])for(const[side,x]of[["h",g.home],["a",g.away]])if(x===u)for(const n of g.goals?.[side]||[])if(n)s.add(n);return[...s].sort()}
+function knownScorers(u){const s=new Set();for(const p of TR(abOf(u))?.roster||[])if(p.pos!=="G")s.add(p.name.split(" ").slice(-1)[0]);for(const g of S.league?.games||[])for(const[side,x]of[["h",g.home],["a",g.away]])if(x===u){for(const n of g.goals?.[side]||[])if(n)s.add(n);for(const a of g.assists?.[side]||[])for(const n of a||[])if(n)s.add(n)}return[...s].sort()}
+function knownGoalies(u){const s=new Set();for(const p of TR(abOf(u))?.roster||[])if(p.pos==="G")s.add(p.name.split(" ").slice(-1)[0]);for(const g of S.league?.games||[])for(const[side,x]of[["h",g.home],["a",g.away]])if(x===u&&g.goalies?.[side])s.add(g.goalies[side]);return[...s].sort()}
 function renderGoalInputs(){
   const f=currentFixture();
   for(const side of["h","a"]){
@@ -1621,8 +1672,13 @@ function renderGoalInputs(){
     const listId="dl-"+side;
     let dl=document.getElementById(listId);if(!dl){dl=h("datalist",{id:listId});document.body.append(dl)}
     dl.replaceChildren(...(u?knownScorers(u):[]).map(x=>h("option",{value:x})));
-    const vals=S.goalDraft[side];
-    box.replaceChildren(...Array.from({length:n},(_,i)=>h("input",{id:`goal-${side}-${i}`,list:listId,maxlength:"30",placeholder:`Goal ${i+1}`,"aria-label":`${side==="h"?"Home":"Away"} goal ${i+1} scorer`,value:vals[i]||"",oninput:e=>{S.goalDraft[side][i]=e.target.value}})));
+    const gl="dl-gk-"+side;let gdl=document.getElementById(gl);if(!gdl){gdl=h("datalist",{id:gl});document.body.append(gdl)}
+    gdl.replaceChildren(...(u?knownGoalies(u):[]).map(x=>h("option",{value:x})));
+    const vals=S.goalDraft[side],ast=S.astDraft[side],who=side==="h"?"Home":"Away";
+    $("l-"+side+"bs").replaceChildren(h("b",{},u||who),n?` · ${n} goal${n>1?"s":""}`:" · no goals");
+    box.replaceChildren(...Array.from({length:n},(_,i)=>h("div",{class:"goal-row"},
+      h("input",{id:`goal-${side}-${i}`,list:listId,maxlength:"30",placeholder:`Goal ${i+1}`,"aria-label":`${who} goal ${i+1} scorer`,value:vals[i]||"",oninput:e=>{S.goalDraft[side][i]=e.target.value}}),
+      ...[0,1].map(j=>h("input",{id:`ast-${side}-${i}-${j}`,class:"ast",list:listId,maxlength:"30",placeholder:`Assist ${j+1}`,"aria-label":`${who} goal ${i+1} assist ${j+1}`,value:ast[i]?.[j]||"",oninput:e=>{(ast[i]||(ast[i]=["",""]))[j]=e.target.value}})))));
   }
 }
 
@@ -1858,6 +1914,9 @@ const LINES={
       ["{W}'s tendy slams the door on {L}, {S}","Clean sheet for {Wt}. {L} rang a couple off the post and that was about it."],
       ["Lights out: {L} gets zip against {W}","{S} final and {L} never solved the {Wteam} goalie. Couldn't put the biscuit in the basket all night."],
       ["{W} shuts the door, blanks {L} {S}","Nothing got through. {Wt} played a full 60 and {L} is still looking for the five-hole."]],
+  wall:[["{N} stands on his head with {n} saves","{who}'s tendy saw rubber all night and turned away {n} of 'em. {who} {res} {opp} {S}{X}. Somebody buy that man a cold one."],
+        ["{n} saves for {N}. Absolute brick wall","{opp} threw the kitchen sink at {who}'s crease and {N} ate it all. {who} {res} {opp} {S}{X}."],
+        ["{N} plays the hero in the blue paint","A {n}-save performance from {N}. {who} {res} {opp} {S}{X}, and the D-men owe him lunch for a month."]],
   bo:[["{W} runs {L} out of the barn, {S}","That was a pylon parade. {W} skated circles around {L} and filled the net {ws} times."],
       ["{W} hangs {ws} on {L} in a laugher","Somebody check on {L}. A {m}-goal beatdown from {Wt}. Ugly one."],
       ["Mercy rule: {W} pumps {L} {S}","{Wt} turned it into a shooting gallery. {L} might want to pull the goalie for a sixth skater next time, and the time after that."],
@@ -1927,6 +1986,7 @@ function buildNews(V){
     if(g.result!=="FF"){
       if(has("up"))add("up",LINES.up,seed,v,when,{game:g});
       else if(hat){const won=hat.who===W;add("hat",LINES.hat,seed,{...v,N:hat.name,n:hat.n,who:hat.who,Wt:tn(hat.who,hat.who===g.home?g.hab:g.aab),res:won?"beat":"fell to",res2:won?"win":"loss",opp:won?Lz:W},when,{game:g})}
+      else if(has("wall")){const b=bs.filter(x=>x.k==="wall").sort((a,b)=>b.n-a.n)[0],won=b.who===W;add("wall",LINES.wall,seed,{...v,N:b.name||(tn(b.who,b.who===g.home?g.hab:g.aab)+"'s goalie"),n:b.n,who:b.who,res:won?"beat":"fell to",opp:won?Lz:W},when,{game:g})}
       else if(has("cb"))add("cb",LINES.cb,seed,v,when,{game:g});
       else if(has("so"))add("so",LINES.so,seed,v,when,{game:g});
       else if(has("bo"))add("bo",LINES.bo,seed,v,when,{game:g});
@@ -2165,26 +2225,30 @@ function renderStats(V){
     big?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Biggest win"),h("small",{},`${big.hs>big.as?big.home:big.away} ${Math.max(big.hs,big.as)}–${Math.min(big.hs,big.as)} over ${big.hs>big.as?big.away:big.home}${big._season?" · "+big._season:""}`))):null,
     hi?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Highest-scoring game"),h("small",{},`${hi.home} ${hi.hs}–${hi.as} ${hi.away} · ${hi.hs+hi.as} goals${hi._season?" · "+hi._season:""}`))):null,
     topGame?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Most goals by one scorer in a game"),h("small",{},`${topGame.n} (${topGame.u}) with ${topGame.k} vs ${topGame.u===topGame.g.home?topGame.g.away:topGame.g.home}`))):null,
+    (()=>{let t=null;for(const g of games)for(const sd of["h","a"]){const sv=savesOf(g,sd);if(sv!=null&&(!t||sv>t.sv))t={sv,g,sd}}if(!t)return null;const u=t.sd==="h"?t.g.home:t.g.away,o=t.sd==="h"?t.g.away:t.g.home;
+      return h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Most saves in a game"),h("small",{},`${t.g.goalies?.[t.sd]?t.g.goalies[t.sd]+" ("+u+")":u} with ${t.sv} vs ${o}`)))})(),
     streakBest?h("div",{class:"player"},h("div",{class:"who"},h("b",{},"Longest win streak"),h("small",{},`${streakBest.u}: ${streakBest.best} straight`))):null));
   box.append(scorersTable(V,games,stage));
 }
-/* Goal scorers: the NHL players typed in as scorers, ranked by goals. */
+/* Skater points and goalie numbers for the NHL players typed in when logging. */
 function scorersTable(V,games,stage){
-  const m=new Map(),gp=new Map();
-  for(const g of games)for(const[side,u]of[["h",g.home],["a",g.away]]){
-    const ab=(side==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"";gp.set(u+"|"+ab,(gp.get(u+"|"+ab)||0)+1);
-    const c=new Map();for(const n of g.goals?.[side]||[]){if(!n)continue;c.set(n,(c.get(n)||0)+1)}
-    for(const[n,k]of c){const key=u+"|"+ab+"|"+n.toLowerCase();const r=m.get(key)||{name:n,u,ab,rs:0,po:0,hat:0};r[g.stage==="po"?"po":"rs"]+=k;if(k>=3)r.hat++;m.set(key,r)}}
-  const rows=[...m.values()].map(r=>({...r,g:r.rs+r.po,gpg:(r.rs+r.po)/(gp.get(r.u+"|"+r.ab)||1)})).sort((a,b)=>b.g-a.g||b.gpg-a.gpg||a.name.localeCompare(b.name));
-  const wrap=h("div",{class:"div-block"},h("h3",{},"Goal scorers"));
-  if(!rows.length){wrap.append(h("p",{class:"hint"},"Add goal scorers when you log a game and the leaders show up here."));return wrap}
-  const both=stage==="all";
-  wrap.append(h("p",{class:"hint"},"The NHL players typed in as goal scorers. G/GP is goals per game that player's league owner played with that team."),
-    h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Scorer"),h("th",{class:"l"},"Owner"),both?h("th",{},"Season"):null,both?h("th",{},"Playoffs"):null,h("th",{},"Goals"),h("th",{},"G/GP"),h("th",{class:"hide-sm"},"Hat tricks"))),
+  const rows=skaterStats(V,games);
+  const wrap=h("div",{class:"div-block"},h("h3",{},"Skaters"));
+  if(!rows.length)wrap.append(h("p",{class:"hint"},"Add goal scorers and assists when you log a game and the leaders show up here."));
+  else{const both=stage==="all";
+  wrap.append(h("p",{class:"hint"},"The NHL players typed in as scorers and assists. P/GP is points per game that player's league owner played with that team."),
+    h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Player"),h("th",{class:"l"},"Owner"),both?h("th",{class:"hide-sm"},"Season P"):null,both?h("th",{class:"hide-sm"},"Playoff P"):null,h("th",{},"G"),h("th",{},"A"),h("th",{},"PTS"),h("th",{},"P/GP"),h("th",{class:"hide-sm"},"Hat tricks"))),
       h("tbody",{},rows.slice(0,50).map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),
         h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||teamOf(r.u))))),
-        h("td",{class:"l"},P(r.u)),both?h("td",{},r.rs):null,both?h("td",{},r.po):null,h("td",{class:"pts"},r.g),h("td",{},r.gpg.toFixed(2)),h("td",{class:"hide-sm"},r.hat||"–")))))));
-  return wrap;
+        h("td",{class:"l"},P(r.u)),both?h("td",{class:"hide-sm"},r.rs):null,both?h("td",{class:"hide-sm"},r.po):null,h("td",{},r.g),h("td",{},r.a),h("td",{class:"pts"},r.pts),h("td",{},r.ppg.toFixed(2)),h("td",{class:"hide-sm"},r.hat||"–"))))))) }
+  const gk=goalieStats(V,games),gw=h("div",{class:"div-block"},h("h3",{},"Goalies"));
+  if(!gk.length){gw.append(h("p",{class:"hint"},"Add each goalie's saves when you log a game and save percentage shows up here."));return h("div",{},wrap,gw)}
+  gw.append(h("p",{class:"hint"},"Only games with saves logged count. GA leaves out the shootout winner."),
+    h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{class:"l"},"#"),h("th",{class:"l"},"Goalie"),h("th",{class:"l"},"Owner"),h("th",{},"GP"),h("th",{},"W"),h("th",{},"SV"),h("th",{},"GA"),h("th",{},"SV%"),h("th",{class:"hide-sm"},"GA/GP"),h("th",{class:"hide-sm"},"SO"))),
+      h("tbody",{},gk.map((r,i)=>h("tr",{class:r.u===me()?"me":null},h("td",{class:"l rank"},i+1),
+        h("td",{class:"l"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name||"Unnamed goalie"),h("small",{},(r.ab&&TEAM_NAME[r.ab])||teamOf(r.u))))),
+        h("td",{class:"l"},P(r.u)),h("td",{},r.gp),h("td",{},r.w),h("td",{},r.sv),h("td",{},r.ga),h("td",{class:"pts"},pctTxt(r.pct)),h("td",{class:"hide-sm"},r.gaa.toFixed(2)),h("td",{class:"hide-sm"},r.so||"–")))))));
+  return h("div",{},wrap,gw);
 }
 $("stat-stage").addEventListener("change",()=>renderStats(VIEW||S.league));
 
@@ -2372,6 +2436,8 @@ const AWARDS=[
   {key:"mvp",title:"MVP",desc:"Voted by the players",gold:true},
   {key:"pres",title:"Presidents' Trophy",desc:"Best regular season record"},
   {key:"goal",title:"Goal Machine",desc:"Top goal scorer (season + playoffs)"},
+  {key:"pass",title:"Playmaker",desc:"Most assists (season + playoffs)"},
+  {key:"glove",title:"Golden Glove",desc:"Best save percentage (played half the max games)"},
   {key:"fire",title:"Firepower",desc:"Most goals for, regular season"},
   {key:"wall",title:"Brick Wall",desc:"Fewest goals against, regular season"},
   {key:"ot",title:"OT Hero",desc:"Most overtime and shootout wins"}
@@ -2386,6 +2452,9 @@ function seasonAwards(V,opts={}){
   out.pres={winners:[{u:rows[0].u}],value:`${rows[0].pts} pts · ${rows[0].w}–${rows[0].l}–${rows[0].otl}`};
   const sc=new Map();for(const g of V.games)for(const[side,u]of[["h",g.home],["a",g.away]]){const ab=(side==="h"?g.hab:g.aab)||V.draft?.picks?.[u]||"";for(const n of g.goals?.[side]||[]){if(!n)continue;const k=u+"|"+n.toLowerCase();const r=sc.get(k)||{u,name:n,ab,n:0};r.n++;sc.set(k,r)}}
   const scs=best([...sc.values()],x=>x.n);if(scs.length)out.goal={winners:scs.map(x=>({u:x.u,note:x.name,ab:x.ab})),value:`${scs[0].n} goal${scs[0].n>1?"s":""}`};
+  const sk=skaterStats(V,V.games).filter(x=>x.a>0),pm=best(sk,x=>x.a);if(pm.length)out.pass={winners:pm.map(x=>({u:x.u,note:x.name,ab:x.ab})),value:`${pm[0].a} assist${pm[0].a>1?"s":""}`};
+  const gs=goalieStats(V,V.games),need=Math.max(1,Math.ceil(Math.max(0,...gs.map(x=>x.gp))/2)),gq=best(gs.filter(x=>x.gp>=need&&x.sv+x.ga>0),x=>x.pct);
+  if(gq.length)out.glove={winners:gq.map(x=>({u:x.u,note:x.name||null,ab:x.ab})),value:`${pctTxt(gq[0].pct)} SV%`};
   const f=best(rows,r=>r.gf);out.fire={winners:f.map(r=>({u:r.u})),value:`${f[0].gf} goals for`};
   const w=best(rows,r=>r.ga,-1);out.wall={winners:w.map(r=>({u:r.u})),value:`${w[0].ga} goals against`};
   const ot=new Map();for(const g of V.games)if(isExtra(g)){const x=g.hs>g.as?g.home:g.away;ot.set(x,(ot.get(x)||0)+1)}
@@ -2524,11 +2593,11 @@ function renderProfile(u){
     h("tbody",{},hh.map(r=>h("tr",{},h("td",{class:"l"},P(r.o)),h("td",{},r.n),h("td",{style:r.a>r.b?"color:var(--win)":null},r.a),h("td",{style:r.b>r.a?"color:var(--hot)":null},r.b),h("td",{class:"hide-sm"},r.ol),h("td",{},`${r.f}–${r.x}`),h("td",{class:"l hide-sm"},rivalryText(u,r.o))))))));
 
   // Best scorers
-  const sc=new Map();for(const g of games){const side=g.home===u?"h":"a",ab=side==="h"?g.hab:g.aab;for(const n of g.goals?.[side]||[]){if(!n)continue;const k=(ab||"")+"|"+n.toLowerCase();const r=sc.get(k)||{name:n,ab,n:0};r.n++;sc.set(k,r)}}
-  const top=[...sc.values()].sort((a,b)=>b.n-a.n).slice(0,5);
+  const top=skaterStats({},games,u).slice(0,5),gks=goalieStats({},games,u);
   body.append(h("h3",{},"Best scorers"));
   if(!top.length)body.append(h("p",{class:"hint"},"No goal scorers logged yet."));
-  else body.append(h("div",{class:"list"},top.map((r,i)=>h("div",{class:"player"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},(i===0?"★ ":"")+r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||""))),h("b",{class:"pts",style:"font-family:var(--display);font-style:italic;font-size:24px;color:var(--glacier)"},r.n+" G")))));
+  else body.append(h("div",{class:"list"},top.map((r,i)=>h("div",{class:"player"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},(i===0?"★ ":"")+r.name),h("small",{},(r.ab&&TEAM_NAME[r.ab])||""))),h("div",{style:"text-align:right"},h("b",{class:"pts",style:"font-family:var(--display);font-style:italic;font-size:24px;color:var(--glacier)"},r.pts+" P"),h("small",{class:"hint",style:"display:block"},`${r.g} G · ${r.a} A`))))));
+  if(gks.length){body.append(h("h3",{},"In net"),h("div",{class:"list"},gks.map(r=>h("div",{class:"player"},h("div",{class:"pl"},logo(r.ab||null),h("div",{class:"who"},h("b",{},r.name||"Unnamed goalie"),h("small",{},`${r.gp} GP · ${r.sv} saves · ${r.so} SO`))),h("b",{class:"pts",style:"font-family:var(--display);font-style:italic;font-size:24px;color:var(--glacier)"},pctTxt(r.pct))))))}
 
   // Awards
   body.append(h("h3",{},"Awards"));
@@ -2583,16 +2652,27 @@ $("log-form").addEventListener("submit",async e=>{
   if(!date)return setMsg("log-msg","Pick the date you played.","err");
   const goals={h:S.goalDraft.h.slice(0,hs).map(x=>(x||"").trim().slice(0,30)),a:S.goalDraft.a.slice(0,as).map(x=>(x||"").trim().slice(0,30))};
   while(goals.h.length<hs)goals.h.push("");while(goals.a.length<as)goals.a.push("");
+  const clean=x=>(x||"").trim().slice(0,30),assists={h:[],a:[]},goalies={},saves={};
+  for(const[sd,n]of[["h",hs],["a",as]]){
+    for(let i=0;i<n;i++){const a=(S.astDraft[sd][i]||[]).map(clean).filter(Boolean);
+      if(a.length===2&&a[0].toLowerCase()===a[1].toLowerCase())return setMsg("log-msg",`Goal ${i+1} for ${sd==="h"?f.home:f.away} has the same player on both assists.`,"err");
+      if(goals[sd][i]&&a.some(x=>x.toLowerCase()===goals[sd][i].toLowerCase()))return setMsg("log-msg",`${goals[sd][i]} can't assist on his own goal.`,"err");
+      assists[sd].push(a)}
+    if(!assists[sd].some(a=>a.length))assists[sd]=[];
+    const gk=clean($("l-"+sd+"gk").value),svRaw=$("l-"+sd+"sv").value.trim(),sv=svRaw===""?null:parseInt(svRaw,10);
+    if(sv!=null&&(!Number.isInteger(sv)||sv<0||sv>99))return setMsg("log-msg","Saves must be a number from 0 to 99.","err");
+    if(gk)goalies[sd]=gk;if(sv!=null)saves[sd]=sv}
+  const extra={assists,goalies,saves};
   $("l-submit").disabled=true;setMsg("log-msg","Saving…");
   if(f.edit){
     try{
       await mutate(`Edit: ${f.home} ${hs}-${as} ${f.away}`,X=>{
         const g=X.games.find(x=>x.id===f.id);if(!g)throw new Error("That game was deleted.");
         if(!canEditGame(X,g,me()))throw new Error(g.stage==="rs"&&X.phase==="playoffs"?"Regular season games are locked once the playoffs start (the host can still edit them).":"You can't edit this game.");
-        Object.assign(g,{hs,as,result:S.result,playedAt:date,note,goals,comeback,editedBy:me(),editedAt:new Date().toISOString()});
+        Object.assign(g,{hs,as,result:S.result,playedAt:date,note,goals,...extra,comeback,editedBy:me(),editedAt:new Date().toISOString()});
         if(g.stage==="po"&&!validatePlayoffs(X))throw new Error("That change would undo a series result that later playoff games depend on. Delete those later games first.");
       });
-      setMsg("log-msg",`Updated: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");S.editId=null;S.goalDraft={h:[],a:[]};renderLog(S.league);
+      setMsg("log-msg",`Updated: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");S.editId=null;setDraft(null);renderLog(S.league);
     }catch(err){setMsg("log-msg",saveErr(err),"err")}
     finally{$("l-submit").disabled=false}
     return;
@@ -2601,7 +2681,7 @@ $("log-form").addEventListener("submit",async e=>{
     await mutate(`${f.stage==="po"?"Playoffs: ":""}${f.home} ${hs}-${as} ${f.away}`,X=>{
       const now=openFixtures(X).find(o=>o.key===f.key);
       if(!now)throw new Error(f.stage==="po"?"This playoff series changed. Pick the matchup again.":"Someone already logged this game.");
-      const g={id:uid(),stage:f.stage,home:now.home,away:now.away,hs,as,result:S.result,playedAt:date,note,goals,loggedBy:me(),createdAt:new Date().toISOString()};
+      const g={id:uid(),stage:f.stage,home:now.home,away:now.away,hs,as,result:S.result,playedAt:date,note,goals,...extra,loggedBy:me(),createdAt:new Date().toISOString()};
       if(f.stage==="po"){g.series=now.series;g.gameNo=now.gameNo}else g.fixture=now.fixture;
       g.hab=X.draft?.picks?.[now.home]||null;g.aab=X.draft?.picks?.[now.away]||null;g.comeback=comeback;
       Object.assign(g,powerSnapshot(X,now.home,now.away,g.hab,g.aab));
@@ -2609,7 +2689,7 @@ $("log-form").addEventListener("submit",async e=>{
       if(f.stage==="rs"&&!openFixtures(X).length&&poSettings(X).auto)applyPlayoffs(X);
     });
     setMsg("log-msg",`Saved: ${f.home} ${hs}, ${f.away} ${as}.`,"ok");
-    $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";S.logKey=null;S.goalDraft={h:[],a:[]};setResult("REG");renderLog(S.league);
+    $("l-hs").value=0;$("l-as").value=0;$("l-note").value="";S.logKey=null;setDraft(null);setResult("REG");renderLog(S.league);
   }catch(err){setMsg("log-msg",saveErr(err),"err")}
   finally{$("l-submit").disabled=false}
 });
