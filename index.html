@@ -968,7 +968,26 @@ function applyPick(X,u,ab,auto){
 /* Draft */
 function draftOnClock(L){if(L.phase!=="draft"||!L.draft)return null;return L.draft.order.find(u=>!L.draft.picks[u])||null}
 function takenBy(L){const m={};if(L.draft)for(const[u,t]of Object.entries(L.draft.picks))m[t]=u;return m}
-function assignDivisions(L){const s=shuffle(L.players.map(p=>p.u));s.forEach((u,i)=>{const p=L.players.find(x=>x.u===u);p.div=i%2===0?"A":"B"})}
+/* Balanced divisions: each tier is split evenly between the two divisions, then the split whose
+   total strength (team rating + preseason tier bonus) is closest is chosen, with a little randomness
+   among near-equal options so reshuffles still vary. */
+function assignDivisions(L,rand=Math.random){
+  const run=(L.lotteryRuns||[]).at(-1),ratings=(typeof S!=="undefined"&&S.ratings?.teams)||{};
+  const tierOf_=p=>run?.tiers?.[p.u]||tierOf(p),pow=p=>gamePower(ratings[L.draft?.picks?.[p.u]]?.ovr??null,tierOf_(p));
+  const groups=[1,2,3,4].map(t=>L.players.filter(p=>tierOf_(p)===t)).filter(g=>g.length);
+  const splits=[];
+  const N=Math.max(1,Math.min(4000,groups.reduce((a,g)=>a*Math.pow(2,g.length),1)));
+  for(let i=0;i<N;i++){
+    const A=[],B=[];
+    for(const g of groups){const sh=[...g];for(let k=sh.length-1;k>0;k--){const j=Math.floor(rand()*(k+1));[sh[k],sh[j]]=[sh[j],sh[k]]}
+      const half=sh.length/2,first=Number.isInteger(half)?half:(A.length<=B.length?Math.ceil(half):Math.floor(half));
+      A.push(...sh.slice(0,first));B.push(...sh.slice(first))}
+    if(Math.abs(A.length-B.length)>1)continue;
+    const d=Math.abs(A.reduce((a,p)=>a+pow(p),0)-B.reduce((a,p)=>a+pow(p),0));splits.push({A,B,d});
+  }
+  const best=Math.min(...splits.map(x=>x.d)),pool=splits.filter(x=>x.d<=best+2),pickd=pool[Math.floor(rand()*pool.length)];
+  for(const p of L.players)p.div=pickd.A.includes(p)?"A":"B";
+}
 /* Playoffs: per-division single-elimination bracket, division champions meet in the final. */
 function nextPow2(n){let p=1;while(p<n)p*=2;return p}
 function seedOrder(P){let o=[1];while(o.length<P){const n=o.length*2;o=o.flatMap(s=>[s,n+1-s])}return o}
