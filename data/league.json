@@ -24,7 +24,7 @@
   },
   {
    "u": "aj",
-   "team": "",
+   "team": "Colorado Avalanche",
    "host": false,
    "tier": 4
   },
@@ -133,11 +133,15 @@
    "jarvis",
    "jamie"
   ],
-  "picks": {},
-  "pickAt": {},
+  "picks": {
+   "aj": "COL"
+  },
+  "pickAt": {
+   "aj": "2026-10-16T18:39:59.136Z"
+  },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:39:46.420Z",
+  "clockAt": "2026-10-16T18:39:59.136Z",
   "paused": null
  },
  "archive": [],
