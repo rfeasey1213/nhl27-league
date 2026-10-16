@@ -108,7 +108,44 @@
   "iv": "6FC9GCSZkEgBUq5Z",
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
- "games": [],
+ "games": [
+  {
+   "id": "mvbg0ibgvqzco",
+   "stage": "rs",
+   "home": "ryan",
+   "away": "jarvis",
+   "hs": 0,
+   "as": 2,
+   "result": "REG",
+   "playedAt": "2026-10-16",
+   "note": "",
+   "goals": {
+    "h": [],
+    "a": [
+     "lizotte",
+     ""
+    ]
+   },
+   "assists": {
+    "h": [],
+    "a": []
+   },
+   "goalies": {},
+   "saves": {},
+   "loggedBy": "ryan",
+   "createdAt": "2026-10-16T20:51:28.060Z",
+   "fixture": "ryan>jarvis#0",
+   "hab": "EDM",
+   "aab": "PIT",
+   "comeback": 0,
+   "hovr": 88,
+   "aovr": 86,
+   "htier": 2,
+   "atier": 1,
+   "hpow": 94,
+   "apow": 95
+  }
+ ],
  "phase": "season",
  "history": [],
  "divisions": {
