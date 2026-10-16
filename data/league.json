@@ -101,7 +101,7 @@
   "ct": "XnV0M7bm0b8DnkenQiTeEaBBxLx8bub9WpxsAM/ZMok1usS/fhJnSiGl+oFSpZNvFrQFOEdMq8JTJe1Svfw1WZ2QJw41Nk6DR5xU5J7Zdy/pWwSQkpSxa5Z2QDcBJgSwzIC94eDE6r61RUUc5Q=="
  },
  "games": [],
- "phase": "setup",
+ "phase": "draft",
  "history": [],
  "divisions": {
   "A": {
@@ -122,7 +122,24 @@
   "jamie"
  ],
  "playoffs": null,
- "draft": null,
+ "draft": {
+  "order": [
+   "aj",
+   "freakas",
+   "ryan",
+   "mains",
+   "graham",
+   "gio",
+   "jarvis",
+   "jamie"
+  ],
+  "picks": {},
+  "pickAt": {},
+  "auto": {},
+  "startedAt": "2026-10-16T18:39:46.420Z",
+  "clockAt": "2026-10-16T18:39:46.420Z",
+  "paused": null
+ },
  "archive": [],
  "mvpVotes": {},
  "gamesPer": 12,
