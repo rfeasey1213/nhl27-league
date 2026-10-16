@@ -30,7 +30,7 @@
   },
   {
    "u": "graham",
-   "team": "",
+   "team": "Florida Panthers",
    "host": false,
    "tier": 3
   },
@@ -137,17 +137,19 @@
    "aj": "COL",
    "freakas": "TBL",
    "ryan": "EDM",
-   "mains": "DAL"
+   "mains": "DAL",
+   "graham": "FLA"
   },
   "pickAt": {
    "aj": "2026-10-16T18:39:59.136Z",
    "freakas": "2026-10-16T18:40:13.546Z",
    "ryan": "2026-10-16T18:40:32.880Z",
-   "mains": "2026-10-16T18:40:49.344Z"
+   "mains": "2026-10-16T18:40:49.344Z",
+   "graham": "2026-10-16T18:41:13.502Z"
   },
   "auto": {},
   "startedAt": "2026-10-16T18:39:46.420Z",
-  "clockAt": "2026-10-16T18:40:49.344Z",
+  "clockAt": "2026-10-16T18:41:13.502Z",
   "paused": null
  },
  "archive": [],
