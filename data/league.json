@@ -118,20 +118,33 @@
    "as": 2,
    "result": "REG",
    "playedAt": "2026-10-16",
-   "note": "",
+   "note": "Opening Day BTA",
    "goals": {
     "h": [],
     "a": [
-     "lizotte",
-     ""
+     "Lizotte",
+     "Kindel"
     ]
    },
    "assists": {
     "h": [],
-    "a": []
+    "a": [
+     [
+      "Dewar"
+     ],
+     [
+      "Korczak"
+     ]
+    ]
    },
-   "goalies": {},
-   "saves": {},
+   "goalies": {
+    "h": "Andersen",
+    "a": "Silovs"
+   },
+   "saves": {
+    "h": 18,
+    "a": 12
+   },
    "loggedBy": "ryan",
    "createdAt": "2026-10-16T20:51:28.060Z",
    "fixture": "ryan>jarvis#0",
@@ -143,7 +156,9 @@
    "htier": 2,
    "atier": 1,
    "hpow": 94,
-   "apow": 95
+   "apow": 95,
+   "editedBy": "ryan",
+   "editedAt": "2026-10-16T20:53:05.026Z"
   }
  ],
  "phase": "season",
