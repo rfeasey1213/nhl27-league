@@ -160,6 +160,53 @@
    "apow": 95,
    "editedBy": "ryan",
    "editedAt": "2026-10-16T20:53:31.105Z"
+  },
+  {
+   "id": "mvbo0wjumucs7",
+   "stage": "rs",
+   "home": "graham",
+   "away": "freakas",
+   "hs": 0,
+   "as": 2,
+   "result": "REG",
+   "playedAt": "2026-10-16",
+   "note": "",
+   "goals": {
+    "h": [],
+    "a": [
+     "Guentzel",
+     "Kucherov"
+    ]
+   },
+   "assists": {
+    "h": [],
+    "a": [
+     [
+      "Point"
+     ],
+     []
+    ]
+   },
+   "goalies": {
+    "h": "Markstrom",
+    "a": "Vasilevskiy"
+   },
+   "saves": {
+    "h": 17,
+    "a": 16
+   },
+   "loggedBy": "freakas",
+   "createdAt": "2026-10-17T00:35:43.434Z",
+   "fixture": "graham>freakas#0",
+   "hab": "FLA",
+   "aab": "TBL",
+   "comeback": 0,
+   "hovr": 86,
+   "aovr": 90,
+   "htier": 3,
+   "atier": 3,
+   "hpow": 89,
+   "apow": 93
   }
  ],
  "phase": "season",
