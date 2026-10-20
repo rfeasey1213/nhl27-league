@@ -279,6 +279,47 @@
    "atier": 2,
    "hpow": 89,
    "apow": 93
+  },
+  {
+   "id": "mvfyndt0ltl25",
+   "stage": "rs",
+   "home": "freakas",
+   "away": "mains",
+   "hs": 1,
+   "as": 0,
+   "result": "SO",
+   "playedAt": "2026-10-19",
+   "note": "",
+   "goals": {
+    "h": [
+     ""
+    ],
+    "a": []
+   },
+   "assists": {
+    "h": [],
+    "a": []
+   },
+   "goalies": {
+    "h": "Vasilevskiy",
+    "a": "Oettinger"
+   },
+   "saves": {
+    "h": 21,
+    "a": 14
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-20T00:44:13.092Z",
+   "fixture": "freakas>mains#0",
+   "hab": "TBL",
+   "aab": "DAL",
+   "comeback": 0,
+   "hovr": 90,
+   "aovr": 89,
+   "htier": 3,
+   "atier": 4,
+   "hpow": 93,
+   "apow": 89
   }
  ],
  "phase": "season",
