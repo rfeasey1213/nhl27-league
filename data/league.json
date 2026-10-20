@@ -348,9 +348,11 @@
     "a": []
    },
    "goalies": {
+    "h": "Vasilevskiy",
     "a": "Thompson"
    },
    "saves": {
+    "h": 20,
     "a": 10
    },
    "loggedBy": "jarvis",
@@ -364,7 +366,9 @@
    "htier": 3,
    "atier": 2,
    "hpow": 93,
-   "apow": 93
+   "apow": 93,
+   "editedBy": "jarvis",
+   "editedAt": "2026-10-20T04:14:58.614Z"
   }
  ],
  "phase": "season",
