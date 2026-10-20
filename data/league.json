@@ -369,6 +369,70 @@
    "apow": 93,
    "editedBy": "jarvis",
    "editedAt": "2026-10-20T04:14:58.614Z"
+  },
+  {
+   "id": "mvgyt991k6p66",
+   "stage": "rs",
+   "home": "gio",
+   "away": "ryan",
+   "hs": 1,
+   "as": 4,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "Logan Thompson Benched",
+   "goals": {
+    "h": [
+     "Kyrou"
+    ],
+    "a": [
+     "McDavid",
+     "McDavid",
+     "Janmark",
+     "Dickinson"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Potas"
+     ]
+    ],
+    "a": [
+     [
+      "Janmark",
+      "Savoie"
+     ],
+     [
+      "Kapanen"
+     ],
+     [
+      "Hymin"
+     ],
+     [
+      "Podkolzin"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Thompson",
+    "a": "Andersen"
+   },
+   "saves": {
+    "h": 14,
+    "a": 18
+   },
+   "loggedBy": "ryan",
+   "createdAt": "2026-10-20T17:36:33.301Z",
+   "fixture": "gio>ryan#0",
+   "hab": "WSH",
+   "aab": "EDM",
+   "comeback": 0,
+   "hovr": 87,
+   "aovr": 88,
+   "htier": 2,
+   "atier": 2,
+   "hpow": 93,
+   "apow": 94
   }
  ],
  "phase": "season",
