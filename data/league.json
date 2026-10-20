@@ -502,6 +502,63 @@
    "atier": 4,
    "hpow": 89,
    "apow": 89
+  },
+  {
+   "id": "mvh8f6n0c3fde",
+   "stage": "rs",
+   "home": "ryan",
+   "away": "graham",
+   "hs": 1,
+   "as": 2,
+   "result": "OT",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "R. Shea"
+    ],
+    "a": [
+     "A.Barkov",
+     "J. Gadjovich"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "R. Nugent-Hopkins",
+      "S. Mukhamadullin"
+     ]
+    ],
+    "a": [
+     [
+      "L. Eller",
+      "J. Gadjovich"
+     ],
+     [
+      "S. Reinhart"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Andersen",
+    "a": "Markstrom"
+   },
+   "saves": {
+    "h": 20,
+    "a": 26
+   },
+   "loggedBy": "graham",
+   "createdAt": "2026-10-20T22:05:32.892Z",
+   "fixture": "ryan>graham#0",
+   "hab": "EDM",
+   "aab": "FLA",
+   "comeback": 0,
+   "hovr": 88,
+   "aovr": 86,
+   "htier": 2,
+   "atier": 3,
+   "hpow": 94,
+   "apow": 89
   }
  ],
  "phase": "season",
