@@ -433,6 +433,75 @@
    "atier": 2,
    "hpow": 93,
    "apow": 94
+  },
+  {
+   "id": "mvh658vh6g4tv",
+   "stage": "rs",
+   "home": "graham",
+   "away": "mains",
+   "hs": 4,
+   "as": 3,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "M. Tkachuk",
+     "R. Gudas",
+     "J. Gadjovich",
+     "Forsling"
+    ],
+    "a": [
+     "J. Benn",
+     "J. Benn",
+     "R. Hintz"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "E. Luostarinen"
+     ],
+     [
+      "S.jones",
+      "J. Gadjovich"
+     ],
+     [],
+     [
+      "L. Eller",
+      "Ekblad"
+     ]
+    ],
+    "a": [
+     [
+      "Steel"
+     ],
+     [
+      "Steel"
+     ],
+     []
+    ]
+   },
+   "goalies": {
+    "h": "Markstrom",
+    "a": "Oettinger"
+   },
+   "saves": {
+    "h": 22,
+    "a": 9
+   },
+   "loggedBy": "graham",
+   "createdAt": "2026-10-20T21:01:49.997Z",
+   "fixture": "graham>mains#0",
+   "hab": "FLA",
+   "aab": "DAL",
+   "comeback": 1,
+   "hovr": 86,
+   "aovr": 89,
+   "htier": 3,
+   "atier": 4,
+   "hpow": 89,
+   "apow": 89
   }
  ],
  "phase": "season",
