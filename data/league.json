@@ -320,6 +320,51 @@
    "atier": 4,
    "hpow": 93,
    "apow": 89
+  },
+  {
+   "id": "mvg63ycbwrlnd",
+   "stage": "rs",
+   "home": "freakas",
+   "away": "gio",
+   "hs": 2,
+   "as": 0,
+   "result": "REG",
+   "playedAt": "2026-10-19",
+   "note": "",
+   "goals": {
+    "h": [
+     "Point",
+     "Girgensons"
+    ],
+    "a": []
+   },
+   "assists": {
+    "h": [
+     [
+      "D’Astous"
+     ],
+     []
+    ],
+    "a": []
+   },
+   "goalies": {
+    "a": "Thompson"
+   },
+   "saves": {
+    "a": 10
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-20T04:13:03.515Z",
+   "fixture": "freakas>gio#0",
+   "hab": "TBL",
+   "aab": "WSH",
+   "comeback": 0,
+   "hovr": 90,
+   "aovr": 87,
+   "htier": 3,
+   "atier": 2,
+   "hpow": 93,
+   "apow": 93
   }
  ],
  "phase": "season",
