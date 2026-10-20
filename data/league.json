@@ -207,6 +207,78 @@
    "atier": 3,
    "hpow": 89,
    "apow": 93
+  },
+  {
+   "id": "mvfxtt6r9q97y",
+   "stage": "rs",
+   "home": "mains",
+   "away": "gio",
+   "hs": 4,
+   "as": 3,
+   "result": "REG",
+   "playedAt": "2026-10-19",
+   "note": "Down 3-1 in the 3rd",
+   "goals": {
+    "h": [
+     "Hintz",
+     "Robertson",
+     "Bichsel",
+     "Hryckowian"
+    ],
+    "a": [
+     "Ovechkin",
+     "Strome",
+     "Protas"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Steel",
+      "Robertson"
+     ],
+     [
+      "Steel",
+      "Myers"
+     ],
+     [
+      "Seguin",
+      "Lundkvist"
+     ],
+     [
+      "Kiviranta"
+     ]
+    ],
+    "a": [
+     [
+      "Jenner"
+     ],
+     [
+      "Wilson"
+     ],
+     []
+    ]
+   },
+   "goalies": {
+    "h": "Oettinger",
+    "a": "Thompson"
+   },
+   "saves": {
+    "h": 20,
+    "a": 9
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-20T00:21:13.347Z",
+   "fixture": "mains>gio#0",
+   "hab": "DAL",
+   "aab": "WSH",
+   "comeback": 2,
+   "hovr": 89,
+   "aovr": 87,
+   "htier": 4,
+   "atier": 2,
+   "hpow": 89,
+   "apow": 93
   }
  ],
  "phase": "season",
