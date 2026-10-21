@@ -951,6 +951,52 @@
    "atier": 1,
    "hpow": 94,
    "apow": 98
+  },
+  {
+   "id": "mvig484qcnou6",
+   "stage": "rs",
+   "home": "gio",
+   "away": "jarvis",
+   "hs": 0,
+   "as": 1,
+   "result": "OT",
+   "playedAt": "2026-10-21",
+   "note": "",
+   "goals": {
+    "h": [],
+    "a": [
+     "Lizotte"
+    ]
+   },
+   "assists": {
+    "h": [],
+    "a": [
+     [
+      "Letang",
+      "Malkin"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Thompson",
+    "a": "Silovs"
+   },
+   "saves": {
+    "h": 14,
+    "a": 19
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-21T18:28:44.714Z",
+   "fixture": "gio>jarvis#0",
+   "hab": "WSH",
+   "aab": "PIT",
+   "comeback": 0,
+   "hovr": 87,
+   "aovr": 86,
+   "htier": 2,
+   "atier": 1,
+   "hpow": 93,
+   "apow": 95
   }
  ],
  "phase": "season",
