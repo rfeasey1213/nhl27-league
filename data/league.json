@@ -721,6 +721,67 @@
    "atier": 1,
    "hpow": 95,
    "apow": 98
+  },
+  {
+   "id": "mvhewtroxl72c",
+   "stage": "rs",
+   "home": "jarvis",
+   "away": "aj",
+   "hs": 4,
+   "as": 0,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Crosby",
+     "Crosby",
+     "Kindel",
+     "Kuzmenko"
+    ],
+    "a": []
+   },
+   "assists": {
+    "h": [
+     [
+      "Girard",
+      "Karlsson"
+     ],
+     [
+      "Girard",
+      "Van Riemsdysk"
+     ],
+     [
+      "Kindell",
+      "Robertson"
+     ],
+     [
+      "Lapierre",
+      "Carlile"
+     ]
+    ],
+    "a": []
+   },
+   "goalies": {
+    "h": "Silvos",
+    "a": "Wedgewood"
+   },
+   "saves": {
+    "h": 9,
+    "a": 7
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-21T01:07:13.717Z",
+   "fixture": "jarvis>aj#0",
+   "hab": "PIT",
+   "aab": "COL",
+   "comeback": 0,
+   "hovr": 86,
+   "aovr": 88,
+   "htier": 1,
+   "atier": 4,
+   "hpow": 95,
+   "apow": 88
   }
  ],
  "phase": "season",
