@@ -608,6 +608,56 @@
    "atier": 4,
    "hpow": 98,
    "apow": 88
+  },
+  {
+   "id": "mvhdfsd4ved3l",
+   "stage": "rs",
+   "home": "aj",
+   "away": "graham",
+   "hs": 2,
+   "as": 1,
+   "result": "SO",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Kulak",
+     ""
+    ],
+    "a": [
+     "Barkov"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Schwartz",
+      "Burns"
+     ],
+     []
+    ],
+    "a": []
+   },
+   "goalies": {
+    "h": "Wedgewood",
+    "a": "Markstrom"
+   },
+   "saves": {
+    "h": 18,
+    "a": 1
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-21T00:25:59.128Z",
+   "fixture": "aj>graham#0",
+   "hab": "COL",
+   "aab": "FLA",
+   "comeback": 0,
+   "hovr": 88,
+   "aovr": 86,
+   "htier": 4,
+   "atier": 3,
+   "hpow": 88,
+   "apow": 89
   }
  ],
  "phase": "season",
