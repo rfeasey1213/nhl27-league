@@ -559,6 +559,55 @@
    "atier": 3,
    "hpow": 94,
    "apow": 89
+  },
+  {
+   "id": "mvhcmozkaj2g6",
+   "stage": "rs",
+   "home": "jamie",
+   "away": "aj",
+   "hs": 2,
+   "as": 0,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Eklund",
+     "Palmieri"
+    ],
+    "a": []
+   },
+   "assists": {
+    "h": [
+     [
+      "Pelech"
+     ],
+     [
+      "Heineman"
+     ]
+    ],
+    "a": []
+   },
+   "goalies": {
+    "h": "Sorokin",
+    "a": "Wedgewood"
+   },
+   "saves": {
+    "h": 13,
+    "a": 12
+   },
+   "loggedBy": "jamie",
+   "createdAt": "2026-10-21T00:03:21.728Z",
+   "fixture": "jamie>aj#0",
+   "hab": "NYI",
+   "aab": "COL",
+   "comeback": 0,
+   "hovr": 89,
+   "aovr": 88,
+   "htier": 1,
+   "atier": 4,
+   "hpow": 98,
+   "apow": 88
   }
  ],
  "phase": "season",
