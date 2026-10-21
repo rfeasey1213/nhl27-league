@@ -782,6 +782,55 @@
    "atier": 4,
    "hpow": 95,
    "apow": 88
+  },
+  {
+   "id": "mvhfmbiy2a1n8",
+   "stage": "rs",
+   "home": "aj",
+   "away": "freakas",
+   "hs": 0,
+   "as": 2,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [],
+    "a": [
+     "Girgensons",
+     "Goncalves"
+    ]
+   },
+   "assists": {
+    "h": [],
+    "a": [
+     [
+      "Kucherov"
+     ],
+     [
+      "Mikheyev"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Wedgewood",
+    "a": "Vasilevskiy"
+   },
+   "saves": {
+    "h": 12,
+    "a": 14
+   },
+   "loggedBy": "jarvis",
+   "createdAt": "2026-10-21T01:27:03.130Z",
+   "fixture": "aj>freakas#0",
+   "hab": "COL",
+   "aab": "TBL",
+   "comeback": 0,
+   "hovr": 88,
+   "aovr": 90,
+   "htier": 4,
+   "atier": 3,
+   "hpow": 88,
+   "apow": 93
   }
  ],
  "phase": "season",
