@@ -890,6 +890,67 @@
    "atier": 3,
    "hpow": 98,
    "apow": 89
+  },
+  {
+   "id": "mvhibo9xvywto",
+   "stage": "rs",
+   "home": "ryan",
+   "away": "jamie",
+   "hs": 4,
+   "as": 1,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Murphy",
+     "McDavid",
+     "Frederic",
+     "Mukhamadullin"
+    ],
+    "a": [
+     "DeAngelo"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Ekholm"
+     ],
+     [
+      "Hyman"
+     ],
+     [
+      "Samanski"
+     ],
+     []
+    ],
+    "a": [
+     [
+      "Horvat"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Andersen",
+    "a": "Sorokin"
+   },
+   "saves": {
+    "h": 10,
+    "a": 20
+   },
+   "loggedBy": "ryan",
+   "createdAt": "2026-10-21T02:42:45.285Z",
+   "fixture": "ryan>jamie#0",
+   "hab": "EDM",
+   "aab": "NYI",
+   "comeback": 0,
+   "hovr": 88,
+   "aovr": 89,
+   "htier": 2,
+   "atier": 1,
+   "hpow": 94,
+   "apow": 98
   }
  ],
  "phase": "season",
