@@ -833,6 +833,61 @@
    "atier": 3,
    "hpow": 88,
    "apow": 93
+  },
+  {
+   "id": "mvhgd0m808ckw",
+   "stage": "rs",
+   "home": "jamie",
+   "away": "graham",
+   "hs": 2,
+   "as": 1,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Eklund",
+     "Pulock"
+    ],
+    "a": [
+     "M. Tkachuk"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Palat"
+     ],
+     [
+      "Pelech"
+     ]
+    ],
+    "a": [
+     [
+      "Bennett"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Sorokin",
+    "a": "Markstrom"
+   },
+   "saves": {
+    "h": 11,
+    "a": 18
+   },
+   "loggedBy": "jamie",
+   "createdAt": "2026-10-21T01:47:48.704Z",
+   "fixture": "jamie>graham#0",
+   "hab": "NYI",
+   "aab": "FLA",
+   "comeback": 0,
+   "hovr": 89,
+   "aovr": 86,
+   "htier": 1,
+   "atier": 3,
+   "hpow": 98,
+   "apow": 89
   }
  ],
  "phase": "season",
