@@ -658,6 +658,69 @@
    "atier": 3,
    "hpow": 88,
    "apow": 89
+  },
+  {
+   "id": "mvhe65i8wa9il",
+   "stage": "rs",
+   "home": "jarvis",
+   "away": "jamie",
+   "hs": 3,
+   "as": 2,
+   "result": "REG",
+   "playedAt": "2026-10-20",
+   "note": "",
+   "goals": {
+    "h": [
+     "Carlile",
+     "Van Riemsdyk",
+     "Robertson"
+    ],
+    "a": [
+     "Eklund",
+     "Eklund"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Malkin",
+      "Karlsson"
+     ],
+     [
+      "Chinakov",
+      "Novak"
+     ],
+     [
+      "Carlile"
+     ]
+    ],
+    "a": [
+     [
+      "Shenn"
+     ],
+     []
+    ]
+   },
+   "goalies": {
+    "h": "Silovs",
+    "a": "Sorokin"
+   },
+   "saves": {
+    "h": 14,
+    "a": 14
+   },
+   "loggedBy": "aj",
+   "createdAt": "2026-10-21T00:46:29.217Z",
+   "fixture": "jarvis>jamie#0",
+   "hab": "PIT",
+   "aab": "NYI",
+   "comeback": 0,
+   "hovr": 86,
+   "aovr": 89,
+   "htier": 1,
+   "atier": 1,
+   "hpow": 95,
+   "apow": 98
   }
  ],
  "phase": "season",
