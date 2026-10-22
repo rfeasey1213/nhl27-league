@@ -997,6 +997,63 @@
    "atier": 1,
    "hpow": 93,
    "apow": 95
+  },
+  {
+   "id": "mviuu831s16rb",
+   "stage": "rs",
+   "home": "jamie",
+   "away": "freakas",
+   "hs": 2,
+   "as": 1,
+   "result": "REG",
+   "playedAt": "2026-10-21",
+   "note": "",
+   "goals": {
+    "h": [
+     "Duclair",
+     "Schaefer"
+    ],
+    "a": [
+     "Girgensons"
+    ]
+   },
+   "assists": {
+    "h": [
+     [
+      "Holmstrom"
+     ],
+     [
+      "Horvat",
+      "Pelech"
+     ]
+    ],
+    "a": [
+     [
+      "Cernak",
+      "Mikheyev"
+     ]
+    ]
+   },
+   "goalies": {
+    "h": "Sorokin",
+    "a": "Vasilevskiy"
+   },
+   "saves": {
+    "h": 7,
+    "a": 33
+   },
+   "loggedBy": "jamie",
+   "createdAt": "2026-10-22T01:20:52.333Z",
+   "fixture": "jamie>freakas#0",
+   "hab": "NYI",
+   "aab": "TBL",
+   "comeback": 1,
+   "hovr": 89,
+   "aovr": 90,
+   "htier": 1,
+   "atier": 3,
+   "hpow": 98,
+   "apow": 93
   }
  ],
  "phase": "season",
