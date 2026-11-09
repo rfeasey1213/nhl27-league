@@ -1,5 +1,5 @@
 {
- "startedAt": "2026-11-02T20:21:36.876Z",
+ "startedAt": "2026-11-09T20:43:06.579Z",
  "attempts": [
   {
    "url": "https://drop-api.ea.com/rating/nhl-27?locale=en&limit=100&offset=0",
@@ -26,126 +26,126 @@
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/atlantic-division/0",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1560137,
+   "bytes": 1563019,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Atlan"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/atlantic-division/0?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 971569,
+   "bytes": 974213,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Atlan"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/metropolitan-division/1",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1548019,
+   "bytes": 1550901,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Metro"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/metropolitan-division/1?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 983545,
+   "bytes": 986427,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Metro"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/central-division/2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1542534,
+   "bytes": 1545178,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Centr"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/central-division/2?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 830044,
+   "bytes": 832926,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Centr"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/pacific-division/3",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1538864,
+   "bytes": 1541508,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Pacif"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/conferences-ratings/pacific-division/3?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 654327,
+   "bytes": 657209,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Pacif"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/center/Center",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1560764,
+   "bytes": 1563408,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Cente"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/center/Center?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 978398,
+   "bytes": 981280,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Cente"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/left-wing/Left%20Wing",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1247542,
+   "bytes": 1250424,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Left "
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/right-wing/Right%20Wing",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1408530,
+   "bytes": 1411650,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Right"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/left-defense/Left%20Defense",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1527775,
+   "bytes": 1530657,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Left "
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/left-defense/Left%20Defense?page=2",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 714792,
+   "bytes": 717674,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Left "
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/right-defense/Right%20Defense",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 1351763,
+   "bytes": 1354645,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Right"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/defense/Defense",
    "status": 404,
    "type": "text/html; charset=utf-8",
-   "bytes": 177281,
+   "bytes": 178267,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><title data-next-head=\"\">404 - Official EA Site</title><link crossorigin=\"use-credentials\" href=\"https://drop-api.ea.com\" rel=\"preconnect\"/><link href=\"https://accounts.ea.com\" rel=\"preconnect\"/><link href=\"https://drop-assets.ea.com\" rel=\"preconnect\"/><link href=\"https://consent.trustarc.com\" rel=\"preconnect\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/ElectronicArts/ElectronicArtsDisplay-Light.woff2\" r"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/goalie/Goalie",
    "status": 200,
    "type": "text/html; charset=utf-8",
-   "bytes": 958405,
+   "bytes": 961287,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/Druk-Text-Wide-Super.otf\" rel=\"preload\" type=\"font/otf\" data-next-head=\"\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/nhl-27/SequelSans-Semi.ttf\" rel=\"preload\" type=\"font/ttf\" data-next-head=\"\"/><meta content=\"https://www.ea.com/meta/nhl/nhl-27-ratings-meta.jpg\" name=\"thumbnail\" data-next-head=\"\"/><title data-next-head=\"\">EA SPORTS™ NHL 27 Goali"
   },
   {
    "url": "https://www.ea.com/en/games/nhl/ratings/positions-ratings/goaltender/Goaltender",
    "status": 404,
    "type": "text/html; charset=utf-8",
-   "bytes": 177293,
+   "bytes": 178279,
    "head": "<!DOCTYPE html><html dir=\"ltr\" data-logged-in=\"unknown\" lang=\"en\"><head><meta charSet=\"utf-8\" data-next-head=\"\"/><meta name=\"viewport\" content=\"width=device-width\" data-next-head=\"\"/><title data-next-head=\"\">404 - Official EA Site</title><link crossorigin=\"use-credentials\" href=\"https://drop-api.ea.com\" rel=\"preconnect\"/><link href=\"https://accounts.ea.com\" rel=\"preconnect\"/><link href=\"https://drop-assets.ea.com\" rel=\"preconnect\"/><link href=\"https://consent.trustarc.com\" rel=\"preconnect\"/><link as=\"font\" crossorigin=\"anonymous\" href=\"/fonts/ElectronicArts/ElectronicArtsDisplay-Light.woff2\" r"
   }
  ],
